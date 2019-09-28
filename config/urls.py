@@ -4,6 +4,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.views.generic import TemplateView
 from django.views import defaults as default_views
+from django.conf.urls import url
 
 urlpatterns = [
     path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
@@ -16,6 +17,11 @@ urlpatterns = [
     path("users/", include("plants_api.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
+    url(r'api-auth/', include('rest_framework.urls')),
+    url(r'api/', include('plants_api.main_site.urls', namespace="main_site")),
+
+    url(r'^chaining/', include('smart_selects.urls')) #added for smart_selects
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
