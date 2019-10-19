@@ -20,7 +20,8 @@ urlpatterns = [
     url(r'api-auth/', include('rest_framework.urls')),
     url(r'api/', include('plants_api.main_site.urls', namespace="main_site")),
 
-    url(r'^chaining/', include('smart_selects.urls')) #added for smart_selects
+    url(r'^chaining/', include('smart_selects.urls')), #added for smart_selects
+
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

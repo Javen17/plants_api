@@ -36,6 +36,41 @@ class PlantSpecies(models.Model):
         return "%s" % (self.common_name)
 
 
+class Recolector(models.Model):
+    name =  models.CharField(max_length=100 , verbose_name="Nombre" , unique = False)
+    photo = models.ImageField("Recolector photo" , null = True , blank = True , upload_to = "uploads/recolectors")
+
+    class Meta:
+        verbose_name = "Recolector"
+        verbose_name_plural = "recolectores"
+
+    def __str__(self):
+        return "%s" % (self.name)
+
+class SpecimenStatus(models.Model):
+    status_name = models.CharField(max_length=100 , verbose_name="Nombre" , unique = False)
+
+    class Meta:
+        verbose_name = "Estado"
+        verbose_name_plural = "Estados"
+
+    def __str__(self):
+        return "%s" % (self.status_name)
+
+class PlantSpecimen(models.Model):
+    recolector = models.ForeignKey(Recolector , on_delete=models.CASCADE , blank = False , default =0 ,  verbose_name="Recolector")
+    photo = models.ImageField("Specimen Photo", null=False, blank=False, upload_to="uploads/specimen")
+    date_received =  models.DateField("Fecha")
+    status = models.ForeignKey(SpecimenStatus,on_delete=models.CASCADE , blank = False , default =0 ,  verbose_name="Status")
+    plant_family = models.ForeignKey(PlantFamily, on_delete=models.CASCADE , blank = False , default =0 ,  verbose_name="Family")
+    plant_species = ChainedForeignKey(PlantSpecies , chained_field = "plant_family" , chained_model_field = "family", show_all=False , auto_choose=True, sort=True)
+
+    class Meta:
+        verbose_name = "Espécimen"
+        verbose_name_plural = "Especimenes"
+
+    def __str__(self):
+        return "Espécimen de %s" % (self.plant_species.common_name)
 
 
 #department = models.ForeignKey(Department, on_delete=models.CASCADE , blank = False , default =0 ,  verbose_name="departamento")

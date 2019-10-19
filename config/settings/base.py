@@ -42,16 +42,21 @@ LOCALE_PATHS = [ROOT_DIR.path("locale")]
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 
+#DATABASES = {
+#    "default": {
+#    "ENGINE" : "django.db.backends.postgresql_psycopg2",
+#     "NAME" : "plants_api",
+#     "USER" : "bryan" ,
+#     "PASSWORD" : "andromeda",
+#     "HOST" : "localhost",
+#     "PORT" : "5432",
+#         }  #env.db("DATABASE_URL", default="postgres:///plants_api")
+#}
+
 DATABASES = {
-    "default": {
-    "ENGINE" : "django.db.backends.postgresql_psycopg2",
-     "NAME" : "plants_api",
-     "USER" : "bryan" ,
-     "PASSWORD" : "andromeda",
-     "HOST" : "localhost",
-     "PORT" : "5432",
-         }  #env.db("DATABASE_URL", default="postgres:///plants_api")
+    'default': env.db('DATABASE_URL', default='postgres:///plants_api'),
 }
+
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
 
 # URLS
@@ -292,3 +297,5 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10
 
 }
+
+USE_DJANGO_JQUERY = True
