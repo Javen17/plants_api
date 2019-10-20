@@ -26,3 +26,5 @@ django-smart-selects==1.5.4
 
 Collectfast==0.5.1
 
+
+django-anymail==7.0.0
