@@ -304,4 +304,3 @@ USE_DJANGO_JQUERY = True
 
 
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
-django_heroku.settings(locals())
