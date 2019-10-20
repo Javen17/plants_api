@@ -310,4 +310,4 @@ REST_FRAMEWORK = {
 USE_DJANGO_JQUERY = True
 
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+#STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
