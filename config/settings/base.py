@@ -10,6 +10,10 @@ ROOT_DIR = (
 )  # (plants_api/config/settings/base.py - 3 = plants_api/)
 APPS_DIR = ROOT_DIR.path("plants_api")
 
+BASIC_DIR = (
+    environ.Path(__file__) - 3
+)
+
 env = environ.Env()
 
 READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=False)
