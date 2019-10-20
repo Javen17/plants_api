@@ -10,7 +10,7 @@ ROOT_DIR = (
 )  # (plants_api/config/settings/base.py - 3 = plants_api/)
 APPS_DIR = ROOT_DIR.path("plants_api")
 
-BASIC_DIR = (
+BASE_DIR = (
     environ.Path(__file__) - 3
 )
 
