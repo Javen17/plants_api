@@ -3,6 +3,7 @@ Base settings to build other settings files upon.
 """
 
 import environ
+import django_heroku
 
 ROOT_DIR = (
     environ.Path(__file__) - 3
