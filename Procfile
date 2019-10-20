@@ -1,1 +1,1 @@
-web: gunicorn plants_api.config.wsgi
+web: gunicorn plants_api.wsgi
