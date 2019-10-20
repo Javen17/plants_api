@@ -157,6 +157,7 @@ MIDDLEWARE = [
 # STATIC
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#static-root
+
 STATIC_ROOT = str(ROOT_DIR("staticfiles"))
 
 #STATIC_ROOT = "plants_api/staticfiles"
