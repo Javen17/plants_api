@@ -1,4 +1,5 @@
 #Do not use this settings , they are necessary for heroku if you're running localy go to #requirements folder and install base.txt and local.txt 
+#
 
 
 alabaster==0.7.12
