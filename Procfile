@@ -1,1 +1,1 @@
-web: gunicorn plants_api.wsgi
+web: gunicorn --pythonpath config config.wsgi
