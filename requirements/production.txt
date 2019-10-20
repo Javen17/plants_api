@@ -9,3 +9,7 @@ Collectfast==1.0.0  # https://github.com/antonagestam/collectfast
 # Django
 # ------------------------------------------------------------------------------
 django-anymail[mailgun]==6.1.0  # https://github.com/anymail/django-anymail
+
+
+django-heroku==0.3.1
+
