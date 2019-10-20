@@ -157,9 +157,9 @@ MIDDLEWARE = [
 # STATIC
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#static-root
-#STATIC_ROOT = str(ROOT_DIR("staticfiles"))
+STATIC_ROOT = str(ROOT_DIR("staticfiles"))
 
-STATIC_ROOT = "plants_api/staticfiles"
+#STATIC_ROOT = "plants_api/staticfiles"
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#static-url
 STATIC_URL = "/static/"
@@ -310,4 +310,4 @@ REST_FRAMEWORK = {
 USE_DJANGO_JQUERY = True
 
 
-#STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
