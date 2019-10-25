@@ -7,6 +7,8 @@ from django.http import HttpResponse , JsonResponse
 from rest_framework.renderers import JSONRenderer
 from django.db.models import Q
 from rest_framework.parsers import FileUploadParser
+from rest_framework import permissions
+
 #from rest_framework.generics import ListCreateAPIView , RetrieveUpdateDestroyAPIView
 class PlantFamilyViewSet(viewsets.ModelViewSet):
     """
@@ -14,6 +16,7 @@ class PlantFamilyViewSet(viewsets.ModelViewSet):
     """
     queryset = PlantFamily.objects.all()
     serializer_class = PlantFamilySerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 class PlantSpeciesViewSet(viewsets.ModelViewSet):
     serializer_class = PlantSpeciesSerializer
