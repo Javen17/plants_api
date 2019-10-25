@@ -29,7 +29,8 @@ class PlantSpeciesViewSet(viewsets.ModelViewSet):
 
             if family_name != '':
 
-                family = get_or_created_family(family_data)
+                #family = get_or_created_family(family_data)
+                family = get_or_create_model_instance(["family_name"] , [family_name] , PlantFamily , PlantFamily() , "family_name" , family_name)
 
 
                 model_instance = PlantSpecies(common_name = serializer.validated_data.get("common_name") ,
@@ -77,6 +78,42 @@ class PlantSpecimenViewSet(viewsets.ModelViewSet):
     serializer_class = PlantSpecimenSerializer
     queryset = PlantSpecimen.objects.all()
 
+    def perform_create(self,serializer):
+
+        if serializer.is_valid():
+
+            family_data = serializer.validated_data["plant_family"]
+            family_name = family_data["family_name"]
+
+            recolector_data = serializer.validated_data["recolector"]
+            recolector_name = recolector_data["name"]
+
+            species_data = serializer.validated_data["plant_species"]
+            status_data = serializer.validated_data["status"]
+
+            if family_name != "" and recolector_name != "" and species_data != "" and status_data != "":
+
+                recolector = get_or_create_model_instance(["name" , "photo"] , [recolector_name , recolector_data["photo"]] , Recolector , Recolector() , "name" , recolector_name)
+                family = get_or_create_model_instance(["family_name"] , [family_name] , PlantFamily , PlantFamily() , "family_name" , family_name)
+                species = get_or_create_model_instance(["common_name","scientific_name","family","description","photo"] , [species_data["common_name"] , species_data["scientific_name"] ,  family , species_data["description"] , species_data["photo"]] , PlantSpecies , PlantSpecies() , "scientific_name" , species_data["scientific_name"] )
+                status = get_or_create_model_instance(["status_name"] , [status_data["status_name"]] , SpecimenStatus , SpecimenStatus() , "status_name" , status_data["status_name"])
+
+                model_instance = PlantSpecimen( recolector = recolector ,
+                    photo = serializer.validated_data.get("photo") ,
+                    date_received = serializer.validated_data.get("date_received"),
+                    status = status ,
+                    plant_family = family,
+                    plant_species = species)
+
+                model_instance.save()
+
+                return JsonResponse({"message": "success"})
+            else:
+                return JsonResponse(data={'message': "Bad request"}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
     @action(methods=['get'], detail=False)
     def search_specimen(self, request, pk=None):
         plant_species = self.request.query_params.get('plant_species', None)
@@ -103,18 +140,20 @@ def search(queryset , filter ,  search_field , serializer):
         return  "please provide a valid search url"
 
 
-def get_or_created_family(family_data):
-    family_name = family_data["family_name"]
+def get_or_create_model_instance(arguments_list , arguments_values , model_manager , model , search_field , value):
 
+    model_list = model_manager.objects.filter(**{search_field: value})
 
-    family_list = PlantFamily.objects.filter(
-        family_name=family_name)
-
-    if not family_list:
-        new_family = PlantFamily(family_name = family_name)
-        family = new_family
-        new_family.save()
+    if not model_list:
+        i = 0
+        for argument_l in arguments_list:
+            setattr(model, argument_l , arguments_values[i])
+            i += 1
+            try:
+                model.save()
+            except ValueError as err:
+                return {"message" : err.args}
     else:
-        family = family_list[0]
+        model = model_list[0]
 
-    return family
+    return model
