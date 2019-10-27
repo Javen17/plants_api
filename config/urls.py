@@ -18,7 +18,7 @@ urlpatterns = [
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
     url(r'api-auth/', include('rest_framework.urls')),
-    url(r'api/', include('plants_api.main_site.urls', namespace="main_site")),
+    url(r'api/', include('plants_api.main_site.urls')),
 
     url(r'^chaining/', include('smart_selects.urls')), #added for smart_selects
 

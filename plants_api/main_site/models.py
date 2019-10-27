@@ -4,6 +4,7 @@ from django.conf import settings
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 from django.db.models.signals import post_save
+from plants_api.users.models import User
 # Create your models here.
 
 class PlantFamily(models.Model):
@@ -39,17 +40,6 @@ class PlantSpecies(models.Model):
         return "%s" % (self.common_name)
 
 
-class Recolector(models.Model):
-    name =  models.CharField(max_length=100 , verbose_name="Nombre" , unique = False)
-    photo = models.ImageField("Recolector photo" , null = True , blank = True , upload_to = "uploads/recolectors")
-
-    class Meta:
-        verbose_name = "Recolector"
-        verbose_name_plural = "recolectores"
-
-    def __str__(self):
-        return "%s" % (self.name)
-
 class SpecimenStatus(models.Model):
     status_name = models.CharField(max_length=100 , verbose_name="Nombre" , unique = False)
 
@@ -61,7 +51,7 @@ class SpecimenStatus(models.Model):
         return "%s" % (self.status_name)
 
 class PlantSpecimen(models.Model):
-    recolector = models.ForeignKey(Recolector , on_delete=models.CASCADE , blank = False , default =0 ,  verbose_name="Recolector")
+    user = models.ForeignKey(User , on_delete=models.CASCADE , blank = False , default =0 ,  verbose_name="Perfil")
     photo = models.ImageField("Specimen Photo", null=False, blank=False, upload_to="uploads/specimen")
     date_received =  models.DateField("Fecha")
     status = models.ForeignKey(SpecimenStatus,on_delete=models.CASCADE , blank = False , default =0 ,  verbose_name="Status")

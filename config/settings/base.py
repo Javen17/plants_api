@@ -96,7 +96,8 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "plants_api.users.apps.UsersConfig",
-    "plants_api.main_site"
+    "plants_api.main_site",
+    "plants_api.helpers"
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

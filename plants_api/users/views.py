@@ -4,8 +4,33 @@ from django.urls import reverse
 from django.views.generic import DetailView, RedirectView, UpdateView
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
+from rest_framework import viewsets
+from .serializers import UserSerializer , ProfileSerializer
+from rest_framework import permissions
+from plants_api.helpers import helpers
+from rest_framework.decorators import action
+from plants_api.users.models import Profile
 
 User = get_user_model()
+
+class ProfileViewSet(viewsets.ModelViewSet):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all().prefetch_related('Profile')
+    serializer_class =  UserSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+    @action(methods=['get'], detail=False)
+    def search_user(self, request, pk=None):
+        name = self.request.query_params.get('username', None)
+        result = helpers.search(self.queryset , "username__icontains" , name , UserSerializer )
+
+        json = JSONRenderer().render(result)
+        return HttpResponse(json)
 
 
 class UserDetailView(LoginRequiredMixin, DetailView):

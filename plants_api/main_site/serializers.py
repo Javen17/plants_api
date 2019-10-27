@@ -1,19 +1,22 @@
-from .models import PlantSpecies ,  PlantFamily , Recolector , PlantSpecimen , SpecimenStatus
+from .models import PlantSpecies ,  PlantFamily , PlantSpecimen , SpecimenStatus
 from rest_framework import serializers
+from plants_api.users.serializers import UserSerializer
+from plants_api.users.models import User
 
 
-
-class PlantFamilySerializer(serializers.HyperlinkedModelSerializer):
+class PlantFamilySerializer(serializers.ModelSerializer):
     class Meta:
         model = PlantFamily
         fields = ['family_name']
         extra_kwargs = {
                 'family_name': {'validators': []},
             }
+        fields = '__all__'
 
-class PlantSpeciesSerializer(serializers.HyperlinkedModelSerializer):
+class PlantSpeciesSerializer(serializers.ModelSerializer):
 
-    family = PlantFamilySerializer()
+    family = serializers.PrimaryKeyRelatedField(queryset= PlantFamily.objects.all())
+
 
     #def create(self, validated_data):
 
@@ -42,29 +45,22 @@ class PlantSpeciesSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = PlantSpecies
-        fields = ['common_name', 'scientific_name', 'family' , 'description' , 'photo']
+        fields = '__all__'
 
 
-class RecolectorSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = Recolector
-        fields = ['name' , 'photo']
-
-
-class SpecimenStatusSerializer(serializers.HyperlinkedModelSerializer):
+class SpecimenStatusSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SpecimenStatus
         fields = ['status_name']
 
-class PlantSpecimenSerializer(serializers.HyperlinkedModelSerializer):
+class PlantSpecimenSerializer(serializers.ModelSerializer):
 
-    recolector = RecolectorSerializer()
-    plant_family = PlantFamilySerializer()
-    plant_species = PlantSpeciesSerializer()
-    status = SpecimenStatusSerializer()
+    user =  serializers.PrimaryKeyRelatedField(queryset= User.objects.all())
+    plant_family = serializers.PrimaryKeyRelatedField(queryset= PlantFamily.objects.all())
+    plant_species = serializers.PrimaryKeyRelatedField(queryset= PlantSpecimen.objects.all())
+    status = serializers.PrimaryKeyRelatedField(queryset= SpecimenStatus.objects.all())
 
     class Meta:
         model = PlantSpecimen
-        fields = ['recolector', 'photo', 'date_received' , 'status' , 'plant_family' , 'plant_species']
+        fields = '__all__'
