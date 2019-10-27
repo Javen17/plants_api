@@ -11,6 +11,7 @@ class ProfileInline(admin.StackedInline):
     model = Profile
     verbose_name_plural = 'Perfil'
 
+
 @admin.register(User)
 class UserAdmin(auth_admin.UserAdmin):
 
@@ -20,5 +21,3 @@ class UserAdmin(auth_admin.UserAdmin):
     list_display = ["username", "name", "is_superuser"]
     search_fields = ["name"]
     inlines = [ProfileInline,]
-
-admin.site.register(Profile)

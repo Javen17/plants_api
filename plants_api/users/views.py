@@ -10,8 +10,11 @@ from rest_framework import permissions
 from plants_api.helpers import helpers
 from rest_framework.decorators import action
 from plants_api.users.models import Profile
+from django.contrib.auth.models import Permission
+from django.http import JsonResponse
 
 User = get_user_model()
+
 
 class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
@@ -20,7 +23,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all().prefetch_related('Profile')
+    queryset = User.objects.all().select_related('profile' , 'auth_token')
     serializer_class =  UserSerializer
     permission_classes = [permissions.IsAdminUser]
 
@@ -31,6 +34,18 @@ class UserViewSet(viewsets.ModelViewSet):
 
         json = JSONRenderer().render(result)
         return HttpResponse(json)
+
+    @action(methods=['get'], detail = True)
+    def get_user_permissions(self , request , pk):
+
+        user =  User.objects.filter(pk = pk).first()
+
+        if user.is_superuser:
+            permissions = Permission.objects.all().values()
+        else:
+            permissions = user.user_permissions.all().values() | Permission.objects.filter(group__user=user).values()
+
+        return JsonResponse({"results" : list(permissions)})
 
 
 class UserDetailView(LoginRequiredMixin, DetailView):

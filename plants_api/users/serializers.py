@@ -2,16 +2,17 @@ from rest_framework import serializers
 from .models import User , Profile
 
 
-class ProfileSerializer(serializers.HyperlinkedModelSerializer):
+class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
         fields = '__all__'
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
 
-    Profile = ProfileSerializer()
+    profile = ProfileSerializer(read_only=True)
 
     class Meta:
         model = User
-        fields = '__all__'
+        #fields = '__all__'
+        exclude = ("password", "user_permissions", "groups")

@@ -13,18 +13,15 @@ class User(AbstractUser):
     def get_absolute_url(self):
         return reverse("users:detail", kwargs={"username": self.username})
 
-
 class Profile(models.Model):
-    name =  models.CharField(max_length=100 , verbose_name="Nombre" , unique = False)
     number_id = models.PositiveIntegerField("Número de referencia" , unique = True)
-    email = models.EmailField( "email" , unique = True)
     phone =  models.CharField(max_length=100 , verbose_name="Teléfono")
     photo = models.ImageField("foto de perfil" , null = True , blank = True , upload_to = "uploads/perfiles")
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE , null = True , blank = True)
 
     class Meta:
         verbose_name = "Perfil"
         verbose_name_plural = "perfiles"
 
     def __str__(self):
-        return "%s" % (self.name)
+        return "%s" % (self.number_id)
