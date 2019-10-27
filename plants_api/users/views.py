@@ -12,6 +12,9 @@ from rest_framework.decorators import action
 from plants_api.users.models import Profile
 from django.contrib.auth.models import Permission
 from django.http import JsonResponse
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+from rest_framework.response import Response
 
 User = get_user_model()
 
@@ -47,6 +50,12 @@ class UserViewSet(viewsets.ModelViewSet):
 
         return JsonResponse({"results" : list(permissions)})
 
+
+class CustomObtainAuthToken(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        response = super(CustomObtainAuthToken, self).post(request, *args, **kwargs)
+        token = Token.objects.get(key=response.data['token'])
+        return Response({'token': token.key, 'id': token.user_id})
 
 class UserDetailView(LoginRequiredMixin, DetailView):
 
