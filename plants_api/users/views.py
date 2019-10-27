@@ -5,7 +5,7 @@ from django.views.generic import DetailView, RedirectView, UpdateView
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import viewsets
-from .serializers import UserSerializer , ProfileSerializer
+from .serializers import UserSerializer , ProfileSerializer , GroupSerializer , PermissionSerializer
 from rest_framework import permissions
 from plants_api.helpers import helpers
 from rest_framework.decorators import action
@@ -15,6 +15,7 @@ from django.http import JsonResponse
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
+from django.contrib.auth.models import Permission , Group
 
 User = get_user_model()
 
@@ -29,6 +30,20 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().select_related('profile' , 'auth_token')
     serializer_class =  UserSerializer
     permission_classes = [permissions.IsAdminUser]
+
+
+    def create(self, validated_data):
+
+        groups = validated_data.data.pop('groups')
+        permissions = validated_data.data.pop('user_permissions')
+        user = User.objects.create(**validated_data.data)
+        for group in groups:
+            user.groups.add(group)
+
+        for permission in permissions:
+            user.user_permissions.add(permission)
+
+        return JsonResponse({"result" : "user added" })
 
     @action(methods=['get'], detail=False)
     def search_user(self, request, pk=None):
@@ -49,6 +64,21 @@ class UserViewSet(viewsets.ModelViewSet):
             permissions = user.user_permissions.all().values() | Permission.objects.filter(group__user=user).values()
 
         return JsonResponse({"results" : list(permissions)})
+
+
+
+class GroupViewSet(viewsets.ModelViewSet):
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
+    permissions_classes = [permissions.IsAdminUser]
+
+
+class PermissionViewSet(viewsets.ModelViewSet):
+    http_method_names = ['get']
+
+    queryset = Permission.objects.all()
+    serializer_class = PermissionSerializer
+    permission_classes = [permissions.DjangoModelPermissions]
 
 
 class CustomObtainAuthToken(ObtainAuthToken):
