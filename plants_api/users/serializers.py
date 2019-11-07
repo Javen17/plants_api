@@ -14,7 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        exclude = ("password", "user_permissions", "groups")
+        exclude = ("password", "user_permissions")
         #extra_kwargs = {'password': {'write_only': True, 'min_length': 4} , "user_permissions" : {'write_only': True} , "groups" : {'write_only': True}}
 
 class GroupSerializer(serializers.ModelSerializer):

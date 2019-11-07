@@ -14,6 +14,7 @@ router.register(r'family', views.PlantFamilyViewSet)
 router.register(r'species', views.PlantSpeciesViewSet)
 router.register(r'specimen',views.PlantSpecimenViewSet)
 router.register(r'user', user_views.UserViewSet)
+router.register(r'profile',user_views.ProfileViewSet)
 router.register(r'group', user_views.GroupViewSet)
 router.register(r'permission' , user_views.PermissionViewSet)
 # Wire up our API using automatic URL routing.
