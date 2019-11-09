@@ -5,6 +5,7 @@ from django.views.generic import DetailView, RedirectView, UpdateView
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import viewsets
+from rest_framework.views import APIView
 from .serializers import UserSerializer , ProfileSerializer , GroupSerializer , PermissionSerializer
 from rest_framework import permissions
 from plants_api.helpers import helpers
@@ -16,6 +17,12 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from django.contrib.auth.models import Permission , Group
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 User = get_user_model()
 
@@ -23,13 +30,13 @@ User = get_user_model()
 class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.DjangoModelPermissions]
 
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().select_related('profile' , 'auth_token')
     serializer_class =  UserSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.DjangoModelPermissions]
 
 
     def create(self, validated_data):
@@ -67,10 +74,63 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 
+class CustomTokenObtainPairView(TokenObtainPairView):
+
+    def post(self, request, *args, **kwargs):
+        try:
+            response = super(TokenObtainPairView , self).post(request, *args, **kwargs)
+            response.set_cookie("token-access", response.data["access"])
+            response.set_cookie("token-refresh", response.data["refresh"])
+            response.data = {"status":"success"}
+            return response
+        except:
+            return JsonResponse({"status": "Something went wrong"})
+
+
+class GeneratePermanentTokenView(APIView):
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self , request , *args , **kwargs):
+        jwt = JWTAuthentication()
+
+        try:
+            permanent_token = request.COOKIES["token-permanent"]
+            token = Token.objects.get(key=permanent_token)
+            user = User.objects.get(id=token.user_id)
+
+            hello = f"It appears you already have a permanent Token, Hi {user}"
+
+            return JsonResponse({"message" : hello} , status = 200)
+        except:
+            print("the user has no cookie or the user has a cookie that should represent the permanent token but it is invalid")
+
+        try:
+            access_token = request.COOKIES["token-access"]
+            validated_token = jwt.get_validated_token(access_token)
+
+            user = jwt.get_user(validated_token)
+
+            retrieved_permanent_token , created = Token.objects.get_or_create(user=user)
+
+            print(created)
+
+            response = JsonResponse({"status" : "Success"} , status = 200)
+
+            response.set_cookie("token-permanent", retrieved_permanent_token.key)
+
+            return response
+
+        except:
+            return JsonResponse({"status" : "Bad Request"} , status = 400)
+
+
+
+
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    permissions_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.DjangoModelPermissions]
 
 
 class PermissionViewSet(viewsets.ModelViewSet):

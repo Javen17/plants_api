@@ -68,10 +68,10 @@ class PlantSpecimen(models.Model):
 
 
 
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_auth_token(sender, instance=None, created=False, **kwargs):
-    if created:
-        Token.objects.create(user=instance)
+#@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+#def create_auth_token(sender, instance=None, created=False, **kwargs):
+#    if created:
+#        Token.objects.create(user=instance)
 #department = models.ForeignKey(Department, on_delete=models.CASCADE , blank = False , default =0 ,  verbose_name="departamento")
 #municipality = ChainedForeignKey(
 #    Municipality,

@@ -5,9 +5,6 @@ from django.urls import include, path
 
 from plants_api.users import views
 
-
-
-
 from plants_api.users.views import (
     user_redirect_view,
     user_update_view,
