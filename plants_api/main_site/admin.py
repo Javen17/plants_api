@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import PlantFamily , PlantSpecies , SpecimenStatus , PlantSpecimen
+from rest_framework.authtoken.models import Token
 
 # Register your models here.
 class PlantSpeciesModelAdmin(admin.ModelAdmin):
@@ -12,3 +13,4 @@ admin.site.register(PlantFamily)
 admin.site.register(PlantSpecies , PlantSpeciesModelAdmin)
 admin.site.register(PlantSpecimen)
 admin.site.register(SpecimenStatus)
+admin.site.unregister(Token)

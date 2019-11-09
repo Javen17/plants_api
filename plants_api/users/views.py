@@ -126,6 +126,20 @@ class GeneratePermanentTokenView(APIView):
 
 
 
+class RemovePermanentTokenView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def delete(self ,  request , *args , **kwargs):
+        token = Token.objects.get(user=request.user)
+        token.delete()
+
+        response = JsonResponse({"status" : "Remember me deleted"})
+        response.delete_cookie("token-permanent")
+
+        return response
+
+
+
 
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
