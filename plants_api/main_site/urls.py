@@ -34,7 +34,8 @@ urlpatterns = [
     path('', include(router.urls)),
     path('login/', user_views.CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('permanent_login/', user_views.GeneratePermanentTokenView.as_view(), name = 'permanent_login'),
-    path('delete_permanent_login/', user_views.RemovePermanentTokenView.as_view(), name = 'remove_permanent_token')
+    path('delete_permanent_login/', user_views.RemovePermanentTokenView.as_view(), name = 'remove_permanent_token'),
+    path('me/',user_views.WhoAmIView.as_view(), name = 'who_am_i')
     #path('api/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     #url(r'^login/', user_views.CustomObtainAuthToken.as_view()),
     #path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))

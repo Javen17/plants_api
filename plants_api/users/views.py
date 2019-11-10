@@ -140,6 +140,21 @@ class RemovePermanentTokenView(APIView):
 
 
 
+class WhoAmIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self , request , *args , **kwargs):
+
+        try:
+            user = UserSerializer(request.user)
+            return JsonResponse({"data":user.data})
+
+        except:
+            return JsonResponse({"status":"Bad Request"} ,  status = 400)
+
+
+
+
 
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
