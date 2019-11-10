@@ -1,16 +1,26 @@
 from django.contrib import admin
-from .models import PlantFamily , PlantSpecies , SpecimenStatus , PlantSpecimen
+from .models import Ecosystem , RecolectionAreaStatus , Biostatus , Status , Family , Genus , Species , Country , State , City,  PlantSpecimen ,MushroomSpecimen , FormTypes , CapTypes
 from rest_framework.authtoken.models import Token
 
 # Register your models here.
-class PlantSpeciesModelAdmin(admin.ModelAdmin):
+class SpeciesModelAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'scientific_name' , 'family')
     list_filter = ('family',)
 
 
-
-admin.site.register(PlantFamily)
-admin.site.register(PlantSpecies , PlantSpeciesModelAdmin)
+admin.site.register(Ecosystem)
+admin.site.register(RecolectionAreaStatus)
+admin.site.register(Biostatus)
+admin.site.register(Status)
+admin.site.register(Family)
+admin.site.register(Genus)
+admin.site.register(Species , SpeciesModelAdmin)
+admin.site.register(Country)
+admin.site.register(State)
+admin.site.register(City)
 admin.site.register(PlantSpecimen)
-admin.site.register(SpecimenStatus)
+admin.site.register(FormTypes)
+admin.site.register(CapTypes)
+admin.site.register(MushroomSpecimen)
+#admin.site.register(SpecimenStatus)
 admin.site.unregister(Token)

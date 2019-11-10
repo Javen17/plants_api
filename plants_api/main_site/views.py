@@ -1,10 +1,10 @@
 from django.shortcuts import render
-from .models import PlantSpecies, PlantFamily , PlantSpecimen , SpecimenStatus
+from .models import Species, Family , PlantSpecimen
 from plants_api.users.models import User
 from plants_api.users.serializers import UserSerializer
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from .serializers import PlantSpeciesSerializer, PlantFamilySerializer , PlantSpecimenSerializer , SpecimenStatusSerializer
+from .serializers import SpeciesSerializer, FamilySerializer , PlantSpecimenSerializer
 from django.http import HttpResponse , JsonResponse
 from rest_framework.renderers import JSONRenderer
 from django.db.models import Q
@@ -13,17 +13,17 @@ from rest_framework import permissions
 from plants_api.helpers import helpers
 
 #from rest_framework.generics import ListCreateAPIView , RetrieveUpdateDestroyAPIView
-class PlantFamilyViewSet(viewsets.ModelViewSet):
+class FamilyViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows groups to be viewed or edited.
     """
-    queryset = PlantFamily.objects.all()
-    serializer_class = PlantFamilySerializer
+    queryset = Family.objects.all()
+    serializer_class = FamilySerializer
     permission_classes = [permissions.IsAuthenticated]
 
-class PlantSpeciesViewSet(viewsets.ModelViewSet):
-    serializer_class = PlantSpeciesSerializer
-    queryset = PlantSpecies.objects.all()
+class SpeciesViewSet(viewsets.ModelViewSet):
+    serializer_class = SpeciesSerializer
+    queryset = Species.objects.all()
     parser_class = (FileUploadParser,)
 
 #    def perform_create(self, serializer):
@@ -56,15 +56,15 @@ class PlantSpeciesViewSet(viewsets.ModelViewSet):
     @action(methods=["get"] , detail = False)
     def search_species(self , request , pk = None):
         common_name = self.request.query_params.get('common_name',None)
-        result = helpers.search(self.queryset , "common_name__icontains" , common_name , PlantSpeciesSerializer)
+        result = helpers.search(self.queryset , "common_name__icontains" , common_name , SpeciesSerializer)
 
         json = JSONRenderer().render(result)
         return HttpResponse(json)
 
 
-class SpecimenStatusViewSet(viewsets.ModelViewSet):
-    serializer_class = SpecimenStatusSerializer
-    queryset = SpecimenStatus
+#class SpecimenStatusViewSet(viewsets.ModelViewSet):
+#    serializer_class = SpecimenStatusSerializer
+#    queryset = SpecimenStatus
 
 
 class PlantSpecimenViewSet(viewsets.ModelViewSet):
@@ -109,7 +109,7 @@ class PlantSpecimenViewSet(viewsets.ModelViewSet):
 
     @action(methods=['get'], detail=False)
     def search_specimen(self, request, pk=None):
-        plant_species = self.request.query_params.get('plant_species', None)
-        result = helpers.search(self.queryset , "plant_species__common_name__icontains" , plant_species , PlantSpecimenSerializer)
+        plant_species = self.request.query_params.get('species', None)
+        result = helpers.search(self.queryset , "species__common_name__icontains" , species , SpecimenSerializer)
         json = JSONRenderer().render(result)
         return HttpResponse(json)

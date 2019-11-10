@@ -7,22 +7,85 @@ from django.db.models.signals import post_save
 from plants_api.users.models import User
 # Create your models here.
 
-class PlantFamily(models.Model):
-    family_name = models.CharField(max_length=100 , verbose_name="Nombre de la familia" , unique = True)
+TYPE_CHOICES = [
+    ('planta', 'Planta'),
+    ('hongo', 'Hongo'),
+]
+
+class Ecosystem(models.Model):
+    name = models.CharField(max_length=100 , verbose_name="Nombre de hábitat")
+
+    class Meta:
+        verbose_name = 'Ecosistema'
+        verbose_name_plural = 'Ecosistemas'
+
+    def __str__(self):
+        return "%s" % (self.name)
+
+
+class RecolectionAreaStatus(models.Model):
+    name = models.CharField(max_length=100 , verbose_name="Nombre de Área de recolección")
+
+    class Meta:
+        verbose_name = 'Área de recolección'
+        verbose_name_plural = 'Áreas de recolección'
+
+    def __str__(self):
+        return "%s" % (self.name)
+
+
+class Biostatus(models.Model):
+    name = models.CharField(max_length=100 , verbose_name="Nombre de estado biológico")
+
+    class Meta:
+        verbose_name = 'Biostatus'
+        verbose_name_plural = 'Biostatus'
+
+    def __str__(self):
+        return "%s" % (self.name)
+
+class Status(models.Model):
+    name = models.CharField(max_length=100 , verbose_name="Nombre del estado")
+
+    class Meta:
+        verbose_name = 'Estado'
+        verbose_name_plural = 'Estados'
+
+    def __str__(self):
+        return "%s" % (self.name)
+
+
+class Family(models.Model):
+    name = models.CharField(max_length=100 , verbose_name="Nombre de la familia" , unique = True)
+    type =  models.CharField(max_length=100  , choices = TYPE_CHOICES , verbose_name = "Tipo")
 
     class Meta:
         verbose_name = 'Familias de plantas'
         verbose_name_plural = 'Familias de plantas'
 
     def __str__(self):
-        return "%s" % (self.family_name)
+        return "%s" % (self.name)
 
-class PlantSpecies(models.Model):
+class Genus(models.Model):
+    name = models.CharField(max_length=100 , verbose_name="Nombre del Género" , unique = True)
+    family = models.ForeignKey(Family , on_delete = models.CASCADE , verbose_name = "Familia")
+    type =  models.CharField( max_length=100  , choices = TYPE_CHOICES , verbose_name = "Tipo")
+
+    class Meta:
+        verbose_name = 'Género'
+        verbose_name_plural = 'Géneros'
+
+    def __str__(self):
+        return "%s" % (self.name)
+
+class Species(models.Model):
     common_name = models.CharField(max_length=100 , verbose_name="Nombre común" , unique = False)
     scientific_name =  models.CharField(max_length=100 , verbose_name="Nombre científico" , unique = True)
-    family = models.ForeignKey(PlantFamily, on_delete=models.CASCADE , blank = False , default =0 ,  verbose_name="familia" )
+    family = models.ForeignKey(Family, on_delete=models.CASCADE , blank = False , default =0 ,  verbose_name="familia" )
+    genus = ChainedForeignKey(Genus , chained_field = "family" , chained_model_field = "family", show_all=False , auto_choose=True, sort=True)
     description = models.TextField(blank=True,default="")
     photo = models.ImageField("Imagen", null=True, blank=True, upload_to="uploads/plant_family")
+    type =  models.CharField( max_length=100  , choices = TYPE_CHOICES , verbose_name = "Tipo")
 
 
     #max_val = models.PositiveIntegerField(default=None, blank=True, null=True , verbose_name="Valor Máximo")
@@ -40,33 +103,125 @@ class PlantSpecies(models.Model):
         return "%s" % (self.common_name)
 
 
-class SpecimenStatus(models.Model):
-    status_name = models.CharField(max_length=100 , verbose_name="Nombre" , unique = False)
+#class SpecimenStatus(models.Model):
+#    status_name = models.CharField(max_length=100 , verbose_name="Nombre" , unique = False)
+#
+#    class Meta:
+#        verbose_name = "Estado"
+#        verbose_name_plural = "Estados"
+#
+#    def __str__(self):
+#        return "%s" % (self.status_name)
+
+
+class Country(models.Model):
+    name = models.CharField(max_length=100 , verbose_name="Nombre")
 
     class Meta:
-        verbose_name = "Estado"
-        verbose_name_plural = "Estados"
+        verbose_name = "Pais"
+        verbose_name_plural = "Paises"
 
     def __str__(self):
-        return "%s" % (self.status_name)
+        return "%s" % (self.name)
 
-class PlantSpecimen(models.Model):
-    user = models.ForeignKey(User , on_delete=models.CASCADE , blank = False , default =0 ,  verbose_name="Perfil")
-    photo = models.ImageField("Specimen Photo", null=False, blank=False, upload_to="uploads/specimen")
+
+class State(models.Model):
+    name = models.CharField(max_length=100 , verbose_name="Nombre")
+    country = models.ForeignKey(Country , on_delete = models.CASCADE , verbose_name = "Pais")
+
+    class Meta:
+        verbose_name = "Estado/Departamentos/Provincias"
+        verbose_name_plural = "Estados/Departamentos/Provincias"
+
+    def __str__(self):
+        return "%s" % (self.name)
+
+
+class City(models.Model):
+    name = models.CharField(max_length=100 , verbose_name="Nombre")
+    state = models.ForeignKey(State , on_delete = models.CASCADE , verbose_name = "Estado")
+
+    class Meta:
+        verbose_name = "Ciudad/Municipio"
+        verbose_name_plural = "Ciudades/Municipios"
+
+    def __str__(self):
+        return "%s" % (self.name)
+
+
+class Specimen(models.Model):
+    user = models.ForeignKey(User , on_delete=models.CASCADE , blank = False , default =0 ,  verbose_name="Usuario")
+    photo = models.ImageField("Foto", null=True, blank=True , upload_to="uploads/specimen")
     date_received =  models.DateField("Fecha")
-    status = models.ForeignKey(SpecimenStatus,on_delete=models.CASCADE , blank = False , default =0 ,  verbose_name="Status")
-    plant_family = models.ForeignKey(PlantFamily, on_delete=models.CASCADE , blank = False , default =0 ,  verbose_name="Family")
-    plant_species = ChainedForeignKey(PlantSpecies , chained_field = "plant_family" , chained_model_field = "family", show_all=False , auto_choose=True, sort=True)
+    family = models.ForeignKey(Family, on_delete=models.CASCADE , blank = False , default =0 ,  verbose_name="Family")
+    genus = ChainedForeignKey(Genus , chained_field = "family" , chained_model_field = "family", on_delete=models.CASCADE , blank = False , default = 0 , verbose_name = "Género")
+    species = ChainedForeignKey(Species , chained_field = "genus" , chained_model_field = "genus", show_all=False , auto_choose=True, sort=True)
+    status = models.ForeignKey(Status , on_delete=models.CASCADE , verbose_name = "Estado")
+    number_of_samples = models.PositiveIntegerField("Número de ejemplares")
+    description = models.TextField("Descripción" , blank=True , null=True)
+    ecosystem = models.ForeignKey(Ecosystem , on_delete = models.CASCADE , verbose_name = "Ecosistema")
+    recolection_area_status = models.ForeignKey(RecolectionAreaStatus , on_delete = models.CASCADE , verbose_name = "Estado del area de recolección")
+
+    country = models.ForeignKey(Country , on_delete=models.CASCADE , blank = False , verbose_name = "País")
+    state = ChainedForeignKey(State , chained_field = "country" , chained_model_field = "country" , verbose_name= "Estado/Departamento/Provincia")
+    city =  ChainedForeignKey(City , chained_field = "state" , chained_model_field = "state" ,   verbose_name= "Ciudad/Municipio")
+
+    latitude  = models.FloatField("Latitud" , blank=True , null=True)
+    longitude =  models.FloatField("Longitud" , blank=True , null=True)
+
+    location = models.CharField(max_length=100 , verbose_name="Ubicación")
 
     class Meta:
-        verbose_name = "Espécimen"
-        verbose_name_plural = "Especimenes"
+        abstract = True
+
+class PlantSpecimen(Specimen):
+    biostatus = models.ForeignKey(Biostatus , on_delete = models.CASCADE , verbose_name = "Biostatus")
+    complete  = models.BooleanField("Completo")
+
+    class Meta:
+        verbose_name = "Espécimen de planta"
+        verbose_name_plural = "Especimenes de plantas"
 
     def __str__(self):
-        return "Espécimen de %s" % (self.plant_species.common_name)
+        return "Espécimen de %s" % (self.species.common_name)
 
 
+class CapTypes(models.Model):
+    name = models.CharField(max_length=100 , verbose_name="Nombre")
 
+    class Meta:
+        verbose_name = "Tipo de sombrero de hongo"
+        verbose_name_plural = "Tipos de sombrero de hongo"
+
+    def __str__(self):
+        return "%s" % (self.name)
+
+
+class FormTypes(models.Model):
+    name = models.CharField(max_length=100 , verbose_name="Nombre")
+
+    class Meta:
+        verbose_name = "Tipo de forma de hongo"
+        verbose_name_plural = "Tipos de forma de hongos"
+
+    def __str__(self):
+        return "%s" % (self.name)
+
+class MushroomSpecimen(Specimen):
+    cap = models.ForeignKey( CapTypes , verbose_name="Forma de sombrero" , on_delete=models.CASCADE)
+    forms = models.ForeignKey(FormTypes ,  verbose_name = "Forma de hongo" , on_delete=models.CASCADE)
+    crust = models.BooleanField("¿Tiene costra?")
+    color = models.CharField(max_length = 100 , verbose_name = "color")
+    change_of_color = models.CharField(max_length = 100 , verbose_name = "Cambios de color")
+    smell = models.CharField(max_length = 100 , verbose_name = "olor")
+    aditional_info = models.TextField("Información Adicional", blank=True , null=True)
+
+    class Meta:
+        verbose_name = "Espécimen de hongo"
+        verbose_name_plural = "Especimenes de hongos"
+
+    def __str__(self):
+        return "Espécimen de %s" % (self.species.common_name)
 
 #@receiver(post_save, sender=settings.AUTH_USER_MODEL)
 #def create_auth_token(sender, instance=None, created=False, **kwargs):

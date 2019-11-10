@@ -1,21 +1,21 @@
-from .models import PlantSpecies ,  PlantFamily , PlantSpecimen , SpecimenStatus
+from .models import Species ,  Family , PlantSpecimen , MushroomSpecimen
 from rest_framework import serializers
 from plants_api.users.serializers import UserSerializer
 from plants_api.users.models import User
 
 
-class PlantFamilySerializer(serializers.ModelSerializer):
+class FamilySerializer(serializers.ModelSerializer):
     class Meta:
-        model = PlantFamily
+        model = Family
         fields = ['family_name']
         extra_kwargs = {
                 'family_name': {'validators': []},
             }
         fields = '__all__'
 
-class PlantSpeciesSerializer(serializers.ModelSerializer):
+class SpeciesSerializer(serializers.ModelSerializer):
 
-    family = serializers.PrimaryKeyRelatedField(queryset= PlantFamily.objects.all())
+    family = serializers.PrimaryKeyRelatedField(queryset= Family.objects.all())
 
 
     #def create(self, validated_data):
@@ -44,22 +44,22 @@ class PlantSpeciesSerializer(serializers.ModelSerializer):
     #    return validated_data
 
     class Meta:
-        model = PlantSpecies
+        model = Species
         fields = '__all__'
 
 
-class SpecimenStatusSerializer(serializers.ModelSerializer):
+#class SpecimenStatusSerializer(serializers.ModelSerializer):
 
-    class Meta:
-        model = SpecimenStatus
-        fields = ['status_name']
+#    class Meta:
+#        model = SpecimenStatus
+#        fields = ['status_name']
 
 class PlantSpecimenSerializer(serializers.ModelSerializer):
 
     user =  serializers.PrimaryKeyRelatedField(queryset= User.objects.all())
-    plant_family = serializers.PrimaryKeyRelatedField(queryset= PlantFamily.objects.all())
+    plant_family = serializers.PrimaryKeyRelatedField(queryset= Family.objects.all())
     plant_species = serializers.PrimaryKeyRelatedField(queryset= PlantSpecimen.objects.all())
-    status = serializers.PrimaryKeyRelatedField(queryset= SpecimenStatus.objects.all())
+#    status = serializers.PrimaryKeyRelatedField(queryset= SpecimenStatus.objects.all())
 
     class Meta:
         model = PlantSpecimen

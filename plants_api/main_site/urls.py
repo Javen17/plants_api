@@ -11,8 +11,8 @@ app_name = 'main_site'
 router = routers.DefaultRouter()
 
 
-router.register(r'family', views.PlantFamilyViewSet)
-router.register(r'species', views.PlantSpeciesViewSet)
+router.register(r'family', views.FamilyViewSet)
+router.register(r'species', views.SpeciesViewSet)
 router.register(r'specimen',views.PlantSpecimenViewSet)
 router.register(r'user', user_views.UserViewSet)
 router.register(r'profile',user_views.ProfileViewSet)
