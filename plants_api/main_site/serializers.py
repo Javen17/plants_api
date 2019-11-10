@@ -1,8 +1,28 @@
-from .models import Species ,  Family , PlantSpecimen , MushroomSpecimen
+from .models import Ecosystem, RecolectionAreaStatus , Biostatus , Status , Family, Genus, Species , Country , State , City  , Specimen, PlantSpecimen , MushroomSpecimen, CapType , FormType
 from rest_framework import serializers
 from plants_api.users.serializers import UserSerializer
 from plants_api.users.models import User
 
+
+class EcosystemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ecosystem
+        fields = '__all__'
+
+class RecolectionAreaStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RecolectionAreaStatus
+        fields = '__all__'
+
+class BiostatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Biostatus
+        fields = '__all__'
+
+class StatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Status
+        fields = '__all__'
 
 class FamilySerializer(serializers.ModelSerializer):
     class Meta:
@@ -13,10 +33,51 @@ class FamilySerializer(serializers.ModelSerializer):
             }
         fields = '__all__'
 
-class SpeciesSerializer(serializers.ModelSerializer):
+class GenusSerializer(serializers.ModelSerializer):
 
     family = serializers.PrimaryKeyRelatedField(queryset= Family.objects.all())
 
+    class Meta:
+        model = Genus
+        fields = '__all__'
+
+class CountrySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Country
+        fields = '__all__'
+
+
+class StateSerializer(serializers.ModelSerializer):
+
+    Country = serializers.PrimaryKeyRelatedField(queryset= Country.objects.all())
+
+    class Meta:
+        model = State
+        fields = '__all__'
+
+class CitySerializer(serializers.ModelSerializer):
+
+    State = serializers.PrimaryKeyRelatedField(queryset= State.objects.all())
+
+    class Meta:
+        model = City
+        fields = '__all__'
+
+
+class CapTypesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CapType
+
+class FormTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FormType
+        fields = '__all__'
+
+class SpeciesSerializer(serializers.ModelSerializer):
+
+    family = serializers.PrimaryKeyRelatedField(queryset= Family.objects.all())
+    genus = serializers.PrimaryKeyRelatedField(queryset= Genus.objects.all())
 
     #def create(self, validated_data):
 
@@ -54,13 +115,36 @@ class SpeciesSerializer(serializers.ModelSerializer):
 #        model = SpecimenStatus
 #        fields = ['status_name']
 
-class PlantSpecimenSerializer(serializers.ModelSerializer):
+class SpecimenSerializer(serializers.ModelSerializer):
 
     user =  serializers.PrimaryKeyRelatedField(queryset= User.objects.all())
-    plant_family = serializers.PrimaryKeyRelatedField(queryset= Family.objects.all())
-    plant_species = serializers.PrimaryKeyRelatedField(queryset= PlantSpecimen.objects.all())
-#    status = serializers.PrimaryKeyRelatedField(queryset= SpecimenStatus.objects.all())
+    family = serializers.PrimaryKeyRelatedField(queryset= Family.objects.all())
+    genus = serializers.PrimaryKeyRelatedField(queryset= Genus.objects.all())
+    species = serializers.PrimaryKeyRelatedField(queryset= Species.objects.all())
+    status = serializers.PrimaryKeyRelatedField(queryset= Status.objects.all())
+    ecosystem = serializers.PrimaryKeyRelatedField(queryset= Ecosystem.objects.all())
+    recolection_area_status = serializers.PrimaryKeyRelatedField(queryset= RecolectionAreaStatus)
+
+    country= serializers.PrimaryKeyRelatedField(queryset= Country)
+    state = serializers.PrimaryKeyRelatedField(queryset= State)
+    city = serializers.PrimaryKeyRelatedField(queryset= City)
+
+    class Meta:
+        model = Specimen
+        fields = "__all__"
+        abstract = True
+
+class PlantSpecimenSerializer(SpecimenSerializer):
+    biostatus = serializers.PrimaryKeyRelatedField(queryset= Biostatus.objects.all())
 
     class Meta:
         model = PlantSpecimen
-        fields = '__all__'
+        fields = "__all__"
+
+class MushroomSpecimenSerializer(SpeciesSerializer):
+    cap = serializers.PrimaryKeyRelatedField(queryset= CapType.objects.all())
+    forms = serializers.PrimaryKeyRelatedField(queryset= FormType.objects.all())
+
+    class Meta:
+        model = MushroomSpecimen
+        fields = "__all__"

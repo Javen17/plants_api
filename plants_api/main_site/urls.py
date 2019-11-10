@@ -10,10 +10,20 @@ app_name = 'main_site'
 
 router = routers.DefaultRouter()
 
-
+router.register(r'ecosystem' , views.EcosystemViewSet)
+router.register(r'recolection_area_status' , views.RecolectionAreaStatusViewSet)
+router.register(r'biostatus', views.BiostatusViewSet)
+router.register(r'status' , views.StatusViewSet)
 router.register(r'family', views.FamilyViewSet)
+router.register(r'genus', views.GenusViewSet)
+router.register(r'country',views.CountryViewSet)
+router.register(r'state',views.StateViewSet)
+router.register(r'city',views.CityViewSet)
+router.register(r'mushroom_cap_type',views.CapTypeViewSet)
+router.register(r'mushroom_form_type',views.FormTypeViewSet)
 router.register(r'species', views.SpeciesViewSet)
-router.register(r'specimen',views.PlantSpecimenViewSet)
+router.register(r'plant_specimen',views.PlantSpecimenViewSet)
+router.register(r'mushroom_specimen',views.MushroomSpecimenViewSet)
 router.register(r'user', user_views.UserViewSet)
 router.register(r'profile',user_views.ProfileViewSet)
 router.register(r'group', user_views.GroupViewSet)

@@ -1,10 +1,10 @@
 from django.shortcuts import render
-from .models import Species, Family , PlantSpecimen
+from .models import Ecosystem , RecolectionAreaStatus , Biostatus , Status ,  Species, Family , Genus , Country , State ,  City , CapType , FormType , PlantSpecimen , MushroomSpecimen
 from plants_api.users.models import User
 from plants_api.users.serializers import UserSerializer
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from .serializers import SpeciesSerializer, FamilySerializer , PlantSpecimenSerializer
+from .serializers import EcosystemSerializer, RecolectionAreaStatusSerializer , BiostatusSerializer , StatusSerializer , SpeciesSerializer, FamilySerializer , GenusSerializer , CountrySerializer, StateSerializer , CitySerializer , CapTypesSerializer , FormTypeSerializer , PlantSpecimenSerializer , MushroomSpecimenSerializer
 from django.http import HttpResponse , JsonResponse
 from rest_framework.renderers import JSONRenderer
 from django.db.models import Q
@@ -13,18 +13,79 @@ from rest_framework import permissions
 from plants_api.helpers import helpers
 
 #from rest_framework.generics import ListCreateAPIView , RetrieveUpdateDestroyAPIView
+
+class EcosystemViewSet(viewsets.ModelViewSet):
+    queryset = Ecosystem.objects.all()
+    serializer_class = EcosystemSerializer
+    permission_classes = [permissions.DjangoModelPermissions]
+
+
+class RecolectionAreaStatusViewSet(viewsets.ModelViewSet):
+    queryset = RecolectionAreaStatus.objects.all()
+    serializer_class = RecolectionAreaStatusSerializer
+    permission_classes = [permissions.DjangoModelPermissions]
+
+
+class BiostatusViewSet(viewsets.ModelViewSet):
+    queryset = Biostatus.objects.all()
+    serializer_class = BiostatusSerializer
+    permission_classes = [permissions.DjangoModelPermissions]
+
+
+class StatusViewSet(viewsets.ModelViewSet):
+    queryset = Status.objects.all()
+    serializer_class = StatusSerializer
+
+
 class FamilyViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows groups to be viewed or edited.
     """
     queryset = Family.objects.all()
     serializer_class = FamilySerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.DjangoModelPermissions]
+
+class GenusViewSet(viewsets.ModelViewSet):
+    queryset = Genus.objects.all()
+    serializer_class = GenusSerializer
+    permission_classes = [permissions.DjangoModelPermissions]
+
+
+class CountryViewSet(viewsets.ModelViewSet):
+    queryset = Country.objects.all()
+    serializer_class = CountrySerializer
+    permission_classes = [permissions.DjangoModelPermissions]
+
+
+class StateViewSet(viewsets.ModelViewSet):
+    queryset = State.objects.all()
+    serializer_class = StateSerializer
+    permission_classes = [permissions.DjangoModelPermissions]
+
+
+class CityViewSet(viewsets.ModelViewSet):
+    queryset = City.objects.all()
+    serializer_class = CitySerializer
+    permission_classes = [permissions.DjangoModelPermissions]
+
+
+class CapTypeViewSet(viewsets.ModelViewSet):
+    queryset = CapType.objects.all()
+    serializer_class = CapTypesSerializer
+    permission_classes = [permissions.DjangoModelPermissions]
+
+
+class FormTypeViewSet(viewsets.ModelViewSet):
+    queryset = FormType.objects.all()
+    serializer_class = FormTypeSerializer
+    permission_classes = [permissions.DjangoModelPermissions]
 
 class SpeciesViewSet(viewsets.ModelViewSet):
     serializer_class = SpeciesSerializer
     queryset = Species.objects.all()
     parser_class = (FileUploadParser,)
+
+    permission_classes = [permissions.DjangoModelPermissions]
 
 #    def perform_create(self, serializer):
 #
@@ -70,6 +131,7 @@ class SpeciesViewSet(viewsets.ModelViewSet):
 class PlantSpecimenViewSet(viewsets.ModelViewSet):
     serializer_class = PlantSpecimenSerializer
     queryset = PlantSpecimen.objects.all()
+    permission_classes = [permissions.DjangoModelPermissions]
 
     #def perform_create(self,serializer):
 #
@@ -113,3 +175,9 @@ class PlantSpecimenViewSet(viewsets.ModelViewSet):
         result = helpers.search(self.queryset , "species__common_name__icontains" , species , SpecimenSerializer)
         json = JSONRenderer().render(result)
         return HttpResponse(json)
+
+
+class MushroomSpecimenViewSet(viewsets.ModelViewSet):
+    queryset = MushroomSpecimen.objects.all()
+    serializer_class = MushroomSpecimenSerializer
+    permission_classes = [permissions.DjangoModelPermissions]

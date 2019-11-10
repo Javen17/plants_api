@@ -24,11 +24,11 @@ class Ecosystem(models.Model):
 
 
 class RecolectionAreaStatus(models.Model):
-    name = models.CharField(max_length=100 , verbose_name="Nombre de Área de recolección")
+    name = models.CharField(max_length=100 , verbose_name="Descripción del habitad")
 
     class Meta:
-        verbose_name = 'Área de recolección'
-        verbose_name_plural = 'Áreas de recolección'
+        verbose_name = 'Descripción del habitad'
+        verbose_name_plural = 'Descripciónes del habitad'
 
     def __str__(self):
         return "%s" % (self.name)
@@ -186,7 +186,7 @@ class PlantSpecimen(Specimen):
         return "Espécimen de %s" % (self.species.common_name)
 
 
-class CapTypes(models.Model):
+class CapType(models.Model):
     name = models.CharField(max_length=100 , verbose_name="Nombre")
 
     class Meta:
@@ -197,7 +197,7 @@ class CapTypes(models.Model):
         return "%s" % (self.name)
 
 
-class FormTypes(models.Model):
+class FormType(models.Model):
     name = models.CharField(max_length=100 , verbose_name="Nombre")
 
     class Meta:
@@ -208,8 +208,8 @@ class FormTypes(models.Model):
         return "%s" % (self.name)
 
 class MushroomSpecimen(Specimen):
-    cap = models.ForeignKey( CapTypes , verbose_name="Forma de sombrero" , on_delete=models.CASCADE)
-    forms = models.ForeignKey(FormTypes ,  verbose_name = "Forma de hongo" , on_delete=models.CASCADE)
+    cap = models.ForeignKey( CapType , verbose_name="Forma de sombrero" , on_delete=models.CASCADE)
+    forms = models.ForeignKey(FormType ,  verbose_name = "Forma de hongo" , on_delete=models.CASCADE)
     crust = models.BooleanField("¿Tiene costra?")
     color = models.CharField(max_length = 100 , verbose_name = "color")
     change_of_color = models.CharField(max_length = 100 , verbose_name = "Cambios de color")

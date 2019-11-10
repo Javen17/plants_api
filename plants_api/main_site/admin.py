@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Ecosystem , RecolectionAreaStatus , Biostatus , Status , Family , Genus , Species , Country , State , City,  PlantSpecimen ,MushroomSpecimen , FormTypes , CapTypes
+from .models import Ecosystem , RecolectionAreaStatus , Biostatus , Status , Family , Genus , Species , Country , State , City,  PlantSpecimen ,MushroomSpecimen , FormType , CapType
 from rest_framework.authtoken.models import Token
 
 # Register your models here.
@@ -19,8 +19,8 @@ admin.site.register(Country)
 admin.site.register(State)
 admin.site.register(City)
 admin.site.register(PlantSpecimen)
-admin.site.register(FormTypes)
-admin.site.register(CapTypes)
+admin.site.register(FormType)
+admin.site.register(CapType)
 admin.site.register(MushroomSpecimen)
 #admin.site.register(SpecimenStatus)
 admin.site.unregister(Token)
