@@ -84,7 +84,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             response.data = {"status":"success"}
             return response
         except:
-            return JsonResponse({"status": "Something went wrong"})
+            return JsonResponse({"status": "Something went wrong"} , status = 401)
 
 
 class GeneratePermanentTokenView(APIView):
