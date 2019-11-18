@@ -19,6 +19,7 @@ from rest_framework.response import Response
 from django.contrib.auth.models import Permission , Group
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from datetime import datetime
+from django.contrib.auth.hashers import make_password
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -44,7 +45,9 @@ class UserViewSet(viewsets.ModelViewSet):
 
         groups = validated_data.data.pop('groups')
         permissions = validated_data.data.pop('user_permissions')
-        user = User.objects.create(**validated_data.data)
+        clearPassNoHash = validated_data.data['password']
+
+        user = User.objects.create_user(**validated_data.data)
         for group in groups:
             user.groups.add(group)
 
