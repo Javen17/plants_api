@@ -168,11 +168,9 @@ class SignUpViewSet(mixins.CreateModelMixin , viewsets.GenericViewSet):
         groups = validated_data.data.pop('groups')
         permissions = validated_data.data.pop('user_permissions')
 
-        print(date_joined)
-
         try:
 
-            user = User.objects.create(**validated_data.data)
+            user = User.objects.create_user(**validated_data.data)
 
             if date_joined is None:
                 user.date_joined = datetime.now()
