@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.views.generic import DetailView, RedirectView, UpdateView
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
-from rest_framework import viewsets
+from rest_framework import viewsets , mixins
 from rest_framework.views import APIView
 from .serializers import UserSerializer , ProfileSerializer , GroupSerializer , PermissionSerializer
 from rest_framework import permissions
@@ -18,6 +18,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from django.contrib.auth.models import Permission , Group
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from datetime import datetime
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -153,8 +154,38 @@ class WhoAmIView(APIView):
             return JsonResponse({"status":"Bad Request"} ,  status = 400)
 
 
+class SignUpViewSet(mixins.CreateModelMixin , viewsets.GenericViewSet):
+    http_method_names = ['post', 'head']
+    queryset = User.objects.all().select_related('profile')
+    serializer_class =  UserSerializer
 
+    def create(self, validated_data):
 
+        date_joined =  validated_data.data.pop('date_joined')
+        groups = validated_data.data.pop('groups')
+        permissions = validated_data.data.pop('user_permissions')
+
+        print(date_joined)
+
+        try:
+
+            user = User.objects.create(**validated_data.data)
+
+            if date_joined is None:
+                user.date_joined = datetime.now()
+                user.save()
+
+                for group in groups:
+                    user.groups.add(group)
+
+                for permission in permissions:
+                    user.user_permissions.add(permission)
+
+                return JsonResponse({"result" : "user added" })
+
+        except:
+
+            return JsonResponse({"result" : "Bad Request" } , status = 400)
 
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()

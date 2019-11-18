@@ -10,6 +10,8 @@ app_name = 'main_site'
 
 router = routers.DefaultRouter()
 
+#this is beginning to look messy refactor needed
+
 router.register(r'ecosystem' , views.EcosystemViewSet)
 router.register(r'recolection_area_status' , views.RecolectionAreaStatusViewSet)
 router.register(r'biostatus', views.BiostatusViewSet)
@@ -28,6 +30,7 @@ router.register(r'user', user_views.UserViewSet)
 router.register(r'profile',user_views.ProfileViewSet)
 router.register(r'group', user_views.GroupViewSet)
 router.register(r'permission' , user_views.PermissionViewSet)
+router.register(r'sign_up' , user_views.SignUpViewSet)
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
