@@ -74,7 +74,7 @@ class UserViewSet(viewsets.ModelViewSet):
         else:
             permissions = user.user_permissions.all().values() | Permission.objects.filter(group__user=user).values()
 
-        return JsonResponse({"results" : list(permissions)})
+        return JsonResponse({"result" : list(permissions)})
 
 
 
@@ -85,10 +85,10 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             response = super(TokenObtainPairView , self).post(request, *args, **kwargs)
             response.set_cookie("token-access", response.data["access"])
             response.set_cookie("token-refresh", response.data["refresh"])
-            response.data = {"status":"success"}
+            response.data = {"result":"success"}
             return response
         except:
-            return JsonResponse({"status": "Something went wrong"} , status = 401)
+            return JsonResponse({"result": "Something went wrong"} , status = 401)
 
 
 class GeneratePermanentTokenView(APIView):
@@ -105,7 +105,7 @@ class GeneratePermanentTokenView(APIView):
 
             hello = f"It appears you already have a permanent Token, Hi {user}"
 
-            return JsonResponse({"message" : hello} , status = 200)
+            return JsonResponse({"result" : hello} , status = 200)
         except:
             print("the user has no cookie or the user has a cookie that should represent the permanent token but it is invalid")
 
@@ -119,14 +119,14 @@ class GeneratePermanentTokenView(APIView):
 
             print(created)
 
-            response = JsonResponse({"status" : "Success"} , status = 200)
+            response = JsonResponse({"result" : "Success"} , status = 200)
 
             response.set_cookie("token-permanent", retrieved_permanent_token.key)
 
             return response
 
         except:
-            return JsonResponse({"status" : "Bad Request"} , status = 400)
+            return JsonResponse({"result" : "Bad Request"} , status = 400)
 
 
 
@@ -137,7 +137,7 @@ class RemovePermanentTokenView(APIView):
         token = Token.objects.get(user=request.user)
         token.delete()
 
-        response = JsonResponse({"status" : "Remember me deleted"})
+        response = JsonResponse({"result" : "Remember me deleted"})
         response.delete_cookie("token-permanent")
 
         return response
@@ -151,7 +151,7 @@ class WhoAmIView(APIView):
 
         try:
             user = UserSerializer(request.user)
-            return JsonResponse({"data":user.data})
+            return JsonResponse({"data":user.data} , status = 200)
 
         except:
             return JsonResponse({"status":"Bad Request"} ,  status = 400)
@@ -182,7 +182,7 @@ class SignUpViewSet(mixins.CreateModelMixin , viewsets.GenericViewSet):
                 for permission in permissions:
                     user.user_permissions.add(permission)
 
-                return JsonResponse({"result" : "user added" })
+                return JsonResponse({"result" : "user added" } , status = 200)
 
         except:
 
