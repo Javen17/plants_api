@@ -174,18 +174,18 @@ class SignUpViewSet(mixins.CreateModelMixin , viewsets.GenericViewSet):
 
             if date_joined is None:
                 user.date_joined = datetime.now()
-                user.save()
 
-                for group in groups:
-                    user.groups.add(group)
+            user.save()
 
-                for permission in permissions:
+            for group in groups:
+                user.groups.add(group)
+
+            for permission in permissions:
                     user.user_permissions.add(permission)
 
-                return JsonResponse({"result" : "user added" } , status = 200)
+            return JsonResponse({"result" : "user added" } , status = 200)
 
         except:
-
             return JsonResponse({"result" : "Bad Request" } , status = 400)
 
 class GroupViewSet(viewsets.ModelViewSet):
