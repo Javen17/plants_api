@@ -11,7 +11,7 @@ from rest_framework import permissions
 from plants_api.helpers import helpers
 from rest_framework.decorators import action
 from plants_api.users.models import Profile
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Permission , Group
 from django.http import JsonResponse
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
@@ -75,6 +75,22 @@ class UserViewSet(viewsets.ModelViewSet):
             permissions = user.user_permissions.all().values() | Permission.objects.filter(group__user=user).values()
 
         return JsonResponse({"result" : list(permissions)})
+
+
+    @action(methods=['get'], detail = True)
+    def get_user_groups(self , request , pk):
+
+        user =  User.objects.filter(pk = pk).first()
+
+        #if user.is_superuser:
+        #    permissions = Permission.objects.all().values()
+        #else:
+        #    permissions = user.user_permissions.all().values() | Permission.objects.filter(group__user=user).values()
+
+        groups = user.user_groups.objects.all().values()
+
+
+        return JsonResponse({"result" : list(groups)})
 
 
 

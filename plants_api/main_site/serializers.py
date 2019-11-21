@@ -115,7 +115,7 @@ class SpeciesSerializer(serializers.ModelSerializer):
 #        model = SpecimenStatus
 #        fields = ['status_name']
 
-class SpecimenSerializer(serializers.ModelSerializer):
+class SpecimenSerializer():
 
     user =  serializers.PrimaryKeyRelatedField(queryset= User.objects.all())
     family = serializers.PrimaryKeyRelatedField(queryset= Family.objects.all())
@@ -129,19 +129,15 @@ class SpecimenSerializer(serializers.ModelSerializer):
     state = serializers.PrimaryKeyRelatedField(queryset= State)
     city = serializers.PrimaryKeyRelatedField(queryset= City)
 
-    class Meta:
-        model = Specimen
-        fields = "__all__"
-        abstract = True
 
-class PlantSpecimenSerializer(SpecimenSerializer):
+class PlantSpecimenSerializer(SpecimenSerializer , serializers.ModelSerializer):
     biostatus = serializers.PrimaryKeyRelatedField(queryset= Biostatus.objects.all())
 
     class Meta:
         model = PlantSpecimen
         fields = "__all__"
 
-class MushroomSpecimenSerializer(SpeciesSerializer):
+class MushroomSpecimenSerializer(SpeciesSerializer , serializers.ModelSerializer):
     cap = serializers.PrimaryKeyRelatedField(queryset= CapType.objects.all())
     forms = serializers.PrimaryKeyRelatedField(queryset= FormType.objects.all())
 
