@@ -4,7 +4,7 @@ from plants_api.users.models import User
 from plants_api.users.serializers import UserSerializer
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from .serializers import EcosystemSerializer, RecolectionAreaStatusSerializer , BiostatusSerializer , StatusSerializer , SpeciesSerializer, FamilySerializer , GenusSerializer , CountrySerializer, StateSerializer , CitySerializer , CapTypesSerializer , FormTypeSerializer , PlantSpecimenSerializer , MushroomSpecimenSerializer
+from .serializers import EcosystemSerializer, RecolectionAreaStatusSerializer , BiostatusSerializer , StatusSerializer , SpeciesSerializer, FamilySerializer , GenusSerializer , CountrySerializer, StateSerializer , CitySerializer , CapTypeSerializer , FormTypeSerializer , PlantSpecimenSerializer , MushroomSpecimenSerializer
 from django.http import HttpResponse , JsonResponse
 from rest_framework.renderers import JSONRenderer
 from django.db.models import Q
@@ -71,7 +71,7 @@ class CityViewSet(viewsets.ModelViewSet):
 
 class CapTypeViewSet(viewsets.ModelViewSet):
     queryset = CapType.objects.all()
-    serializer_class = CapTypesSerializer
+    serializer_class = CapTypeSerializer
     permission_classes = [permissions.DjangoModelPermissions]
 
 
