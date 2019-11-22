@@ -81,13 +81,7 @@ class UserViewSet(viewsets.ModelViewSet):
     def get_user_groups(self , request , pk):
 
         user =  User.objects.filter(pk = pk).first()
-
-        #if user.is_superuser:
-        #    permissions = Permission.objects.all().values()
-        #else:
-        #    permissions = user.user_permissions.all().values() | Permission.objects.filter(group__user=user).values()
-
-        groups = user.user_groups.objects.all().values()
+        groups = user.groups.all().values()
 
 
         return JsonResponse({"result" : list(groups)})
@@ -207,6 +201,16 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     permission_classes = [permissions.DjangoModelPermissions]
+
+    @action(methods=['get'], detail = True)
+    def get_group_permissions(self , request , pk):
+
+        group =  Group.objects.filter(pk = pk).first()
+        group_permissions = group.permissions.all().values()
+
+
+        return JsonResponse({"result" : list(group_permissions)})
+
 
 
 class PermissionViewSet(viewsets.ModelViewSet):
