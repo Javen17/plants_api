@@ -56,6 +56,42 @@ class UserViewSet(viewsets.ModelViewSet):
 
         return JsonResponse({"result" : "user added" })
 
+    def update(self, request, pk=None):
+
+        if pk is not None:
+
+            user = User.objects.filter(pk=pk).first()
+
+
+            try:
+
+                for group in request.data["groups"]:
+                    user.groups.add(group)
+
+                del request.data["groups"]
+
+            except:
+                pass
+
+            try:
+
+                for permission in request.data["user_permissions"]:
+                    user.user_permissions.add(permission)
+
+                del request.data["user_permissions"]
+
+            except:
+                pass
+
+            for value in request.data:
+                setattr(user, value, request.data[value])
+
+            user.save()
+            return Response({"result" : UserSerializer(user).data })
+
+        return Response(serializer.errors , status = status.HTTP_400_BAD_REQUEST)
+
+
     @action(methods=['get'], detail=False)
     def search_user(self, request, pk=None):
         name = self.request.query_params.get('username', None)
