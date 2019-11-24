@@ -78,7 +78,7 @@ class UserViewSet(viewsets.ModelViewSet):
                 pass
 
             try:
-                user.groups.clear()
+                user.permissions.clear()
 
                 for permission in request.data["user_permissions"]:
                     user.user_permissions.add(permission)
