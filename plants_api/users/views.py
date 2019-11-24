@@ -62,24 +62,28 @@ class UserViewSet(viewsets.ModelViewSet):
 
             user = User.objects.filter(pk=pk).first()
 
+            try:
+                del request.data["password"]
+            except:
+                pass
 
             try:
+                user.groups.clear()
 
                 for group in request.data["groups"]:
                     user.groups.add(group)
 
                 del request.data["groups"]
-
             except:
                 pass
 
             try:
+                user.groups.clear()
 
                 for permission in request.data["user_permissions"]:
                     user.user_permissions.add(permission)
 
                 del request.data["user_permissions"]
-
             except:
                 pass
 
