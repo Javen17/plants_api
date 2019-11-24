@@ -20,6 +20,7 @@ from django.contrib.auth.models import Permission , Group
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from datetime import datetime
 from django.contrib.auth.hashers import make_password
+from urllib.parse import parse_qs
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -97,12 +98,20 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
     @action(methods=['get'], detail=False)
-    def search_user(self, request, pk=None):
-        name = self.request.query_params.get('username', None)
-        result = helpers.search(self.queryset , "username__icontains" , name , UserSerializer )
+    def search(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , UserSerializer , "OR")
 
-        json = JSONRenderer().render(result)
-        return HttpResponse(json)
+        return JsonResponse({"result": result})
+
+
+    @action(methods=['get'], detail=False)
+    def filter(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , UserSerializer , "AND")
+
+        return JsonResponse({"result": result})
+
 
     @action(methods=['get'], detail = True)
     def get_user_permissions(self , request , pk):

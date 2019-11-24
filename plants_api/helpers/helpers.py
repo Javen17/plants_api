@@ -1,19 +1,31 @@
 from django.db.models import Q
 
-def search(queryset , filter ,  search_field , serializer):
+def search(queryset , search_dic , serializer , type):
+#    first_search , *searchs = search_dic
+    filter_field , *filters = search_dic.keys()
+    search_field , *fields = search_dic.values()
 
-    if search_field is not None:
+    if search_field is not None and filter_field is not None:
         q_objects = Q()
-        q_objects = Q(**{ filter : search_field })
+        q_objects = Q(**{ filter_field + '__icontains' : search_field[0] })
+
+        if len(search_dic) > 1 :
+
+            if type == "OR":
+                for filter , field in zip(filters, fields):
+                    q_objects |= Q(**{ filter + '__icontains' : field[0]})
+            elif type == "AND":
+                for filter , field in zip(filters, fields):
+                    q_objects &= Q(**{ filter + '__icontains' : field[0]})
 
         found_elements = queryset.filter(q_objects)
-        resultdict = {}
+        resultlist = []
 
         for found in found_elements:
-            serializer = serializer(found)
-            resultdict.update(serializer.data)
+            serializers = serializer(found)
+            resultlist.append(serializers.data)
 
-        return resultdict
+        return resultlist
     else:
         return  "please provide a valid search url"
 
