@@ -104,6 +104,7 @@ class CapTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CapType
+        fields = "__all__"
 
 class FormTypeSerializer(serializers.ModelSerializer):
 
@@ -158,7 +159,7 @@ class SpeciesSerializer(serializers.ModelSerializer):
 #        model = SpecimenStatus
 #        fields = ['status_name']
 
-class SpecimenSerializer(serializers.ModelSerializer):
+class SpecimenSerializer():
 
     user =  UserSerializer()
     family = FamilySerializer()
@@ -173,13 +174,14 @@ class SpecimenSerializer(serializers.ModelSerializer):
     city = CitySerializer()
 
 
-class PlantSpecimenSerializer(SpecimenSerializer):
+class PlantSpecimenSerializer(serializers.ModelSerializer , SpecimenSerializer):
     biostatus = BiostatusSerializer()
     class Meta:
         model = PlantSpecimen
         fields = "__all__"
 
-class MushroomSpecimenSerializer(SpecimenSerializer):
+
+class MushroomSpecimenSerializer(serializers.ModelSerializer , SpecimenSerializer):
     cap = CapTypeSerializer()
     forms = FormTypeSerializer()
 
