@@ -35,6 +35,19 @@ class ProfileViewSet(viewsets.ModelViewSet):
     serializer_class = ProfileSerializer
     permission_classes = [permissions.DjangoModelPermissions]
 
+    @action(methods=['get'], detail=False)
+    def search(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , ProfileSerializer , "OR")
+
+    @action(methods=['get'], detail=False)
+    def filter(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , ProfileSerializer , "AND")
+
+        return JsonResponse({"result": result})
+
+
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().select_related('profile' , 'auth_token')
@@ -260,15 +273,41 @@ class GroupViewSet(viewsets.ModelViewSet):
 
         return JsonResponse({"result" : list(group_permissions)})
 
+    @action(methods=['get'], detail=False)
+    def search(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , GroupSerializer , "OR")
+
+        return JsonResponse({"result": result})
+
+    @action(methods=['get'], detail=False)
+    def filter(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , GroupsSerializer , "AND")
+
+        return JsonResponse({"result": result})
 
 
 class PermissionViewSet(viewsets.ModelViewSet):
-    http_method_names = ['get']
+#    http_method_names = ['get']
 
     queryset = Permission.objects.all()
     serializer_class = PermissionSerializer
     permission_classes = [permissions.DjangoModelPermissions]
 
+    @action(methods=['get'], detail=False)
+    def search(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , PermissionSerializer , "OR")
+
+        return JsonResponse({"result": result})
+
+    @action(methods=['get'], detail=False)
+    def filter(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , PermissionSerializer , "AND")
+
+        return JsonResponse({"result": result})
 
 #class CustomObtainAuthToken(ObtainAuthToken):
 #    def post(self, request, *args, **kwargs):

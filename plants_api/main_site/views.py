@@ -19,11 +19,40 @@ class EcosystemViewSet(viewsets.ModelViewSet):
     serializer_class = EcosystemSerializer
     permission_classes = [permissions.DjangoModelPermissions]
 
+    @action(methods=['get'], detail=False)
+    def search(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , EcosystemSerializer , "OR")
+
+        return JsonResponse({"result": result})
+
+    @action(methods=['get'], detail=False)
+    def filter(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , EcosystemSerializer , "AND")
+
+        return JsonResponse({"result": result})
+
 
 class RecolectionAreaStatusViewSet(viewsets.ModelViewSet):
     queryset = RecolectionAreaStatus.objects.all()
     serializer_class = RecolectionAreaStatusSerializer
     permission_classes = [permissions.DjangoModelPermissions]
+
+
+    @action(methods=['get'], detail=False)
+    def search(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , RecolectionAreaStatusSerializer , "OR")
+
+        return JsonResponse({"result": result})
+
+    @action(methods=['get'], detail=False)
+    def filter(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , RecolectionAreaStatusSerializer , "AND")
+
+        return JsonResponse({"result": result})
 
 
 class BiostatusViewSet(viewsets.ModelViewSet):
@@ -32,9 +61,39 @@ class BiostatusViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.DjangoModelPermissions]
 
 
+    @action(methods=['get'], detail=False)
+    def search(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , BiostatusSerializer , "OR")
+
+        return JsonResponse({"result": result})
+
+    @action(methods=['get'], detail=False)
+    def filter(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , BiostatusSerializer , "AND")
+
+        return JsonResponse({"result": result})
+
+
 class StatusViewSet(viewsets.ModelViewSet):
     queryset = Status.objects.all()
     serializer_class = StatusSerializer
+
+
+    @action(methods=['get'], detail=False)
+    def search(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , StatusSerializer , "OR")
+
+        return JsonResponse({"result": result})
+
+    @action(methods=['get'], detail=False)
+    def filter(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , StatusSerializer , "AND")
+
+        return JsonResponse({"result": result})
 
 
 class FamilyViewSet(viewsets.ModelViewSet):
@@ -45,10 +104,39 @@ class FamilyViewSet(viewsets.ModelViewSet):
     serializer_class = FamilySerializer
     permission_classes = [permissions.DjangoModelPermissions]
 
+    @action(methods=['get'], detail=False)
+    def search(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , FamilySerializer , "OR")
+
+        return JsonResponse({"result": result})
+
+    @action(methods=['get'], detail=False)
+    def filter(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , FamilySerializer , "AND")
+
+        return JsonResponse({"result": result})
+
 class GenusViewSet(viewsets.ModelViewSet):
     queryset = Genus.objects.all()
     serializer_class = GenusSerializer
     permission_classes = [permissions.DjangoModelPermissions]
+
+
+    @action(methods=['get'], detail=False)
+    def search(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , GenusSerializer , "OR")
+
+        return JsonResponse({"result": result})
+
+    @action(methods=['get'], detail=False)
+    def filter(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , GenusSerializer , "AND")
+
+        return JsonResponse({"result": result})
 
 
 class CountryViewSet(viewsets.ModelViewSet):
@@ -57,10 +145,40 @@ class CountryViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.DjangoModelPermissions]
 
 
+    @action(methods=['get'], detail=False)
+    def search(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , CountrySerializer , "OR")
+
+        return JsonResponse({"result": result})
+
+    @action(methods=['get'], detail=False)
+    def filter(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , CountrySerializer , "AND")
+
+        return JsonResponse({"result": result})
+
+
 class StateViewSet(viewsets.ModelViewSet):
     queryset = State.objects.all()
     serializer_class = StateSerializer
     permission_classes = [permissions.DjangoModelPermissions]
+
+
+    @action(methods=['get'], detail=False)
+    def search(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , StateSerializer , "OR")
+
+        return JsonResponse({"result": result})
+
+    @action(methods=['get'], detail=False)
+    def filter(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , StateSerializer , "AND")
+
+        return JsonResponse({"result": result})
 
 
 class CityViewSet(viewsets.ModelViewSet):
@@ -69,10 +187,40 @@ class CityViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.DjangoModelPermissions]
 
 
+    @action(methods=['get'], detail=False)
+    def search(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , CitySerializer , "OR")
+
+        return JsonResponse({"result": result})
+
+    @action(methods=['get'], detail=False)
+    def filter(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , CitySerializer , "AND")
+
+        return JsonResponse({"result": result})
+
+
 class CapTypeViewSet(viewsets.ModelViewSet):
     queryset = CapType.objects.all()
     serializer_class = CapTypeSerializer
     permission_classes = [permissions.DjangoModelPermissions]
+
+
+    @action(methods=['get'], detail=False)
+    def search(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , CapTypeSerializer , "OR")
+
+        return JsonResponse({"result": result})
+
+    @action(methods=['get'], detail=False)
+    def filter(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , CapTypeSerializer , "AND")
+
+        return JsonResponse({"result": result})
 
 
 class FormTypeViewSet(viewsets.ModelViewSet):
@@ -80,12 +228,29 @@ class FormTypeViewSet(viewsets.ModelViewSet):
     serializer_class = FormTypeSerializer
     permission_classes = [permissions.DjangoModelPermissions]
 
+
+    @action(methods=['get'], detail=False)
+    def search(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , GroupSerializer , "OR")
+
+        return JsonResponse({"result": result})
+
+    @action(methods=['get'], detail=False)
+    def filter(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , GrouoSerializer , "AND")
+
+        return JsonResponse({"result": result})
+
 class SpeciesViewSet(viewsets.ModelViewSet):
     serializer_class = SpeciesSerializer
     queryset = Species.objects.all()
     parser_class = (FileUploadParser,)
 
     permission_classes = [permissions.DjangoModelPermissions]
+
+
 
 #    def perform_create(self, serializer):
 #
@@ -114,13 +279,20 @@ class SpeciesViewSet(viewsets.ModelViewSet):
 #        else:
 #            return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(methods=["get"] , detail = False)
-    def search_species(self , request , pk = None):
-        common_name = self.request.query_params.get('common_name',None)
-        result = helpers.search(self.queryset , "common_name__icontains" , common_name , SpeciesSerializer)
 
-        json = JSONRenderer().render(result)
-        return HttpResponse(json)
+    @action(methods=['get'], detail=False)
+    def search(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , SpeciesSerializer , "OR")
+
+        return JsonResponse({"result": result})
+
+    @action(methods=['get'], detail=False)
+    def filter(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , SpeciesSerializer , "AND")
+
+        return JsonResponse({"result": result})
 
 
 #class SpecimenStatusViewSet(viewsets.ModelViewSet):
@@ -170,14 +342,37 @@ class PlantSpecimenViewSet(viewsets.ModelViewSet):
 
 
     @action(methods=['get'], detail=False)
-    def search_specimen(self, request, pk=None):
-        plant_species = self.request.query_params.get('species', None)
-        result = helpers.search(self.queryset , "species__common_name__icontains" , species , SpecimenSerializer)
-        json = JSONRenderer().render(result)
-        return HttpResponse(json)
+    def search(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , PlantSpecimenSerializer , "OR")
+
+        return JsonResponse({"result": result})
+
+    @action(methods=['get'], detail=False)
+    def filter(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , PlantSpecimenSerializer , "AND")
+
+        return JsonResponse({"result": result})
+
 
 
 class MushroomSpecimenViewSet(viewsets.ModelViewSet):
     queryset = MushroomSpecimen.objects.all()
     serializer_class = MushroomSpecimenSerializer
     permission_classes = [permissions.DjangoModelPermissions]
+
+
+    @action(methods=['get'], detail=False)
+    def search(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , GroupSerializer , "OR")
+
+        return JsonResponse({"result": result})
+
+    @action(methods=['get'], detail=False)
+    def filter(self, request, pk=None):
+        params = parse_qs(request.META['QUERY_STRING'])
+        result = helpers.search(self.queryset , params , GrouoSerializer , "AND")
+
+        return JsonResponse({"result": result})
