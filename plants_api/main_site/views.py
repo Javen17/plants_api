@@ -233,14 +233,14 @@ class FormTypeViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=False)
     def search(self, request, pk=None):
         params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , GroupSerializer , "OR")
+        result = helpers.search(self.queryset , params , FormTypeSerializer , "OR")
 
         return JsonResponse({"result": result})
 
     @action(methods=['get'], detail=False)
     def filter(self, request, pk=None):
         params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , GrouoSerializer , "AND")
+        result = helpers.search(self.queryset , params , FormTypeSerializer , "AND")
 
         return JsonResponse({"result": result})
 
