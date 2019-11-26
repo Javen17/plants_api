@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .models import Ecosystem , RecolectionAreaStatus , Biostatus , Status ,  Species, Family , Genus , Country , State ,  City , CapType , FormType , PlantSpecimen , MushroomSpecimen
 from plants_api.users.models import User
+from plants_api.users.views import UserViewSet
 from plants_api.users.serializers import UserSerializer
 from rest_framework import viewsets
 from rest_framework.decorators import action
@@ -300,46 +301,16 @@ class SpeciesViewSet(viewsets.ModelViewSet):
 #    queryset = SpecimenStatus
 
 
+
 class PlantSpecimenViewSet(viewsets.ModelViewSet):
     serializer_class = PlantSpecimenSerializer
     queryset = PlantSpecimen.objects.all()
     permission_classes = [permissions.DjangoModelPermissions]
 
-    #def perform_create(self,serializer):
-#
-#        if serializer.is_valid():
-#
-#            family_data = serializer.validated_data["plant_family"]
-#            family_name = family_data["family_name"]
-#
-#            user_data = serializer.validated_data["user"]
-#            user_name = profile_data["username"]
-
-#            species_data = serializer.validated_data["plant_species"]
-#            status_data = serializer.validated_data["status"]
-
-#            if family_name != "" and user_name != "" and species_data != "" and status_data != "":
-
-#                user = get_or_create_model_instance(["name" , "photo"] , [user_name , user_data["profile_photo"]] , Profile , Profile() , "name" , profile_name)
-#                family = get_or_create_model_instance(["family_name"] , [family_name] , PlantFamily , PlantFamily() , "family_name" , family_name)
-#                species = get_or_create_model_instance(["common_name","scientific_name","family","description","photo"] , [species_data["common_name"] , species_data["scientific_name"] ,  family , species_data["description"] , species_data["photo"]] , PlantSpecies , PlantSpecies() , "scientific_name" , species_data["scientific_name"] )
-#                status = get_or_create_model_instance(["status_name"] , [status_data["status_name"]] , SpecimenStatus , SpecimenStatus() , "status_name" , status_data["status_name"])
-
-#                model_instance = PlantSpecimen( received_by =  profile ,
-#                    photo = serializer.validated_data.get("photo") ,
-#                    date_received = serializer.validated_data.get("date_received"),
-#                    status = status ,
-#                    plant_family = family,
-#                    plant_species = species)
-
-#                model_instance.save()
-
-#                return JsonResponse({"message": "success"})
-#            else:
-#                return JsonResponse(data={'message': "Bad request"}, status=status.HTTP_400_BAD_REQUEST)
-#        else:
-#            return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    def get_permissions(self):
+        if self.action == "retrieve" or self.action == "list":
+            return [permissions.AllowAny(), ]
+        return super(PlantSpecimenViewSet, self).get_permissions()
 
     @action(methods=['get'], detail=False)
     def search(self, request, pk=None):
@@ -362,6 +333,10 @@ class MushroomSpecimenViewSet(viewsets.ModelViewSet):
     serializer_class = MushroomSpecimenSerializer
     permission_classes = [permissions.DjangoModelPermissions]
 
+    def get_permissions(self):
+        if self.action == "retrieve" or self.action == "list":
+            return [permissions.AllowAny(), ]
+        return super(MushroomSpecimenViewSet, self).get_permissions()
 
     @action(methods=['get'], detail=False)
     def search(self, request, pk=None):
