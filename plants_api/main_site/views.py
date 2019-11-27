@@ -333,6 +333,22 @@ class PlantSpecimenViewSet(viewsets.ModelViewSet):
     queryset = PlantSpecimen.objects.all()
     permission_classes = [permissions.DjangoModelPermissions]
 
+    def update(self, request , pk = None):
+
+        if pk is not None:
+
+            approved = request.data.get("approved")
+
+            if request.user.has_perm("change_plant_approval") and approved:
+                return super(PlantSpecimenViewSet, self).update(request , pk)
+            elif approved is None:
+                return super(PlantSpecimenViewSet, self).update(request , pk)
+            else:
+                return JsonResponse({"result": "Unauthorized"} , status = 401)
+            #except:
+                #return super(PlantSpecimenViewSet, self).update(request , pk)
+
+
     def get_permissions(self):
         if self.action == "retrieve" or self.action == "list":
             return [permissions.AllowAny(), ]
@@ -359,6 +375,19 @@ class MushroomSpecimenViewSet(viewsets.ModelViewSet):
     serializer_class = MushroomSpecimenSerializer
     permission_classes = [permissions.DjangoModelPermissions]
 
+    def update(self , request, pk = None):
+
+        if pk is not None:
+
+            approved = request.data.get("approved")
+
+            if request.user.has_perm("change_mushroom_approval") and approved:
+                return super(MushroomSpecimenViewSet, self).update(request , pk)
+            elif approved is None:
+                return super(MushroomSpecimenViewSet, self).update(request , pk)
+            else:
+                return JsonResponse({"result": "Unauthorized"} , status = 401)
+
     def get_permissions(self):
         if self.action == "retrieve" or self.action == "list":
             return [permissions.AllowAny(), ]
@@ -374,6 +403,6 @@ class MushroomSpecimenViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=False)
     def filter(self, request, pk=None):
         params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , GrouoSerializer , "AND")
+        result = helpers.search(self.queryset , params , GroupSerializer , "AND")
 
         return JsonResponse({"result": result})

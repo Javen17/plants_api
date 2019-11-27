@@ -162,6 +162,8 @@ class Specimen(models.Model):
     ecosystem = models.ForeignKey(Ecosystem , on_delete = models.CASCADE , verbose_name = "Ecosistema")
     recolection_area_status = models.ForeignKey(RecolectionAreaStatus , on_delete = models.CASCADE , verbose_name = "Estado del area de recolección")
 
+    approved = models.BooleanField("Aprobado" , default = False , blank = True )
+
     country = models.ForeignKey(Country , on_delete=models.CASCADE , blank = False , verbose_name = "País")
     state = ChainedForeignKey(State , chained_field = "country" , chained_model_field = "country" , verbose_name= "Estado/Departamento/Provincia")
     city =  ChainedForeignKey(City , chained_field = "state" , chained_model_field = "state" ,   verbose_name= "Ciudad/Municipio")

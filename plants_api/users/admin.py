@@ -23,6 +23,4 @@ class UserAdmin(auth_admin.UserAdmin):
     search_fields = ["name"]
     inlines = [ProfileInline,]
 
-@admin.register(Permission)
-class PermissionAdmin(admin.ModelAdmin):
-    fields = ('name')
+admin.site.register(Permission)
