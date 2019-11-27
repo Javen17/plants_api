@@ -34,6 +34,11 @@ class EcosystemViewSet(viewsets.ModelViewSet):
 
         return JsonResponse({"result": result})
 
+    def get_permissions(self):
+        if self.action == "retrieve" or self.action == "list":
+            return [permissions.AllowAny(), ]
+        return super(EcosystemViewSet, self).get_permissions()
+
 
 class RecolectionAreaStatusViewSet(viewsets.ModelViewSet):
     queryset = RecolectionAreaStatus.objects.all()
@@ -55,12 +60,15 @@ class RecolectionAreaStatusViewSet(viewsets.ModelViewSet):
 
         return JsonResponse({"result": result})
 
+    def get_permissions(self):
+        if self.action == "retrieve" or self.action == "list":
+            return [permissions.AllowAny(), ]
+        return super(RecolectionAreaStatusViewSet, self).get_permissions()
 
 class BiostatusViewSet(viewsets.ModelViewSet):
     queryset = Biostatus.objects.all()
     serializer_class = BiostatusSerializer
     permission_classes = [permissions.DjangoModelPermissions]
-
 
     @action(methods=['get'], detail=False)
     def search(self, request, pk=None):
@@ -75,6 +83,11 @@ class BiostatusViewSet(viewsets.ModelViewSet):
         result = helpers.search(self.queryset , params , BiostatusSerializer , "AND")
 
         return JsonResponse({"result": result})
+
+    def get_permissions(self):
+        if self.action == "retrieve" or self.action == "list":
+            return [permissions.AllowAny(), ]
+        return super(BiostatusViewSet, self).get_permissions()
 
 
 class StatusViewSet(viewsets.ModelViewSet):
@@ -95,6 +108,11 @@ class StatusViewSet(viewsets.ModelViewSet):
         result = helpers.search(self.queryset , params , StatusSerializer , "AND")
 
         return JsonResponse({"result": result})
+
+    def get_permissions(self):
+        if self.action == "retrieve" or self.action == "list":
+            return [permissions.AllowAny(), ]
+        return super(StatusViewSet, self).get_permissions()
 
 
 class FamilyViewSet(viewsets.ModelViewSet):
@@ -119,6 +137,11 @@ class FamilyViewSet(viewsets.ModelViewSet):
 
         return JsonResponse({"result": result})
 
+    def get_permissions(self):
+        if self.action == "retrieve" or self.action == "list":
+            return [permissions.AllowAny(), ]
+        return super(FamilyViewSet, self).get_permissions()
+
 class GenusViewSet(viewsets.ModelViewSet):
     queryset = Genus.objects.all()
     serializer_class = GenusSerializer
@@ -138,6 +161,11 @@ class GenusViewSet(viewsets.ModelViewSet):
         result = helpers.search(self.queryset , params , GenusSerializer , "AND")
 
         return JsonResponse({"result": result})
+
+    def get_permissions(self):
+        if self.action == "retrieve" or self.action == "list":
+            return [permissions.AllowAny(), ]
+        return super(GenusViewSet, self).get_permissions()
 
 
 class CountryViewSet(viewsets.ModelViewSet):
@@ -160,6 +188,11 @@ class CountryViewSet(viewsets.ModelViewSet):
 
         return JsonResponse({"result": result})
 
+    def get_permissions(self):
+        if self.action == "retrieve" or self.action == "list":
+            return [permissions.AllowAny(), ]
+        return super(CountryViewSet, self).get_permissions()
+
 
 class StateViewSet(viewsets.ModelViewSet):
     queryset = State.objects.all()
@@ -180,6 +213,11 @@ class StateViewSet(viewsets.ModelViewSet):
         result = helpers.search(self.queryset , params , StateSerializer , "AND")
 
         return JsonResponse({"result": result})
+
+    def get_permissions(self):
+        if self.action == "retrieve" or self.action == "list":
+            return [permissions.AllowAny(), ]
+        return super(StateViewSet, self).get_permissions()
 
 
 class CityViewSet(viewsets.ModelViewSet):
@@ -202,6 +240,10 @@ class CityViewSet(viewsets.ModelViewSet):
 
         return JsonResponse({"result": result})
 
+    def get_permissions(self):
+        if self.action == "retrieve" or self.action == "list":
+            return [permissions.AllowAny(), ]
+        return super(CityViewSet, self).get_permissions()
 
 class CapTypeViewSet(viewsets.ModelViewSet):
     queryset = CapType.objects.all()
@@ -222,6 +264,11 @@ class CapTypeViewSet(viewsets.ModelViewSet):
         result = helpers.search(self.queryset , params , CapTypeSerializer , "AND")
 
         return JsonResponse({"result": result})
+
+    def get_permissions(self):
+        if self.action == "retrieve" or self.action == "list":
+            return [permissions.AllowAny(), ]
+        return super(CapTypeViewSet, self).get_permissions()
 
 
 class FormTypeViewSet(viewsets.ModelViewSet):
@@ -244,42 +291,17 @@ class FormTypeViewSet(viewsets.ModelViewSet):
 
         return JsonResponse({"result": result})
 
+    def get_permissions(self):
+        if self.action == "retrieve" or self.action == "list":
+            return [permissions.AllowAny(), ]
+        return super(FormTypeViewSet, self).get_permissions()
+
 class SpeciesViewSet(viewsets.ModelViewSet):
     serializer_class = SpeciesSerializer
     queryset = Species.objects.all()
     parser_class = (FileUploadParser,)
 
     permission_classes = [permissions.DjangoModelPermissions]
-
-
-
-#    def perform_create(self, serializer):
-#
-#        if serializer.is_valid():
-#
-#            family_data = serializer.validated_data['family']
-#            family_name = family_data["family_name"]
-#
-#            if family_name != '':
-#
-#                #family = get_or_created_family(family_data)
-#                family = get_or_create_model_instance(["family_name"] , [family_name] , PlantFamily , PlantFamily() , "family_name" , family_name)
-#
-
-#                model_instance = PlantSpecies(common_name = serializer.validated_data.get("common_name") ,
-#                    scientific_name = serializer.validated_data.get("scientific_name"),
-#                    description = serializer.validated_data.get("description"),
-#                    photo = serializer.validated_data.get("photo"),
-#                    family = family)
-
-#                model_instance.save()
-
-#                return JsonResponse({"message": "success"})
-#            else:
-#                return JsonResponse(data={'message': 'Empty product_name'}, status=status.HTTP_400_BAD_REQUEST)
-#        else:
-#            return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
     @action(methods=['get'], detail=False)
     def search(self, request, pk=None):
@@ -295,6 +317,10 @@ class SpeciesViewSet(viewsets.ModelViewSet):
 
         return JsonResponse({"result": result})
 
+    def get_permissions(self):
+        if self.action == "retrieve" or self.action == "list":
+            return [permissions.AllowAny(), ]
+        return super(SpeciesViewSet, self).get_permissions()
 
 #class SpecimenStatusViewSet(viewsets.ModelViewSet):
 #    serializer_class = SpecimenStatusSerializer
