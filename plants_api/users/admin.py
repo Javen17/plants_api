@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth import admin as auth_admin
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
 from .models import Profile
 
 from plants_api.users.forms import UserChangeForm, UserCreationForm
@@ -21,3 +22,7 @@ class UserAdmin(auth_admin.UserAdmin):
     list_display = ["username", "name", "is_superuser"]
     search_fields = ["name"]
     inlines = [ProfileInline,]
+
+@admin.register(Permission)
+class PermissionAdmin(admin.ModelAdmin):
+    fields = ('name')
