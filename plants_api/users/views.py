@@ -153,14 +153,14 @@ class UserViewSet(viewsets.ModelViewSet):
 class CustomTokenObtainPairView(TokenObtainPairView):
 
     def post(self, request, *args, **kwargs):
-        try:
-            response = super(TokenObtainPairView , self).post(request, *args, **kwargs)
-            response.set_cookie("token-access", response.data["access"])
-            response.set_cookie("token-refresh", response.data["refresh"])
-            response.data = {"result":"success"}
-            return response
-        except:
-            return JsonResponse({"result": "Something went wrong"} , status = 401)
+        #try:
+        response = super(TokenObtainPairView , self).post(request, *args, **kwargs)
+        response.set_cookie("token-access", response.data["access"])
+        response.set_cookie("token-refresh", response.data["refresh"])
+        response.data = {"result":"success"}
+        return response
+        #except:
+        #    return JsonResponse({"result": "Something went wrong"} , status = 401)
 
 
 class GeneratePermanentTokenView(APIView):
