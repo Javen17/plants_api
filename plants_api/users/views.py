@@ -237,11 +237,11 @@ class SignUpViewSet(mixins.CreateModelMixin , viewsets.GenericViewSet):
     def create(self, validated_data):
 
 
-        if validated_data.data['date_joined']:
+        if validated_data.data.get('date_joined'):
             date_joined =  validated_data.data.pop('date_joined')
-        if validated_data.data['groups']:
+        if validated_data.data.get('groups'):
             groups = validated_data.data.pop('groups')
-        if validated_data.data['user_permissions']:
+        if validated_data.data.get('user_permissions'):
             permissions = validated_data.data.pop('user_permissions')
 
 
