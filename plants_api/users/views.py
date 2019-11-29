@@ -252,11 +252,13 @@ class SignUpViewSet(mixins.CreateModelMixin , viewsets.GenericViewSet):
 
         user.save()
 
-        for group in groups:
-            user.groups.add(group)
+        if groups:
+            for group in groups:
+                user.groups.add(group)
 
-        for permission in permissions:
-            user.user_permissions.add(permission)
+        if permissions:
+            for permission in permissions:
+                user.user_permissions.add(permission)
 
         return JsonResponse({"result" : "user added" } , status = 200)
 
