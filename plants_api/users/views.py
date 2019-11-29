@@ -153,14 +153,14 @@ class UserViewSet(viewsets.ModelViewSet):
 class CustomTokenObtainPairView(TokenObtainPairView):
 
     def post(self, request, *args, **kwargs):
-        #try:
-        response = super(TokenObtainPairView , self).post(request, *args, **kwargs)
-        response.set_cookie("token-access", response.data["access"])
-        response.set_cookie("token-refresh", response.data["refresh"])
-        response.data = {"result":"success"}
-        return response
-        #except:
-        #    return JsonResponse({"result": "Something went wrong"} , status = 401)
+        try:
+            response = super(TokenObtainPairView , self).post(request, *args, **kwargs)
+            response.set_cookie("token-access", response.data["access"])
+            response.set_cookie("token-refresh", response.data["refresh"])
+            response.data = {"result":"success"}
+            return response
+        except:
+            return JsonResponse({"result": "Something went wrong"} , status = 401)
 
 
 class GeneratePermanentTokenView(APIView):
@@ -236,8 +236,12 @@ class SignUpViewSet(mixins.CreateModelMixin , viewsets.GenericViewSet):
 
     def create(self, validated_data):
 
-        date_joined =  validated_data.data.pop('date_joined')
-        groups = validated_data.data.pop('groups')
+
+        if validated_data.data['date_joined']:
+            date_joined =  validated_data.data.pop('date_joined')
+        if validated_data.data['groups']:
+            groups = validated_data.data.pop('groups')
+        if validated_data.data['user_permissions']:
         permissions = validated_data.data.pop('user_permissions')
 
 
