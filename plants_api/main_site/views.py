@@ -12,6 +12,7 @@ from django.db.models import Q
 from rest_framework.parsers import FileUploadParser
 from rest_framework import permissions
 from plants_api.helpers import helpers
+from rest_framework.views import APIView
 
 #from rest_framework.generics import ListCreateAPIView , RetrieveUpdateDestroyAPIView
 
@@ -404,5 +405,21 @@ class MushroomSpecimenViewSet(viewsets.ModelViewSet):
     def filter(self, request, pk=None):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , GroupSerializer , "AND")
+
+        return JsonResponse({"result": result})
+
+
+class StatsView(APIView):
+
+    def get(self , request):
+        user= len(User.objects.all())
+        plants = len(PlantSpecimen.objects.all())
+        mushroom = len(MushroomSpecimen.objects.all())
+
+        result = {
+            "user_number" : user ,
+            "plant_number" : plants,
+            "mushroom_number" :  mushroom
+        }
 
         return JsonResponse({"result": result})
