@@ -236,12 +236,14 @@ class SignUpViewSet(mixins.CreateModelMixin , viewsets.GenericViewSet):
 
     def create(self, validated_data):
 
+        groups = None
+        permissions = None
 
-        if validated_data.data['date_joined']:
+        if validated_data.data.get('date_joined'):
             date_joined =  validated_data.data.pop('date_joined')
-        if validated_data.data['groups']:
+        if validated_data.data.get('groups'):
             groups = validated_data.data.pop('groups')
-        if validated_data.data['user_permissions']:
+        if validated_data.data.get('user_permissions'):
             permissions = validated_data.data.pop('user_permissions')
 
 
@@ -252,11 +254,13 @@ class SignUpViewSet(mixins.CreateModelMixin , viewsets.GenericViewSet):
 
         user.save()
 
-        for group in groups:
-            user.groups.add(group)
+        if groups is not None:
+            for group in groups:
+                user.groups.add(group)
 
-        for permission in permissions:
-            user.user_permissions.add(permission)
+        if permissions is not None:
+            for permission in permissions:
+                user.user_permissions.add(permission)
 
         return JsonResponse({"result" : "user added" } , status = 200)
 

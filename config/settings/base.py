@@ -92,7 +92,8 @@ THIRD_PARTY_APPS = [
     "allauth.socialaccount",
     "rest_framework",
     "smart_selects",
-    "rest_framework.authtoken"
+    "rest_framework.authtoken",
+    'corsheaders',
 ]
 
 LOCAL_APPS = [
@@ -147,6 +148,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#middleware
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
@@ -158,6 +160,9 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
     "plants_api.users.middleware.auth_middleware.CustomAuthMiddleware"
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True
+
 
 # STATIC
 # ------------------------------------------------------------------------------
