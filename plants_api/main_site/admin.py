@@ -4,8 +4,8 @@ from rest_framework.authtoken.models import Token
 
 # Register your models here.
 class SpeciesModelAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'scientific_name' , 'family')
-    list_filter = ('family',)
+    list_display = ('__str__', 'scientific_name' ,  'genus')
+    list_filter = ('genus',)
 
 
 admin.site.register(Ecosystem)

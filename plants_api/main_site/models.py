@@ -69,7 +69,6 @@ class Family(models.Model):
 class Genus(models.Model):
     name = models.CharField(max_length=100 , verbose_name="Nombre del Género" , unique = True)
     family = models.ForeignKey(Family , on_delete = models.CASCADE , verbose_name = "Familia")
-    type =  models.CharField( max_length=100  , choices = TYPE_CHOICES , verbose_name = "Tipo")
 
     class Meta:
         verbose_name = 'Género'
@@ -81,12 +80,9 @@ class Genus(models.Model):
 class Species(models.Model):
     common_name = models.CharField(max_length=100 , verbose_name="Nombre común" , unique = False)
     scientific_name =  models.CharField(max_length=100 , verbose_name="Nombre científico" , unique = True)
-    family = models.ForeignKey(Family, on_delete=models.CASCADE , blank = False , default =0 ,  verbose_name="familia" )
-    genus = ChainedForeignKey(Genus , chained_field = "family" , chained_model_field = "family", show_all=False , auto_choose=True, sort=True)
+    genus = models.ForeignKey(Genus , on_delete = models.CASCADE , verbose_name = "Género")
     description = models.TextField(blank=True,default="")
     photo = models.ImageField("Imagen", null=True, blank=True, upload_to="uploads/plant_family")
-    type =  models.CharField( max_length=100  , choices = TYPE_CHOICES , verbose_name = "Tipo")
-
 
     #max_val = models.PositiveIntegerField(default=None, blank=True, null=True , verbose_name="Valor Máximo")
     #unit = models.CharField(max_length=20 , verbose_name="Unidad de medida" , blank = True , default = "")
@@ -153,9 +149,7 @@ class Specimen(models.Model):
     user = models.ForeignKey(User , on_delete=models.CASCADE , blank = False , default =0 ,  verbose_name="Usuario")
     photo = models.ImageField("Foto", null=True, blank=True , upload_to="uploads/specimen")
     date_received =  models.DateField("Fecha")
-    family = models.ForeignKey(Family, on_delete=models.CASCADE , blank = False , default =0 ,  verbose_name="Family")
-    genus = ChainedForeignKey(Genus , chained_field = "family" , chained_model_field = "family", on_delete=models.CASCADE , blank = False , default = 0 , verbose_name = "Género")
-    species = ChainedForeignKey(Species , chained_field = "genus" , chained_model_field = "genus", show_all=False , auto_choose=True, sort=True)
+    species = models.ForeignKey(Species , on_delete = models.CASCADE, verbose_name = "Especie")
     status = models.ForeignKey(Status , on_delete=models.CASCADE , verbose_name = "Estado")
     number_of_samples = models.PositiveIntegerField("Número de ejemplares")
     description = models.TextField("Descripción" , blank=True , null=True)
@@ -164,8 +158,6 @@ class Specimen(models.Model):
 
     approved = models.BooleanField("Aprobado" , default = False , blank = True )
 
-    country = models.ForeignKey(Country , on_delete=models.CASCADE , blank = False , verbose_name = "País")
-    state = ChainedForeignKey(State , chained_field = "country" , chained_model_field = "country" , verbose_name= "Estado/Departamento/Provincia")
     city =  ChainedForeignKey(City , chained_field = "state" , chained_model_field = "state" ,   verbose_name= "Ciudad/Municipio")
 
     latitude  = models.FloatField("Latitud" , blank=True , null=True)
