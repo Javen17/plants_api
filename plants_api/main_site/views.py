@@ -14,7 +14,6 @@ from rest_framework import permissions
 from plants_api.helpers import helpers
 from urllib.parse import parse_qs
 from rest_framework.views import APIView
-
 #from rest_framework.generics import ListCreateAPIView , RetrieveUpdateDestroyAPIView
 
 class EcosystemViewSet(viewsets.ModelViewSet):
@@ -360,15 +359,14 @@ class PlantSpecimenViewSet(viewsets.ModelViewSet):
     def search(self, request, pk=None):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , PlantSpecimenSerializer , "OR")
-
-        return JsonResponse({"result": result})
+        return JsonResponse(result, safe=False)
 
     @action(methods=['get'], detail=False)
     def filter(self, request, pk=None):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , PlantSpecimenSerializer , "AND")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result)
 
 
 
