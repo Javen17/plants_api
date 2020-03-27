@@ -39,13 +39,14 @@ class ProfileViewSet(viewsets.ModelViewSet):
     def search(self, request, pk=None):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , ProfileSerializer , "OR")
+        return JsonResponse(result, safe=False)
 
     @action(methods=['get'], detail=False)
     def filter(self, request, pk=None):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , ProfileSerializer , "AND")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result, safe=False)
 
 
 
@@ -115,7 +116,7 @@ class UserViewSet(viewsets.ModelViewSet):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , UserSerializer , "OR")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result, safe=False)
 
 
     @action(methods=['get'], detail=False)
@@ -123,7 +124,7 @@ class UserViewSet(viewsets.ModelViewSet):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , UserSerializer , "AND")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result, safe=False)
 
 
     @action(methods=['get'], detail = True)
@@ -136,7 +137,7 @@ class UserViewSet(viewsets.ModelViewSet):
         else:
             permissions = user.user_permissions.all().values() | Permission.objects.filter(group__user=user).values()
 
-        return JsonResponse({"result" : list(permissions)})
+        return JsonResponse({list(permissions)}, safe = False)
 
 
     @action(methods=['get'], detail = True)
@@ -146,7 +147,7 @@ class UserViewSet(viewsets.ModelViewSet):
         groups = user.groups.all().values()
 
 
-        return JsonResponse({"result" : list(groups)})
+        return JsonResponse(list(groups), safe = False)
 
 
 
@@ -279,21 +280,21 @@ class GroupViewSet(viewsets.ModelViewSet):
         group_permissions = group.permissions.all().values()
 
 
-        return JsonResponse({"result" : list(group_permissions)})
+        return JsonResponse(list(group_permissions), safe = False)
 
     @action(methods=['get'], detail=False)
     def search(self, request, pk=None):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , GroupSerializer , "OR")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result , safe = False)
 
     @action(methods=['get'], detail=False)
     def filter(self, request, pk=None):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , GroupsSerializer , "AND")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result , safe = False)
 
 
 class PermissionViewSet(viewsets.ModelViewSet):
@@ -308,14 +309,14 @@ class PermissionViewSet(viewsets.ModelViewSet):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , PermissionSerializer , "OR")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result , safe = False)
 
     @action(methods=['get'], detail=False)
     def filter(self, request, pk=None):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , PermissionSerializer , "AND")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result , safe = False)
 
 #class CustomObtainAuthToken(ObtainAuthToken):
 #    def post(self, request, *args, **kwargs):

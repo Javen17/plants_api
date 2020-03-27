@@ -26,14 +26,14 @@ class EcosystemViewSet(viewsets.ModelViewSet):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , EcosystemSerializer , "OR")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result, safe=False)
 
     @action(methods=['get'], detail=False)
     def filter(self, request, pk=None):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , EcosystemSerializer , "AND")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result, safe=False)
 
     def get_permissions(self):
         if self.action == "retrieve" or self.action == "list":
@@ -52,14 +52,14 @@ class RecolectionAreaStatusViewSet(viewsets.ModelViewSet):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , RecolectionAreaStatusSerializer , "OR")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result, safe=False)
 
     @action(methods=['get'], detail=False)
     def filter(self, request, pk=None):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , RecolectionAreaStatusSerializer , "AND")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result, safe=False)
 
     def get_permissions(self):
         if self.action == "retrieve" or self.action == "list":
@@ -76,14 +76,14 @@ class BiostatusViewSet(viewsets.ModelViewSet):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , BiostatusSerializer , "OR")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result, safe=False)
 
     @action(methods=['get'], detail=False)
     def filter(self, request, pk=None):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , BiostatusSerializer , "AND")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result, safe=False)
 
     def get_permissions(self):
         if self.action == "retrieve" or self.action == "list":
@@ -101,14 +101,14 @@ class StatusViewSet(viewsets.ModelViewSet):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , StatusSerializer , "OR")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result, safe=False)
 
     @action(methods=['get'], detail=False)
     def filter(self, request, pk=None):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , StatusSerializer , "AND")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result, safe=False)
 
     def get_permissions(self):
         if self.action == "retrieve" or self.action == "list":
@@ -129,14 +129,14 @@ class FamilyViewSet(viewsets.ModelViewSet):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , FamilySerializer , "OR")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result, safe=False)
 
     @action(methods=['get'], detail=False)
     def filter(self, request, pk=None):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , FamilySerializer , "AND")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result, safe=False)
 
     def get_permissions(self):
         if self.action == "retrieve" or self.action == "list":
@@ -154,14 +154,14 @@ class GenusViewSet(viewsets.ModelViewSet):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , GenusSerializer , "OR")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result, safe=False)
 
     @action(methods=['get'], detail=False)
     def filter(self, request, pk=None):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , GenusSerializer , "AND")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result, safe=False)
 
     def get_permissions(self):
         if self.action == "retrieve" or self.action == "list":
@@ -180,14 +180,14 @@ class CountryViewSet(viewsets.ModelViewSet):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , CountrySerializer , "OR")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result, safe=False)
 
     @action(methods=['get'], detail=False)
     def filter(self, request, pk=None):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , CountrySerializer , "AND")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result, safe=False)
 
     def get_permissions(self):
         if self.action == "retrieve" or self.action == "list":
@@ -206,14 +206,14 @@ class StateViewSet(viewsets.ModelViewSet):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , StateSerializer , "OR")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result, safe=False)
 
     @action(methods=['get'], detail=False)
     def filter(self, request, pk=None):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , StateSerializer , "AND")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result, safe=False)
 
     def get_permissions(self):
         if self.action == "retrieve" or self.action == "list":
@@ -232,14 +232,14 @@ class CityViewSet(viewsets.ModelViewSet):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , CitySerializer , "OR")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result, safe=False)
 
     @action(methods=['get'], detail=False)
     def filter(self, request, pk=None):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , CitySerializer , "AND")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result, safe=False)
 
     def get_permissions(self):
         if self.action == "retrieve" or self.action == "list":
@@ -257,14 +257,14 @@ class CapTypeViewSet(viewsets.ModelViewSet):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , CapTypeSerializer , "OR")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result, safe=False)
 
     @action(methods=['get'], detail=False)
     def filter(self, request, pk=None):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , CapTypeSerializer , "AND")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result, safe=False)
 
     def get_permissions(self):
         if self.action == "retrieve" or self.action == "list":
@@ -283,14 +283,14 @@ class FormTypeViewSet(viewsets.ModelViewSet):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , FormTypeSerializer , "OR")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result, safe=False)
 
     @action(methods=['get'], detail=False)
     def filter(self, request, pk=None):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , FormTypeSerializer , "AND")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result, safe=False)
 
     def get_permissions(self):
         if self.action == "retrieve" or self.action == "list":
@@ -309,14 +309,14 @@ class SpeciesViewSet(viewsets.ModelViewSet):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , SpeciesSerializer , "OR")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result, safe=False)
 
     @action(methods=['get'], detail=False)
     def filter(self, request, pk=None):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , SpeciesSerializer , "AND")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result, safe=False)
 
     def get_permissions(self):
         if self.action == "retrieve" or self.action == "list":
@@ -366,7 +366,7 @@ class PlantSpecimenViewSet(viewsets.ModelViewSet):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , PlantSpecimenSerializer , "AND")
 
-        return JsonResponse(result)
+        return JsonResponse(result, safe=False)
 
 
 
@@ -398,14 +398,14 @@ class MushroomSpecimenViewSet(viewsets.ModelViewSet):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , GroupSerializer , "OR")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result, safe=False)
 
     @action(methods=['get'], detail=False)
     def filter(self, request, pk=None):
         params = parse_qs(request.META['QUERY_STRING'])
         result = helpers.search(self.queryset , params , GroupSerializer , "AND")
 
-        return JsonResponse({"result": result})
+        return JsonResponse(result, safe=False)
 
 
 class StatsView(APIView):
