@@ -164,24 +164,25 @@ class RestorePassword(APIView):
     def post(self, request , *args , **kwargs):
         form = json.loads(request.body)
 
-        try:
-            email = form["email"]
-            user = User.objects.get(email  = email)
-            temporal = helpers.get_temporal_password(user)
+        #try:
+        
+        email = form["email"]
+        user = User.objects.get(email  = email)
+        temporal = helpers.get_temporal_password(user)
 
-            html_message = render_to_string('restore_password_mail_template.html', {'username': user.username , "link" : settings.DOMAIN_NAME + "/api/me/new_password/?code="  + temporal})   
+        html_message = render_to_string('restore_password_mail_template.html', {'username': user.username , "link" : settings.DOMAIN_NAME + "/api/me/new_password/?code="  + temporal})   
 
-            send_mail(
-            'Restaurar Contraseña Herbario Nacional',
-            'Parece que deseas restaurar tu contraseña del Herbario Nacional. Si es asi accede a este enlace: '  + settings.DOMAIN_NAME + "/api/me/new_password/?code="  + temporal,
-            'from@example.com',
-            [user.email],
-            fail_silently=False,
-            html_message = html_message
-            )
-            return JsonResponse( {"result" : email} )
-        except: 
-            return JsonResponse({"result": "Bad Request"} , status = 400)
+        send_mail(
+        'Restaurar Contraseña Herbario Nacional',
+        'Parece que deseas restaurar tu contraseña del Herbario Nacional. Si es asi accede a este enlace: '  + settings.DOMAIN_NAME + "/api/me/new_password/?code="  + temporal,
+        'from@example.com',
+        [user.email],
+        fail_silently=False,
+        html_message = html_message
+        )
+        return JsonResponse( {"result" : email} )
+        #except: 
+         #   return JsonResponse({"result": "Bad Request"} , status = 400)
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
