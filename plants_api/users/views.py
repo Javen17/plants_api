@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 from django.views.generic import DetailView, RedirectView, UpdateView
+from django.views.generic.edit import FormView
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import viewsets , mixins
@@ -21,6 +22,13 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from datetime import datetime
 from django.contrib.auth.hashers import make_password
 from urllib.parse import parse_qs
+import json
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.conf import settings
+from . import forms
+from django.http import Http404
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -149,6 +157,34 @@ class UserViewSet(viewsets.ModelViewSet):
 
         return JsonResponse(list(groups), safe = False)
 
+    
+class RestorePassword(APIView):
+
+    permission_classes = [permissions.AllowAny]
+    def post(self, request , *args , **kwargs):
+        form = json.loads(request.body)
+
+        #try:
+        email = form["email"]
+        user = User.objects.get(email  = email)
+        temporal = helpers.get_temporal_password(user)
+
+        print(temporal)
+
+        html_message = render_to_string('restore_password_mail_template.html', {'username': user.username , "link" : settings.DOMAIN_NAME + "/api/me/get_new_password/?code="  + temporal})   
+
+        send_mail(
+        'Restaurar Contraseña Herbario Nacional',
+        'Parece que deseas restaurar tu contraseña del Herbario Nacional. Si es asi accede a este enlace: https://stackoverflow.com/questions/3005080/how-to-send-html-email-with-django-with-dynamic-content-in-it',
+        'from@example.com',
+        [user.email],
+        fail_silently=False,
+        html_message = html_message
+        )
+
+        return JsonResponse( {"result" : email} )
+        #except: 
+        #    return JsonResponse({"result": "Bad Request"} , status = 400)
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -229,6 +265,24 @@ class WhoAmIView(APIView):
         except:
             return JsonResponse({"status":"Bad Request"} ,  status = 400)
 
+    
+class MyPermissions(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self , request, *args , **kwargs):
+
+        user =  request.user 
+
+        if not request.user.is_anonymous:
+
+            if user.is_superuser:
+                permissions = Permission.objects.all().values()
+            else:
+                permissions = user.user_permissions.all().values() | Permission.objects.filter(group__user=user).values()
+
+            return JsonResponse(list(permissions), safe = False)
+        else: 
+            return JsonResponse({"status":"You need to be logged to list your account permissions"} ,  status = 400)
 
 class SignUpViewSet(mixins.CreateModelMixin , viewsets.GenericViewSet):
     http_method_names = ['post', 'head']
@@ -363,3 +417,36 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
 
 
 user_redirect_view = UserRedirectView.as_view()
+
+
+class NewPasswordView(FormView):
+    
+    template_name = "users/get_new_password.html"
+    form_class = forms.NewPasswordForm
+    success_url = '/updated_password/'
+
+    def get(self, request, *args, **kwargs):
+        
+        try:
+            params = parse_qs(request.META['QUERY_STRING'])
+            user = User.objects.get(temporal_password = params["code"][0])
+            return super().get(self, request, *args, **kwargs)
+        except: 
+             raise Http404("you've met with a terrible fate, haven't you?")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+    def form_valid(self, form):
+        # This method is called when valid form data has been POSTed.
+        # It should return an HttpResponse.
+        try:
+            params = parse_qs(self.request.META['QUERY_STRING'])
+            user = User.objects.get(temporal_password = params["code"][0])
+            user.temporal_password = None
+            user.set_password(form.cleaned_data['newpassword'])
+            user.save()
+            return super().form_valid(form)
+        except: 
+             raise Http404("you've met with a terrible fate, haven't you?")

@@ -104,7 +104,6 @@ class FormTypeSerializer(serializers.ModelSerializer):
 
 class SpeciesSerializer(serializers.ModelSerializer):
 
-    family = FamilySerializer()
     genus = GenusSerializer()
 
     #def create(self, validated_data):
@@ -132,12 +131,10 @@ class SpeciesSerializer(serializers.ModelSerializer):
     #    species.save()
     #    return validated_data
     def to_internal_value(self, data):
-        self.fields['family'] = serializers.PrimaryKeyRelatedField(queryset=Family.objects.all())
         self.fields['genus'] = serializers.PrimaryKeyRelatedField(queryset=Genus.objects.all())
         return super(SpeciesSerializer, self).to_internal_value(data)
 
     def to_representation(self, obj):
-        self.fields['family'] = FamilySerializer()
         self.fields['genus'] = GenusSerializer()
         return super(SpeciesSerializer, self).to_representation(obj)
 
@@ -156,43 +153,30 @@ class SpeciesSerializer(serializers.ModelSerializer):
 class SpecimenSerializer():
 
     user =  UserSerializer()
-    family = FamilySerializer()
-    genus = GenusSerializer()
     species = SpeciesSerializer()
     status = StatusSerializer()
     ecosystem = EcosystemSerializer()
     recolection_area_status = RecolectionAreaStatusSerializer()
 
-    country= CountrySerializer()
-    state = StateSerializer()
     city = CitySerializer()
 
     def to_internal_value(self, data):
         self.fields['user'] = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-        self.fields['family'] = serializers.PrimaryKeyRelatedField(queryset=Family.objects.all())
-        self.fields['genus'] = serializers.PrimaryKeyRelatedField(queryset=Genus.objects.all())
         self.fields['species'] = serializers.PrimaryKeyRelatedField(queryset=Species.objects.all())
         self.fields['status'] = serializers.PrimaryKeyRelatedField(queryset=Status.objects.all())
         self.fields['ecosystem'] = serializers.PrimaryKeyRelatedField(queryset=Ecosystem.objects.all())
         self.fields['recolection_area_status'] = serializers.PrimaryKeyRelatedField(queryset=RecolectionAreaStatus.objects.all())
 
-        self.fields['country'] = serializers.PrimaryKeyRelatedField(queryset=Country.objects.all())
-        self.fields['state'] = serializers.PrimaryKeyRelatedField(queryset=State.objects.all())
         self.fields['city'] = serializers.PrimaryKeyRelatedField(queryset=City.objects.all())
 
         return super(SpecimenSerializer, self).to_internal_value(data)
 
     def to_representation(self, obj):
         self.fields['user'] = UserSerializer()
-        self.fields['family'] = FamilySerializer()
-        self.fields['genus'] = GenusSerializer()
         self.fields['species'] = SpeciesSerializer()
         self.fields['status'] = StatusSerializer()
         self.fields['ecosystem'] = EcosystemSerializer()
         self.fields['recolection_area_status'] = RecolectionAreaStatusSerializer()
-
-        self.fields['country'] = CountrySerializer()
-        self.fields['state'] = StateSerializer()
         self.fields['city'] = CitySerializer()
 
 

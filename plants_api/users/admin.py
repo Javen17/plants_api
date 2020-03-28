@@ -20,6 +20,7 @@ class UserAdmin(auth_admin.UserAdmin):
     add_form = UserCreationForm
     fieldsets = (("User", {"fields": ("name",)}),) + auth_admin.UserAdmin.fieldsets
     list_display = ["username", "name", "is_superuser"]
+    exclude = ('temporal_password',)
     search_fields = ["name"]
     inlines = [ProfileInline,]
 

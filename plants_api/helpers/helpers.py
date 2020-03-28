@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.utils.crypto import get_random_string
 
 def search(queryset , search_dic , serializer , type):
 #    first_search , *searchs = search_dic
@@ -48,3 +49,10 @@ def get_or_create_model_instance(arguments_list , arguments_values , model_manag
         model = model_list[0]
 
     return model
+
+
+def get_temporal_password(user):
+    unique_id = get_random_string(length=32)
+    user.temporal_password = unique_id
+    user.save()
+    return unique_id

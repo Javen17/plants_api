@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from django.urls import include, path
+from django.urls import include, path, re_path
 from rest_framework import routers
 
 from plants_api.main_site import views
@@ -40,7 +40,10 @@ urlpatterns = [
     path('permanent_login/', user_views.GeneratePermanentTokenView.as_view(), name = 'permanent_login'),
     path('delete_permanent_login/', user_views.RemovePermanentTokenView.as_view(), name = 'remove_permanent_token'),
     path('me/',user_views.WhoAmIView.as_view(), name = 'who_am_i'),
-    path('stats/',views.StatsView.as_view(), name = 'stats')
+    path('me/my_permissions/', user_views.MyPermissions.as_view() , name = 'my_permissions'),
+    path('stats/',views.StatsView.as_view(), name = 'stats'),
+    path('me/restore_password/', user_views.RestorePassword.as_view() , name = 'restore_password'),
+    re_path(r'^me/new_password/$', user_views.NewPasswordView.as_view() , name = 'new_password')
     #path('api/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     #url(r'^login/', user_views.CustomObtainAuthToken.as_view()),
     #path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
