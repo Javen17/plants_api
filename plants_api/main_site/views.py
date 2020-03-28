@@ -368,7 +368,10 @@ class PlantSpecimenViewSet(viewsets.ModelViewSet):
 
         return JsonResponse(result, safe=False)
 
-
+    @action(methods=['get'] , detail=False)
+    def approved(self, request , pk=None):
+        result =  self.serializer_class(self.queryset.filter(approved=True), many = True).data
+        return JsonResponse(result, safe=False)     
 
 class MushroomSpecimenViewSet(viewsets.ModelViewSet):
     queryset = MushroomSpecimen.objects.all()
@@ -406,6 +409,11 @@ class MushroomSpecimenViewSet(viewsets.ModelViewSet):
         result = helpers.search(self.queryset , params , GroupSerializer , "AND")
 
         return JsonResponse(result, safe=False)
+
+    @action(methods=['get'] , detail=False)
+    def approved(self, request , pk=None):
+        result =  self.serializer_class(self.queryset.filter(approved=True), many = True).data
+        return JsonResponse(result, safe=False)        
 
 
 class StatsView(APIView):
