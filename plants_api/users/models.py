@@ -10,6 +10,7 @@ class User(AbstractUser):
     # around the globe.
     name = CharField(_("Name of User"), blank=True, max_length=255)
     temporal_password  = models.CharField(_("Temporal Password"), blank=True , null=True, max_length=255)
+    email = models.EmailField(unique=True)
 
     def get_absolute_url(self):
         return reverse("users:detail", kwargs={"username": self.username})
