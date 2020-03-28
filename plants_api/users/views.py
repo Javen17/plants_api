@@ -447,3 +447,7 @@ class NewPasswordView(FormView):
             return super().form_valid(form)
         except: 
              raise Http404("you've met with a terrible fate, haven't you?")
+
+
+class SuccessUpdatedPassword(TemplateView):
+    template_name = "users/success_updated_password.htmll"
