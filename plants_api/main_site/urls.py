@@ -43,7 +43,8 @@ urlpatterns = [
     path('me/my_permissions/', user_views.MyPermissions.as_view() , name = 'my_permissions'),
     path('stats/',views.StatsView.as_view(), name = 'stats'),
     path('me/restore_password/', user_views.RestorePassword.as_view() , name = 'restore_password'),
-    re_path(r'^me/new_password/$', user_views.NewPasswordView.as_view() , name = 'new_password')
+    re_path(r'^me/new_password/$', user_views.NewPasswordView.as_view() , name = 'new_password'),
+    path('me/updated_password/', user_views.SuccessUpdatedPassword.as_view(), name = 'success_restore_password')
     #path('api/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     #url(r'^login/', user_views.CustomObtainAuthToken.as_view()),
     #path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))

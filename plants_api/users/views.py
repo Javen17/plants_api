@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
-from django.views.generic import DetailView, RedirectView, UpdateView
+from django.views.generic import DetailView, RedirectView, UpdateView , TemplateView
 from django.views.generic.edit import FormView
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
@@ -420,7 +420,7 @@ class NewPasswordView(FormView):
     
     template_name = "users/get_new_password.html"
     form_class = forms.NewPasswordForm
-    success_url = '/updated_password/'
+    success_url = '/api/me/updated_password/'
 
     def get(self, request, *args, **kwargs):
         
@@ -450,4 +450,4 @@ class NewPasswordView(FormView):
 
 
 class SuccessUpdatedPassword(TemplateView):
-    template_name = "users/success_updated_password.htmll"
+    template_name = "users/success_updated_password.html"
