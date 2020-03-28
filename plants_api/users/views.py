@@ -169,11 +169,11 @@ class RestorePassword(APIView):
             user = User.objects.get(email  = email)
             temporal = helpers.get_temporal_password(user)
 
-            html_message = render_to_string('restore_password_mail_template.html', {'username': user.username , "link" : settings.DOMAIN_NAME + "/api/me/get_new_password/?code="  + temporal})   
+            html_message = render_to_string('restore_password_mail_template.html', {'username': user.username , "link" : settings.DOMAIN_NAME + "/api/me/new_password/?code="  + temporal})   
 
             send_mail(
             'Restaurar Contraseña Herbario Nacional',
-            'Parece que deseas restaurar tu contraseña del Herbario Nacional. Si es asi accede a este enlace: https://stackoverflow.com/questions/3005080/how-to-send-html-email-with-django-with-dynamic-content-in-it',
+            'Parece que deseas restaurar tu contraseña del Herbario Nacional. Si es asi accede a este enlace: '  + settings.DOMAIN_NAME + "/api/me/new_password/?code="  + temporal,
             'from@example.com',
             [user.email],
             fail_silently=False,
