@@ -145,7 +145,7 @@ class UserViewSet(viewsets.ModelViewSet):
         else:
             permissions = user.user_permissions.all().values() | Permission.objects.filter(group__user=user).values()
 
-        return JsonResponse({list(permissions)}, safe = False)
+        return JsonResponse(list(permissions), safe = False)
 
 
     @action(methods=['get'], detail = True)
