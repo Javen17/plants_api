@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from gdstorage.storage import GoogleDriveStorage
+from config import settings
 
 # Create your models here.
 
@@ -23,7 +24,7 @@ class User(AbstractUser):
 class Profile(models.Model):
     number_id = models.PositiveIntegerField("Número de referencia" , unique = True)
     phone =  models.CharField(max_length=100 , verbose_name="Teléfono")
-    photo = models.ImageField("foto de perfil" , null = False , blank = False , upload_to = "uploads/perfiles" , storage=gd_storage, default = "/static/img/user-placeholder.png")
+    photo = models.ImageField("foto de perfil" , null = True , blank = True , upload_to = "uploads/perfiles" , storage=gd_storage, default =  settings.base.STATIC_ROOT  + "/img/user-placeholder.png")
     user = models.OneToOneField(User, on_delete=models.CASCADE , null = True , blank = True)
 
     class Meta:
