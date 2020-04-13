@@ -287,37 +287,37 @@ class SignUpViewSet(mixins.CreateModelMixin , viewsets.GenericViewSet):
     serializer_class =  UserSerializer
 
     def create(self, validated_data):
+        try:
+            groups = None
+            permissions = None
 
-        groups = None
-        permissions = None
-
-        if validated_data.data.get('date_joined'):
-            date_joined =  validated_data.data.pop('date_joined')
-        if validated_data.data.get('groups'):
-            groups = validated_data.data.pop('groups')
-        if validated_data.data.get('user_permissions'):
-            permissions = validated_data.data.pop('user_permissions')
+            if validated_data.data.get('date_joined'):
+                date_joined =  validated_data.data.pop('date_joined')
+            if validated_data.data.get('groups'):
+                groups = validated_data.data.pop('groups')
+            if validated_data.data.get('user_permissions'):
+                permissions = validated_data.data.pop('user_permissions')
 
 
-        user = User.objects.create_user(**validated_data.data)
+            user = User.objects.create_user(**validated_data.data)
 
-        if date_joined is None:
-            user.date_joined = datetime.now()
+            if date_joined is None:
+                user.date_joined = datetime.now()
 
-        user.save()
+            user.save()
 
-        if groups is not None:
-            for group in groups:
-                user.groups.add(group)
+            if groups is not None:
+                for group in groups:
+                    user.groups.add(group)
 
-        if permissions is not None:
-            for permission in permissions:
-                user.user_permissions.add(permission)
+            if permissions is not None:
+                for permission in permissions:
+                    user.user_permissions.add(permission)
 
-        return JsonResponse({"result" : "user added" } , status = 200)
+            return JsonResponse({"result" : "user added" } , status = 200)
 
-        #except:
-        #    return JsonResponse({"result" : "Bad Request" } , status = 400)
+        except Exception as e:
+            return JsonResponse({"result" : str(e) } , status = 400)
 
 class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
