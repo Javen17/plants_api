@@ -3,6 +3,11 @@ from django.db.models import CharField
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
+from gdstorage.storage import GoogleDriveStorage
+
+# Create your models here.
+
+gd_storage = GoogleDriveStorage()
 
 class User(AbstractUser):
 
