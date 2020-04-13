@@ -349,9 +349,18 @@ class PlantSpecimenViewSet(viewsets.ModelViewSet):
             #except:
                 #return super(PlantSpecimenViewSet, self).update(request , pk)
 
+    def retrieve(self, request, pk=None):
+        if request.user.has_perm("view_plantspecimen"):
+            queryset = self.queryset
+        else:
+            queryset = self.queryset.filter(approved = True)
+        
+        plant = get_object_or_404(queryset, pk=pk)
+        serializer = self.serializer_class(plant)
+        return Response(serializer.data)
 
     def get_permissions(self):
-        if self.action == "retrieve" or self.action == "list":
+        if self.action == "retrieve" or self.action == "approved":
             return [permissions.AllowAny(), ]
         return super(PlantSpecimenViewSet, self).get_permissions()
 
@@ -392,9 +401,19 @@ class MushroomSpecimenViewSet(viewsets.ModelViewSet):
                 return JsonResponse({"result": "Unauthorized"} , status = 401)
 
     def get_permissions(self):
-        if self.action == "retrieve" or self.action == "list":
+        if self.action == "retrieve" or self.action == "approved":
             return [permissions.AllowAny(), ]
         return super(MushroomSpecimenViewSet, self).get_permissions()
+
+    def retrieve(self, request, pk=None):
+        if request.user.has_perm("view_mushroomspecimen"):
+            queryset = self.queryset
+        else:
+            queryset = self.queryset.filter(approved = True)
+        
+        mushroom = get_object_or_404(queryset, pk=pk)
+        serializer = self.serializer_class(mushroom)
+        return Response(serializer.data)
 
     @action(methods=['get'], detail=False)
     def search(self, request, pk=None):
