@@ -1,0 +1,12 @@
+{
+    "type": "service_account",
+    "project_id": "herbario-nacional-nicaragua",
+    "private_key_id": "9806ed484865b378ec3d1394ec8d0967074a3c88",
+    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC9QCJ5R9vg8Kui\nFqkcdL/DWfezipyMQSb4FLjCp8OAI5E6L+IZ6v2MMNG9SJsynNHR8yyVaRpFp0/r\nA21/tptqVsyofMpLkfjUGp61RTiSgR7awdeEA8ikjjyndfESquCFWhbaPBkfkH3a\nT2jXOS6yF5v2XOzfu+TWCBeUmr9ZxnAA9tBcMTojkDdPaxiwKFvASpfwQ233cL9T\nylW/IiXci8TVm5ZAbM7pTt8Pk2OYdBFfk4AFCcAxn6mkXm/VD9WynBUE7hRU7hFV\nGfQ71W7m7tR/KPolZCoMWHv6CroijuY1x7rTqefl4MjAz5h8vxjc6g/GPldzT9D2\ndN8zbeTtAgMBAAECggEAAS6ZXds5CwVLInlfF7JoUDa2Tq9wSDVP96oJeA3G3Cdc\nt4RSYTRlM671CxLyWoqS35YpPSBUQwMcg1dDeSdm08SJsAkM1RQAUzLSCEfPu/qF\nJXtNy/afa4eykUkx9u/iSchE7vAD0tKli+uFuB0UpurG1URsplPCG3l0IZV7LyWv\nXouFOSimt4Y8BuOe1NUmcw0DPzBTHVbVnL1px5agiSAiFPDBgwvDE/ur8G+JMxoT\n26RrBfEnIx80CHlefHyJKcYKH2uXui8BaYIqAqRIXxp4QnZfyO//Ng5A2paQjfDL\nHOJx4WHPBuyFQ9e8iCgJqTpDhup6L/qAH/XUqmX+cQKBgQD9VeX2RThyfH34edk4\nfX5/t+Ru1R8NNhF6uDHxtfaPRQwKvmTk4uWUq3/xqv/AnQwxzX66cAca168AcRFk\nwZllkVOUNa7JZAPOakZcxE5WtaXJz5FJ0wUtANRFH/F15/j/17Tc4I/l7Y53IXDw\nNBAH05b6y21Xm+XIdcO7xTCK/wKBgQC/PbBEZq95/giFAtHXk2eZMm3lb6GvxFKU\n7Rc7YiQBe5AQ+evHK4hmmKYdsMmmVeqbyPG/78rvZPwHoVRdTZyZNqD1eR54hviw\nquIRivDHsMJaJ7D3obnJuoxmsMS/U5e+IDn/abTaUdRJDnub18Eb61odaiLc81X0\nnlKE2dBsEwKBgGhqczIiLbXiYfl8H3ANKYpyvRCBfx7u3h16tfsuSMWca+4xs1wz\nuPSiC0YMeQVmtZQBYu5tJkCGDXddIxIoSZV3ZL99sOEI/Bij7QRnVPKgRAj+KKAI\n/eUiplsnY1p5lkO9IKq5VBYs579qZSZcDw9qwpv0JMkrVHZfM6G9ENj5AoGAG5oY\nvdagTxg2PJRqmxXAZyEbMXlKOec5EBukNcL1dW1THtAjkqya1EwF9dUVVbei0/dN\nxSkj/idyJNvJJGpWRtrWondnyXeZn04asPN/yyKc+owuA5/JA++z4gJzczXqeduG\n43FrU/Npk13Ow3CBg7kVWZd/DqrkZhkPyfLyHRcCgYEA+q5qYcZgsNmhX1h3Uf+I\nrhfjVsf9e2vFFgnfweuc5wPMebA8KuO3VGeNhzpPW+E53/RRrUzG9ggH65kr8HCB\nvppg1U7lW70OkL+NGIwoTSyPoEfgaRMqdfT3SewqzwF3znM3mz2smtGMDF0vTpgQ\nTb/sxf+dS8QxyFsLPpWSABA=\n-----END PRIVATE KEY-----\n",
+    "client_email": "herbarionaciona@herbario-nacional-nicaragua.iam.gserviceaccount.com",
+    "client_id": "109675675299763469259",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/herbarionaciona%40herbario-nacional-nicaragua.iam.gserviceaccount.com"
+  }

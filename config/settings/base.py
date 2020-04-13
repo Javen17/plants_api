@@ -94,6 +94,7 @@ THIRD_PARTY_APPS = [
     "smart_selects",
     "rest_framework.authtoken",
     'corsheaders',
+    'gdstorage'
 ]
 
 LOCAL_APPS = [
@@ -364,3 +365,5 @@ SIMPLE_JWT = {
 }
 
 DOMAIN_NAME = env("DOMAIN_NAME")
+
+GOOGLE_DRIVE_STORAGE_JSON_KEY_FILE =  ROOT_DIR + "google_api_settings.json"

@@ -5,7 +5,11 @@ from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 from django.db.models.signals import post_save
 from plants_api.users.models import User
+from gdstorage.storage import GoogleDriveStorage
+
 # Create your models here.
+
+gd_storage = GoogleDriveStorage()
 
 TYPE_CHOICES = [
     ('planta', 'Planta'),
@@ -82,7 +86,7 @@ class Species(models.Model):
     scientific_name =  models.CharField(max_length=100 , verbose_name="Nombre científico" , unique = True)
     genus = models.ForeignKey(Genus , on_delete = models.CASCADE , verbose_name = "Género")
     description = models.TextField(blank=True,default="")
-    photo = models.ImageField("Imagen", null=True, blank=True, upload_to="uploads/plant_family")
+    photo = models.ImageField("Imagen", null=True, blank=True, upload_to="uploads/plant_family", storage=gd_storage)
 
     #max_val = models.PositiveIntegerField(default=None, blank=True, null=True , verbose_name="Valor Máximo")
     #unit = models.CharField(max_length=20 , verbose_name="Unidad de medida" , blank = True , default = "")
@@ -147,7 +151,7 @@ class City(models.Model):
 
 class Specimen(models.Model):
     user = models.ForeignKey(User , on_delete=models.CASCADE , blank = False , default =0 ,  verbose_name="Usuario")
-    photo = models.ImageField("Foto", null=True, blank=True , upload_to="uploads/specimen")
+    photo = models.ImageField("Foto", null=True, blank=True , upload_to="uploads/specimen" , storage=gd_storage)
     date_received =  models.DateField("Fecha")
     species = models.ForeignKey(Species , on_delete = models.CASCADE, verbose_name = "Especie")
     status = models.ForeignKey(Status , on_delete=models.CASCADE , verbose_name = "Estado")
