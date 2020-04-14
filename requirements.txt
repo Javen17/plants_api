@@ -132,5 +132,5 @@ djangorestframework-simplejwt==4.3.0
 
 
 django-cors-headers==3.2.0
-django-push-notifications-2.0.0 
+django-push-notifications==2.0.0 
 
