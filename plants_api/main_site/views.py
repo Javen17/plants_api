@@ -364,6 +364,9 @@ class PlantSpecimenViewSet(viewsets.ModelViewSet):
             return [permissions.AllowAny(), ]
         return super(PlantSpecimenViewSet, self).get_permissions()
 
+    def perform_create(self, serializer):
+        return serializer.save(user=self.request.user)
+
     @action(methods=['get'], detail=False)
     def search(self, request, pk=None):
         params = parse_qs(request.META['QUERY_STRING'])
@@ -381,6 +384,7 @@ class PlantSpecimenViewSet(viewsets.ModelViewSet):
     def approved(self, request , pk=None):
         result =  self.serializer_class(self.queryset.filter(approved=True), many = True).data
         return JsonResponse(result, safe=False)     
+    
 
 class MushroomSpecimenViewSet(viewsets.ModelViewSet):
     queryset = MushroomSpecimen.objects.all()
@@ -414,6 +418,9 @@ class MushroomSpecimenViewSet(viewsets.ModelViewSet):
         mushroom = get_object_or_404(queryset, pk=pk)
         serializer = self.serializer_class(mushroom)
         return Response(serializer.data)
+
+    def perform_create(self, serializer):
+        return serializer.save(user=self.request.user)
 
     @action(methods=['get'], detail=False)
     def search(self, request, pk=None):
