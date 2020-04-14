@@ -358,7 +358,7 @@ class PlantSpecimenViewSet(viewsets.ModelViewSet):
         
         plant = get_object_or_404(queryset, pk=pk)
         serializer = self.serializer_class(plant)
-        return Response(serializer.data)
+        return JsonResponse(serializer.data)
 
     def get_permissions(self):
         if self.action == "retrieve" or self.action == "approved":
