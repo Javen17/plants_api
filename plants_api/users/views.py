@@ -29,6 +29,7 @@ from django.utils.html import strip_tags
 from django.conf import settings
 from . import forms
 from django.http import Http404
+from django.db.models import Q
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -298,6 +299,11 @@ class SignUpViewSet(mixins.CreateModelMixin , viewsets.GenericViewSet):
             if validated_data.data.get('user_permissions'):
                 permissions = validated_data.data.pop('user_permissions')
 
+            username = validated_data.data.get('username')
+            email = validated_data.data.get('email')
+
+            if User.objects.filter(Q(username=username) | Q(email=email)).exists():
+                return JsonResponse({"result" : "username or email already exists" } , status = 400) 
 
             user = User.objects.create_user(**validated_data.data)
 
