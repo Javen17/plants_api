@@ -29,7 +29,6 @@ from django.utils.html import strip_tags
 from django.conf import settings
 from . import forms
 from django.http import Http404
-from django.db.models import Q
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -302,8 +301,15 @@ class SignUpViewSet(mixins.CreateModelMixin , viewsets.GenericViewSet):
             username = validated_data.data.get('username')
             email = validated_data.data.get('email')
 
-            if User.objects.filter(Q(username=username) | Q(email=email)).exists():
-                return JsonResponse({"result" : "username or email already exists" } , status = 400) 
+            invalid_username = True if User.objects.filter(username= username).exists() else False 
+            invalid_email = True if User.objects.filter(email= email).exists() else False 
+
+            if invalid_username and invalid_email:
+                return JsonResponse({"result" : "username and email are invalid" } , status = 400)
+            if invalid_username:
+                return JsonResponse({"result" : "username is invalid" } , status = 400)
+            if invalid_email:
+                return JsonResponse({"result" : "email is invalid" } , status = 400)
 
             user = User.objects.create_user(**validated_data.data)
 
