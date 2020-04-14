@@ -198,6 +198,7 @@ class PlantSpecimenSerializer(SpecimenSerializer , serializers.ModelSerializer):
     class Meta:
         model = PlantSpecimen
         fields = "__all__"
+        exclude = ('user',)
 
 
 class MushroomSpecimenSerializer(SpecimenSerializer , serializers.ModelSerializer):
@@ -217,3 +218,4 @@ class MushroomSpecimenSerializer(SpecimenSerializer , serializers.ModelSerialize
     class Meta:
         model = MushroomSpecimen
         fields = "__all__"
+        exclude = ('user',)
