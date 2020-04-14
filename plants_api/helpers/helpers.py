@@ -56,3 +56,9 @@ def get_temporal_password(user):
     user.temporal_password = unique_id
     user.save()
     return unique_id
+
+
+def send_notification(gcm_reg_id):
+    device = GCMDevice.objects.get(registration_id=gcm_reg_id)
+    device.send_message(message={"title" : "Game Request", "body" : "Bob wants to play poker"}, extra={"foo": "bar"})
+    return 

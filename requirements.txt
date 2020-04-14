@@ -1,7 +1,6 @@
 #Do not use this settings , they are necessary for heroku if you're running localy go to #requirements folder and install base.txt and local.txt 
 #
 
-
 alabaster==0.7.12
 appdirs==1.4.3
 argon2-cffi==19.1.0
@@ -133,5 +132,5 @@ djangorestframework-simplejwt==4.3.0
 
 
 django-cors-headers==3.2.0
-
+django-push-notifications-2.0.0 
 

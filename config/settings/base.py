@@ -93,8 +93,9 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     "smart_selects",
     "rest_framework.authtoken",
-    'corsheaders',
-    'gdstorage'
+    "corsheaders",
+    "gdstorage",
+    "push_notifications"
 ]
 
 LOCAL_APPS = [
@@ -367,3 +368,8 @@ SIMPLE_JWT = {
 DOMAIN_NAME = env("DOMAIN_NAME")
 
 GOOGLE_DRIVE_STORAGE_JSON_KEY_FILE =  ROOT_DIR + "google_api_settings.json"
+
+PUSH_NOTIFICATIONS_SETTINGS = {
+        "FCM_API_KEY": "AIzaSyBy8J-ymAQ5z3yGfulUdc-qKAmJMh-s7ow",
+        "USER_MODEL" :  "users.User"
+ }

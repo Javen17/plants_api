@@ -14,6 +14,7 @@ from rest_framework import permissions
 from plants_api.helpers import helpers
 from urllib.parse import parse_qs
 from rest_framework.views import APIView
+from django.shortcuts import get_object_or_404
 #from rest_framework.generics import ListCreateAPIView , RetrieveUpdateDestroyAPIView
 
 class EcosystemViewSet(viewsets.ModelViewSet):
