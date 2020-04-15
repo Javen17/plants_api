@@ -138,7 +138,12 @@ gulp.task('watch', function() {
 
 });
 
-// Default task
+const generateAssets = parallel(
+  styles,
+  scripts,
+  
+  imgCompression
+)
 
 // Default task
 gulp.task('default', function() {
