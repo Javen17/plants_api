@@ -26,7 +26,7 @@
     "pixrem": "^5.0.0"
   },
   "engines": {
-    "node": ">=13"
+    "node": "13"
   },
   "browserslist": [
       "last 2 version",
