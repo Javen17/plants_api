@@ -15,7 +15,25 @@ from plants_api.helpers import helpers
 from urllib.parse import parse_qs
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
+from rest_framework.mixins import UpdateModelMixin
 #from rest_framework.generics import ListCreateAPIView , RetrieveUpdateDestroyAPIView
+
+
+class BaseSpecimenPatchView(APIView):
+
+    def edit(self, request ,  pk , partial):
+        #try:
+
+        print("llega")
+
+        select_obj = self.model.objects.get(id=pk)
+        serializer = self.serializer_class(select_obj, data=request.data, partial=partial)
+        if serializer.is_valid():
+            serializer.save()
+        return JsonResponse(serializer.data)
+        #except:
+        #    return JsonResponse({"result" : "Bad Request"} , status = 400)
+    
 
 class EcosystemViewSet(viewsets.ModelViewSet):
     queryset = Ecosystem.objects.all()
@@ -330,25 +348,24 @@ class SpeciesViewSet(viewsets.ModelViewSet):
 
 
 
-class PlantSpecimenViewSet(viewsets.ModelViewSet):
+class PlantSpecimenViewSet(viewsets.ModelViewSet , BaseSpecimenPatchView):
     serializer_class = PlantSpecimenSerializer
     queryset = PlantSpecimen.objects.all()
     permission_classes = [permissions.DjangoModelPermissions]
+    http_method_names = ['get', 'post', 'head' , 'put' , 'patch']
+    model = PlantSpecimen
 
-    def update(self, request , pk = None):
+    def update(self, request, partial, pk = None):
 
         if pk is not None:
-
             approved = request.data.get("approved")
 
-            if request.user.has_perm("change_plant_approval") and approved:
-                return super(PlantSpecimenViewSet, self).update(request , pk)
-            elif approved is None:
-                return super(PlantSpecimenViewSet, self).update(request , pk)
+            if (request.user.has_perm("change_plant_approval") and approved) or  approved is None:
+                return self.edit(request , pk , partial)
             else:
-                return JsonResponse({"result": "Unauthorized"} , status = 401)
-            #except:
-                #return super(PlantSpecimenViewSet, self).update(request , pk)
+                return JsonResponse({"result" : "Bad Request"} , status = 400)
+        else:
+            return JsonResponse({"result" : "Bad Request"} , status = 400)
 
     def retrieve(self, request, pk=None):
         if request.user.has_perm("view_plantspecimen"):
@@ -387,24 +404,25 @@ class PlantSpecimenViewSet(viewsets.ModelViewSet):
         return JsonResponse(result, safe=False)     
     
 
-class MushroomSpecimenViewSet(viewsets.ModelViewSet):
+class MushroomSpecimenViewSet(viewsets.ModelViewSet, BaseSpecimenPatchView):
     queryset = MushroomSpecimen.objects.all()
     serializer_class = MushroomSpecimenSerializer
     permission_classes = [permissions.DjangoModelPermissions]
+    http_method_names = ['get', 'post', 'head' , 'put' , 'patch']
+    model = MushroomSpecimen
 
-    def update(self , request, pk = None):
+    def update(self , request, partial , pk = None):
 
         if pk is not None:
-
             approved = request.data.get("approved")
 
-            if request.user.has_perm("change_mushroom_approval") and approved:
-                return super(MushroomSpecimenViewSet, self).update(request , pk)
-            elif approved is None:
-                return super(MushroomSpecimenViewSet, self).update(request , pk)
+            if (request.user.has_perm("change_mushroom_approval") and approved) or  approved is None:
+                return self.edit(request , pk , partial)
             else:
-                return JsonResponse({"result": "Unauthorized"} , status = 401)
-
+                return JsonResponse({"result" : "Bad Request"} , status = 400)
+        else:
+            return JsonResponse({"result" : "Bad Request"} , status = 400)
+                
     def get_permissions(self):
         if self.action == "retrieve" or self.action == "approved":
             return [permissions.AllowAny(), ]
@@ -457,3 +475,9 @@ class StatsView(APIView):
         }
 
         return JsonResponse({"result": result})
+
+class NotificationDemoView(APIView):
+
+    def get(self , request):
+        helpers.send_notification("e9S99OJXnrrHr6AaESoZQ-:APA91bGm3ZiKbPEH2fzH7c2S4ctkcGozCIp_bZ5XnEsTqmoDG3BdQXdVFpAbE9g_HwuLwiwA7eljRTOgTEZvxJ89EV2b5iE8FpxYIg1avbL6mstPSKL_Dy2xkVMO2kUrZgI-PZBdvDtX")
+        return JsonResponse({"result": "prueba"})

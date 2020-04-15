@@ -370,6 +370,6 @@ DOMAIN_NAME = env("DOMAIN_NAME")
 GOOGLE_DRIVE_STORAGE_JSON_KEY_FILE =  ROOT_DIR + "google_api_settings.json"
 
 PUSH_NOTIFICATIONS_SETTINGS = {
-        "FCM_API_KEY": "AIzaSyBy8J-ymAQ5z3yGfulUdc-qKAmJMh-s7ow",
+        "FCM_API_KEY": "AAAAOoz3fx0:APA91bEKazL_DwW7L72cxB8FPFp-65Ffht6vDsrpUinHvu7DaVpT1wu-nhZz8x2Yl8baJadng9uy2Hyr52veoQNEwZc6qlX0YbAXRVwLB85zNYl2ZkDTNEMlRmNUUi0C4wFbhSLi5pyQ",
         "USER_MODEL" :  "users.User"
  }
