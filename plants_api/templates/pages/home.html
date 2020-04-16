@@ -1,1 +1,29 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block aditional_css %}
+ <link rel = "stylesheet" href =  "{% static 'css/dist/ideal-slider/ideal-image-slider.css' %}">
+ <link rel = "stylesheet" href =  "{% static 'css/dist/ideal-slider/default.css' %}">
+{% endblock aditional_css%}
+
+{% block content %}
+
+{% include 'partials/home_carousel.html' %}
+
+{% include 'partials/api_features.html' %}
+
+{% endblock content %}
+
+{% block aditional_js %}
+<script src = "{% static 'js/dist/ideal-slider/ideal-image-slider.min.js' %}"></script>
+<script src = "{% static 'js/dist/ideal-slider/iis-caption.js' %}"></script>
+<script>;
+    let slider = new IdealImageSlider.Slider({
+	    selector: "#home-slider",
+	    height: 600,
+	    interval: 4000
+    });
+    slider.addCaptions();
+    slider.start();
+</script>
+{% endblock aditional_js %}

@@ -1,0 +1,18 @@
+.feature-card{
+    .container{
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+        min-height: 300px;
+    }
+    
+    .feature-icon{
+        img{
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center;
+            height: 100px;
+            width: 100px;
+            box-shadow: 4px 4px 8px 0 rgba(0,0,0,0.2);
+        }    
+    }
+
+}
