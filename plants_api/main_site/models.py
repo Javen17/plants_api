@@ -2,7 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
-from django.db.models.signals import post_save
+from django.db.models.signals import pre_save
 from plants_api.users.models import User
 from gdstorage.storage import GoogleDriveStorage
 from config import settings
@@ -15,6 +15,14 @@ TYPE_CHOICES = [
     ('planta', 'Planta'),
     ('hongo', 'Hongo'),
 ]
+
+
+def save_image_url(sender, instance, **kwargs):
+    pre_save.disconnect(save_image_url, sender=sender)
+    instance.photo_url = instance.photo.url
+    instance.save()
+    pre_save.connect(save_image_url, sender=sender)
+    
 
 class Ecosystem(models.Model):
     name = models.CharField(max_length=100 , verbose_name="Nombre de hábitat")
@@ -87,11 +95,8 @@ class Species(models.Model):
     genus = models.ForeignKey(Genus , on_delete = models.CASCADE , verbose_name = "Género")
     description = models.TextField(blank=True,default="")
     photo = models.ImageField("Imagen" , upload_to="uploads/plant_family", storage=gd_storage)
-    #max_val = models.PositiveIntegerField(default=None, blank=True, null=True , verbose_name="Valor Máximo")
-    #unit = models.CharField(max_length=20 , verbose_name="Unidad de medida" , blank = True , default = "")
-    #order = models.PositiveIntegerField(default=0)
-    #color = ColorField(default='#FF0000')
 
+    photo_url = models.CharField(max_length=100 , verbose_name="Url de imagen" , null = True , blank = True)
 
     class Meta:
         verbose_name = 'Especies de Plantas'
@@ -100,6 +105,8 @@ class Species(models.Model):
 
     def __str__(self):
         return "%s" % (self.common_name)
+
+pre_save.connect(save_image_url, sender=Species)
 
 
 #class SpecimenStatus(models.Model):
@@ -167,6 +174,7 @@ class Specimen(models.Model):
     longitude =  models.FloatField("Longitud" , blank=True , null=True)
 
     location = models.CharField(max_length=100 , verbose_name="Ubicación")
+    photo_url = models.CharField(max_length=100 , verbose_name="Url de imagen" , null = True , blank = True)
 
     class Meta:
         abstract = True
@@ -181,6 +189,8 @@ class PlantSpecimen(Specimen):
 
     def __str__(self):
         return "Espécimen de %s" % (self.species.common_name)
+    
+pre_save.connect(save_image_url, sender=PlantSpecimen)
 
 
 class CapType(models.Model):
@@ -219,6 +229,8 @@ class MushroomSpecimen(Specimen):
 
     def __str__(self):
         return "Espécimen de %s" % (self.species.common_name)
+
+pre_save.connect(save_image_url, sender=MushroomSpecimen)
 
 #@receiver(post_save, sender=settings.AUTH_USER_MODEL)
 #def create_auth_token(sender, instance=None, created=False, **kwargs):

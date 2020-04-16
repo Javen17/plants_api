@@ -106,30 +106,6 @@ class SpeciesSerializer(serializers.ModelSerializer):
 
     genus = GenusSerializer()
 
-    #def create(self, validated_data):
-
-    #    family = validated_data.get("family")
-
-    #    print("hola")
-
-    #    try:
-    #        family = PlantFamily.objects.get(family_name=family["family_name"]).first()
-    #    except:
-    #        family = validated_data.get("family")
-    #        new_family = PlantFamily(family_name = family["family_name"])
-    #        new_family.save()
-    #        family = new_family
-
-    #    species = PlantSpecies(
-    #    common_name= validated_data.get("common_name") ,
-    #    scientific_name = validated_data.get("scientific_name"),
-    #    description = validated_data.get("description"),
-    #    photo = validated_data.get("photo"),
-    #    family = family
-    #    )
-
-    #    species.save()
-    #    return validated_data
     def to_internal_value(self, data):
         self.fields['genus'] = serializers.PrimaryKeyRelatedField(queryset=Genus.objects.all())
         return super(SpeciesSerializer, self).to_internal_value(data)
@@ -143,6 +119,11 @@ class SpeciesSerializer(serializers.ModelSerializer):
         model = Species
         fields = '__all__'
 
+class SpeciesExcludeSerializer(SpeciesSerializer): 
+
+    class Meta:
+        model = Species
+        exclude = ('photo', )
 
 #class SpecimenStatusSerializer(serializers.ModelSerializer):
 
@@ -173,14 +154,10 @@ class SpecimenSerializer():
 
     def to_representation(self, obj):
         self.fields['user'] = UserSerializer()
-        self.fields['species'] = SpeciesSerializer()
         self.fields['status'] = StatusSerializer()
         self.fields['ecosystem'] = EcosystemSerializer()
         self.fields['recolection_area_status'] = RecolectionAreaStatusSerializer()
         self.fields['city'] = CitySerializer()
-
-
-
         return super(SpecimenSerializer, self).to_representation(obj)
 
 
@@ -192,12 +169,26 @@ class PlantSpecimenSerializer(SpecimenSerializer , serializers.ModelSerializer):
         return super(PlantSpecimenSerializer, self).to_internal_value(data)
 
     def to_representation(self, obj):
+        self.fields['species'] = SpeciesSerializer()
         self.fields['biostatus'] = BiostatusSerializer()
         return super(PlantSpecimenSerializer, self).to_representation(obj)
 
     class Meta:
         model = PlantSpecimen
         fields = "__all__"
+
+
+class PlantSpecimenExcludeSerializer(PlantSpecimenSerializer): 
+    species = SpeciesExcludeSerializer()
+
+    def to_representation(self, obj):
+        self.fields['species'] = SpeciesExcludeSerializer()
+        self.fields['biostatus'] = BiostatusSerializer()
+        return super(PlantSpecimenSerializer, self).to_representation(obj)
+
+    class Meta:
+        model = PlantSpecimen
+        exclude = ('photo', )
 
 
 class MushroomSpecimenSerializer(SpecimenSerializer , serializers.ModelSerializer):
@@ -217,3 +208,16 @@ class MushroomSpecimenSerializer(SpecimenSerializer , serializers.ModelSerialize
     class Meta:
         model = MushroomSpecimen
         fields = "__all__"
+
+class MushroomSpecimenExcludeSerializer(MushroomSpecimenSerializer): 
+    species = SpeciesExcludeSerializer()
+
+    def to_representation(self, obj):
+        self.fields['species'] = SpeciesExcludeSerializer()
+        self.fields['cap'] = CapTypeSerializer()
+        self.fields['forms'] = FormTypeSerializer()
+        return super(MushroomSpecimenSerializer, self).to_representation(obj)
+
+    class Meta:
+        model = MushroomSpecimen
+        exclude = ('photo', )

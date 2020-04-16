@@ -5,7 +5,7 @@ from plants_api.users.views import UserViewSet
 from plants_api.users.serializers import UserSerializer
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from .serializers import EcosystemSerializer, RecolectionAreaStatusSerializer , BiostatusSerializer , StatusSerializer , SpeciesSerializer, FamilySerializer , GenusSerializer , CountrySerializer, StateSerializer , CitySerializer , CapTypeSerializer , FormTypeSerializer , PlantSpecimenSerializer , MushroomSpecimenSerializer
+from .serializers import EcosystemSerializer, RecolectionAreaStatusSerializer , BiostatusSerializer , StatusSerializer , SpeciesSerializer , SpeciesExcludeSerializer , FamilySerializer , GenusSerializer , CountrySerializer, StateSerializer , CitySerializer , CapTypeSerializer , FormTypeSerializer , PlantSpecimenSerializer ,PlantSpecimenExcludeSerializer , MushroomSpecimenSerializer , MushroomSpecimenExcludeSerializer
 from django.http import HttpResponse , JsonResponse
 from rest_framework.renderers import JSONRenderer
 from django.db.models import Q
@@ -18,8 +18,24 @@ from django.shortcuts import get_object_or_404
 from rest_framework.mixins import UpdateModelMixin
 #from rest_framework.generics import ListCreateAPIView , RetrieveUpdateDestroyAPIView
 
+class BaseGoogleFixClass:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.serializer_action_classes = {
+            'list':self.exclude_serializer,
+            'retrieve':self.exclude_serializer
+        }
 
-class BaseSpecimenPatchView(APIView):
+    def get_serializer_class(self, *args, **kwargs):
+        """Instantiate the list of serializers per action from class attribute (must be defined)."""
+        kwargs['partial'] = True
+
+        try:
+            return self.serializer_action_classes[self.action]
+        except (KeyError, AttributeError):
+            return super().get_serializer_class()
+
+class BaseSpecimenPatchView(BaseGoogleFixClass , APIView):
 
     def edit(self, request ,  pk , partial):
         try:
@@ -30,7 +46,7 @@ class BaseSpecimenPatchView(APIView):
             return JsonResponse(serializer.data)
         except Exception as e:
             return JsonResponse({"result" : str(e)} , status = 400)
-    
+
 
 class EcosystemViewSet(viewsets.ModelViewSet):
     queryset = Ecosystem.objects.all()
@@ -313,10 +329,11 @@ class FormTypeViewSet(viewsets.ModelViewSet):
             return [permissions.AllowAny(), ]
         return super(FormTypeViewSet, self).get_permissions()
 
-class SpeciesViewSet(viewsets.ModelViewSet):
+class SpeciesViewSet(BaseGoogleFixClass, viewsets.ModelViewSet):
     serializer_class = SpeciesSerializer
     queryset = Species.objects.all()
     parser_class = (FileUploadParser,)
+    exclude_serializer = SpeciesExcludeSerializer
 
     permission_classes = [permissions.DjangoModelPermissions]
 
@@ -345,12 +362,13 @@ class SpeciesViewSet(viewsets.ModelViewSet):
 
 
 
-class PlantSpecimenViewSet(viewsets.ModelViewSet , BaseSpecimenPatchView):
+class PlantSpecimenViewSet(BaseSpecimenPatchView , viewsets.ModelViewSet):
     serializer_class = PlantSpecimenSerializer
     queryset = PlantSpecimen.objects.all()
     permission_classes = [permissions.DjangoModelPermissions]
     http_method_names = ['get', 'post', 'head' , 'put' , 'patch']
     model = PlantSpecimen
+    exclude_serializer = PlantSpecimenExcludeSerializer
 
     def update(self, request, partial  = False , pk = None):
 
@@ -407,6 +425,7 @@ class MushroomSpecimenViewSet(viewsets.ModelViewSet, BaseSpecimenPatchView):
     permission_classes = [permissions.DjangoModelPermissions]
     http_method_names = ['get', 'post', 'head' , 'put' , 'patch']
     model = MushroomSpecimen
+    exclude_serializer = MushroomSpecimenExcludeSerializer
 
     def update(self , request, partial  = False , pk = None):
 
