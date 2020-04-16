@@ -355,7 +355,7 @@ class PlantSpecimenViewSet(viewsets.ModelViewSet , BaseSpecimenPatchView):
     http_method_names = ['get', 'post', 'head' , 'put' , 'patch']
     model = PlantSpecimen
 
-    def update(self, request, partial, pk = None):
+    def update(self, request, partial  = False , pk = None):
 
         if pk is not None:
             approved = request.data.get("approved")
@@ -411,7 +411,7 @@ class MushroomSpecimenViewSet(viewsets.ModelViewSet, BaseSpecimenPatchView):
     http_method_names = ['get', 'post', 'head' , 'put' , 'patch']
     model = MushroomSpecimen
 
-    def update(self , request, partial , pk = None):
+    def update(self , request, partial  = False , pk = None):
 
         if pk is not None:
             approved = request.data.get("approved")

@@ -56,6 +56,7 @@ var paths = pathsConfig();
 		//Tasks//
 ////////////////////////////////
 
+
 // Styles autoprefixing and minification
 gulp.task('styles', function() {
   return gulp.src(paths.sass + '/project.scss')
