@@ -16,24 +16,8 @@ from urllib.parse import parse_qs
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from rest_framework.mixins import UpdateModelMixin
+from plants_api.common.base_classes import BaseGoogleFixClass
 #from rest_framework.generics import ListCreateAPIView , RetrieveUpdateDestroyAPIView
-
-class BaseGoogleFixClass:
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.serializer_action_classes = {
-            'list':self.exclude_serializer,
-            'retrieve':self.exclude_serializer
-        }
-
-    def get_serializer_class(self, *args, **kwargs):
-        """Instantiate the list of serializers per action from class attribute (must be defined)."""
-        kwargs['partial'] = True
-
-        try:
-            return self.serializer_action_classes[self.action]
-        except (KeyError, AttributeError):
-            return super().get_serializer_class()
 
 class BaseSpecimenPatchView(BaseGoogleFixClass , APIView):
 
@@ -419,7 +403,7 @@ class PlantSpecimenViewSet(BaseSpecimenPatchView , viewsets.ModelViewSet):
         return JsonResponse(result, safe=False)     
     
 
-class MushroomSpecimenViewSet(viewsets.ModelViewSet, BaseSpecimenPatchView):
+class MushroomSpecimenViewSet(BaseSpecimenPatchView , viewsets.ModelViewSet):
     queryset = MushroomSpecimen.objects.all()
     serializer_class = MushroomSpecimenSerializer
     permission_classes = [permissions.DjangoModelPermissions]

@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import viewsets , mixins
 from rest_framework.views import APIView
-from .serializers import UserSerializer , ProfileSerializer , GroupSerializer , PermissionSerializer
+from .serializers import UserSerializer , UserExcludeSerializer , ProfileSerializer , ProfileExcludeSerializer , GroupSerializer , PermissionSerializer
 from rest_framework import permissions
 from plants_api.helpers import helpers
 from rest_framework.decorators import action
@@ -29,6 +29,7 @@ from django.utils.html import strip_tags
 from django.conf import settings
 from . import forms
 from django.http import Http404
+from plants_api.common.base_classes import BaseGoogleFixClass
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -38,10 +39,12 @@ from rest_framework_simplejwt.views import (
 User = get_user_model()
 
 
-class ProfileViewSet(viewsets.ModelViewSet):
+class ProfileViewSet(BaseGoogleFixClass , viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
     permission_classes = [permissions.DjangoModelPermissions]
+    exclude_serializer = ProfileExcludeSerializer
+    
 
     @action(methods=['get'], detail=False)
     def search(self, request, pk=None):
@@ -58,10 +61,11 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(BaseGoogleFixClass ,viewsets.ModelViewSet):
     queryset = User.objects.all().select_related('profile' , 'auth_token')
     serializer_class =  UserSerializer
     permission_classes = [permissions.DjangoModelPermissions]
+    exclude_serializer = UserExcludeSerializer
 
 
     def create(self, validated_data):

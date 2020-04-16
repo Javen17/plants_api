@@ -1,6 +1,6 @@
 from .models import Ecosystem, RecolectionAreaStatus , Biostatus , Status , Family, Genus, Species , Country , State , City  , Specimen, PlantSpecimen , MushroomSpecimen, CapType , FormType
 from rest_framework import serializers
-from plants_api.users.serializers import UserSerializer
+from plants_api.users.serializers import UserSerializer , UserExcludeSerializer
 from plants_api.users.models import User
 
 
@@ -153,7 +153,6 @@ class SpecimenSerializer():
         return super(SpecimenSerializer, self).to_internal_value(data)
 
     def to_representation(self, obj):
-        self.fields['user'] = UserSerializer()
         self.fields['status'] = StatusSerializer()
         self.fields['ecosystem'] = EcosystemSerializer()
         self.fields['recolection_area_status'] = RecolectionAreaStatusSerializer()
@@ -169,6 +168,7 @@ class PlantSpecimenSerializer(SpecimenSerializer , serializers.ModelSerializer):
         return super(PlantSpecimenSerializer, self).to_internal_value(data)
 
     def to_representation(self, obj):
+        self.fields['user'] = UserSerializer()
         self.fields['species'] = SpeciesSerializer()
         self.fields['biostatus'] = BiostatusSerializer()
         return super(PlantSpecimenSerializer, self).to_representation(obj)
@@ -182,6 +182,7 @@ class PlantSpecimenExcludeSerializer(PlantSpecimenSerializer):
     species = SpeciesExcludeSerializer()
 
     def to_representation(self, obj):
+        self.fields['user'] = UserExcludeSerializer()
         self.fields['species'] = SpeciesExcludeSerializer()
         self.fields['biostatus'] = BiostatusSerializer()
         return super(PlantSpecimenSerializer, self).to_representation(obj)
@@ -201,6 +202,8 @@ class MushroomSpecimenSerializer(SpecimenSerializer , serializers.ModelSerialize
         return super(MushroomSpecimenSerializer, self).to_internal_value(data)
 
     def to_representation(self, obj):
+        self.fields['species'] = SpeciesSerializer()
+        self.fields['user'] = UserSerializer()
         self.fields['cap'] = CapTypeSerializer()
         self.fields['forms'] = FormTypeSerializer()
         return super(MushroomSpecimenSerializer, self).to_representation(obj)
@@ -216,6 +219,7 @@ class MushroomSpecimenExcludeSerializer(MushroomSpecimenSerializer):
         self.fields['species'] = SpeciesExcludeSerializer()
         self.fields['cap'] = CapTypeSerializer()
         self.fields['forms'] = FormTypeSerializer()
+        self.fields['user'] = UserExcludeSerializer()
         return super(MushroomSpecimenSerializer, self).to_representation(obj)
 
     class Meta:

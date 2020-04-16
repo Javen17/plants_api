@@ -5,6 +5,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from gdstorage.storage import GoogleDriveStorage
 from config import settings
+from plants_api.helpers import helpers
+from django.db.models.signals import pre_save
 
 # Create your models here.
 
@@ -26,6 +28,7 @@ class Profile(models.Model):
     phone =  models.CharField(max_length=100 , verbose_name="Teléfono")
     photo = models.ImageField("foto de perfil" , null = True , blank = True , upload_to = "uploads/perfiles" , storage=gd_storage, default =  settings.base.STATIC_ROOT  + "/img/user-placeholder.png")
     user = models.OneToOneField(User, on_delete=models.CASCADE , null = True , blank = True)
+    photo_url = models.CharField(max_length=100 , verbose_name="Url de imagen" , null = True , blank = True)
 
     class Meta:
         verbose_name = "Perfil"
@@ -33,3 +36,5 @@ class Profile(models.Model):
 
     def __str__(self):
         return "%s" % (self.number_id)
+
+pre_save.connect(helpers.save_image_url, sender=Profile)

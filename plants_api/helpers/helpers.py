@@ -1,6 +1,7 @@
 from django.db.models import Q
 from django.utils.crypto import get_random_string
 from push_notifications.models import GCMDevice
+from django.db.models.signals import pre_save
 
 def search(queryset , search_dic , serializer , type):
 #    first_search , *searchs = search_dic
@@ -63,3 +64,10 @@ def send_notification(gcm_reg_id):
     device = GCMDevice.objects.get(registration_id=gcm_reg_id)
     device.send_message(message={"title" : "Game Request", "body" : "remember, remember the fifth of november"}, extra={"foo": "bar"})
     return 
+
+
+def save_image_url(sender, instance, **kwargs):
+    pre_save.disconnect(save_image_url, sender=sender)
+    instance.photo_url = instance.photo.url
+    instance.save()
+    pre_save.connect(save_image_url, sender=sender)

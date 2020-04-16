@@ -5,7 +5,8 @@ from rest_framework.authtoken.models import Token
 from django.db.models.signals import pre_save
 from plants_api.users.models import User
 from gdstorage.storage import GoogleDriveStorage
-from config import settings
+from config import settings 
+from plants_api.helpers import helpers 
 
 # Create your models here.
 
@@ -15,14 +16,6 @@ TYPE_CHOICES = [
     ('planta', 'Planta'),
     ('hongo', 'Hongo'),
 ]
-
-
-def save_image_url(sender, instance, **kwargs):
-    pre_save.disconnect(save_image_url, sender=sender)
-    instance.photo_url = instance.photo.url
-    instance.save()
-    pre_save.connect(save_image_url, sender=sender)
-    
 
 class Ecosystem(models.Model):
     name = models.CharField(max_length=100 , verbose_name="Nombre de hábitat")
@@ -106,7 +99,7 @@ class Species(models.Model):
     def __str__(self):
         return "%s" % (self.common_name)
 
-pre_save.connect(save_image_url, sender=Species)
+pre_save.connect(helpers.save_image_url, sender=Species)
 
 
 #class SpecimenStatus(models.Model):
@@ -190,7 +183,7 @@ class PlantSpecimen(Specimen):
     def __str__(self):
         return "Espécimen de %s" % (self.species.common_name)
     
-pre_save.connect(save_image_url, sender=PlantSpecimen)
+pre_save.connect(helpers.save_image_url, sender=PlantSpecimen)
 
 
 class CapType(models.Model):
@@ -230,7 +223,7 @@ class MushroomSpecimen(Specimen):
     def __str__(self):
         return "Espécimen de %s" % (self.species.common_name)
 
-pre_save.connect(save_image_url, sender=MushroomSpecimen)
+pre_save.connect(helpers.save_image_url, sender=MushroomSpecimen)
 
 #@receiver(post_save, sender=settings.AUTH_USER_MODEL)
 #def create_auth_token(sender, instance=None, created=False, **kwargs):
