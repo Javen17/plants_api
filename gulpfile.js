@@ -1,76 +1,8 @@
 ////////////////////////////////
 // Setup
 ////////////////////////////////
-var gulp = require('gulp')
+var gulp = require('gulp');
 
-////////////////////////////////
-// im trying to quickly fix this, this script is redundant and everything but i only want it to work someday in the future i will make it clean
-////////////////////////////////
-// Styles autoprefixing and minification
-gulp.task('styles', function() {
-    return gulp.src(paths.sass + '/project.scss')
-      .pipe(sass({
-        includePaths: [
-  
-          paths.bootstrapSass,
-  
-          paths.sass
-        ]
-      }).on('error', sass.logError))
-      .pipe(plumber()) // Checks for errors
-      .pipe(autoprefixer()) // Adds vendor prefixes
-      .pipe(pixrem())  // add fallbacks for rem units
-      .pipe(gulp.dest(paths.css))
-      .pipe(rename({ suffix: '.min' }))
-      .pipe(cssnano()) // Minifies the result
-      .pipe(gulp.dest(paths.css));
-  
-      console.log(paths.css);
-  
-  });
-  
-  // Javascript minification
-  gulp.task('scripts', function() {
-    return gulp.src(paths.js + '/project.js')
-      .pipe(plumber()) // Checks for errors
-      /*.pipe(uglify()) // Minifies the js*/
-      .pipe(terser())
-      .pipe(rename({ suffix: '.min' }))
-      .pipe(gulp.dest(paths.js));
-  });
-  
-  
-  
-  // Vendor Javascript minification
-  gulp.task('vendor-scripts', function() {
-    return gulp.src(paths.vendorsJs)
-      .pipe(concat('vendors.js'))
-      .pipe(gulp.dest(paths.js))
-      .pipe(plumber()) // Checks for errors
-      .pipe(uglify()) // Minifies the js
-      .pipe(rename({ suffix: '.min' }))
-      .pipe(gulp.dest(paths.js));
-  });
-  
-  
-  // Image compression
-  gulp.task('imgCompression', function(){
-    return gulp.src(paths.images + '/*')
-      .pipe(imagemin()) // Compresses PNG, JPEG, GIF and SVG images
-      .pipe(gulp.dest(paths.images))
-  });
-
-  // Watch
-gulp.task('watch', function() {
-
-    gulp.watch(paths.sass + '/*.scss',  gulp.series('styles') );
-    gulp.watch(paths.sass + '/**/*.scss', gulp.series('styles'));
-    gulp.watch(paths.js + '/*.js', gulp.series('scripts')).on("change", reload);
-    gulp.watch(paths.images + '/*', gulp.series('imgCompression'));
-    gulp.watch(paths.templates + '/**/*.html').on("change", reload);
-  
-  });
-  
 ////////////////////////////////
 // Gulp and package
 const { src, dest, parallel, series, watch } = require('gulp')
@@ -189,6 +121,7 @@ function watchPaths() {
   watch([`${paths.js}/*.js`, `!${paths.js}/*.min.js`], scripts).on("change", reload)
 }
 
+
 // Generate all assets
 const generateAssets = parallel(
   styles,
@@ -207,3 +140,9 @@ const dev = parallel(
 exports.default = series(generateAssets, dev)
 exports["generate-assets"] = generateAssets
 exports["dev"] = dev
+
+
+
+////////////////////////////////
+// im trying to quickly fix this, this script is redundant and everything but i only want it to work someday in the future i will make it clean
+///////////////////////////////

@@ -433,7 +433,7 @@ class MushroomSpecimenViewSet(viewsets.ModelViewSet, BaseSpecimenPatchView):
         
         mushroom = get_object_or_404(queryset, pk=pk)
         serializer = self.serializer_class(mushroom)
-        return Response(serializer.data)
+        return JsonResponse(serializer.data)
 
     def perform_create(self, serializer):
         return serializer.save(user=self.request.user)
