@@ -1,5 +1,4 @@
 from django.db import models
-from smart_selects.db_fields import ChainedForeignKey
 from django.conf import settings
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
@@ -162,7 +161,7 @@ class Specimen(models.Model):
 
     approved = models.BooleanField("Aprobado" , default = False , blank = True )
 
-    city =  ForeignKey(City ,  on_delete = models.CASCADE  ,  verbose_name= "Ciudad/Municipio")
+    city =  models.ForeignKey(City ,  on_delete = models.CASCADE  ,  verbose_name= "Ciudad/Municipio")
 
     latitude  = models.FloatField("Latitud" , blank=True , null=True)
     longitude =  models.FloatField("Longitud" , blank=True , null=True)
