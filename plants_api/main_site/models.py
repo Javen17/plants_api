@@ -162,7 +162,7 @@ class Specimen(models.Model):
 
     approved = models.BooleanField("Aprobado" , default = False , blank = True )
 
-    city =  ChainedForeignKey(City , chained_field = "state" , chained_model_field = "state" ,   verbose_name= "Ciudad/Municipio")
+    city =  ForeignKey(City ,  on_delete = models.CASCADE  ,  verbose_name= "Ciudad/Municipio")
 
     latitude  = models.FloatField("Latitud" , blank=True , null=True)
     longitude =  models.FloatField("Longitud" , blank=True , null=True)
