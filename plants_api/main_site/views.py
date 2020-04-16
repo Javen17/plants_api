@@ -22,17 +22,14 @@ from rest_framework.mixins import UpdateModelMixin
 class BaseSpecimenPatchView(APIView):
 
     def edit(self, request ,  pk , partial):
-        #try:
-
-        print("llega")
-
-        select_obj = self.model.objects.get(id=pk)
-        serializer = self.serializer_class(select_obj, data=request.data, partial=partial)
-        if serializer.is_valid():
-            serializer.save()
-        return JsonResponse(serializer.data)
-        #except:
-        #    return JsonResponse({"result" : "Bad Request"} , status = 400)
+        try:
+            select_obj = self.model.objects.get(id=pk)
+            serializer = self.serializer_class(select_obj, data=request.data, partial=partial)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+            return JsonResponse(serializer.data)
+        except Exception as e:
+            return JsonResponse({"result" : str(e)} , status = 400)
     
 
 class EcosystemViewSet(viewsets.ModelViewSet):
