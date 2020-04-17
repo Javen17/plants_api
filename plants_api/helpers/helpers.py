@@ -69,5 +69,4 @@ def send_notification(gcm_reg_id):
 def save_image_url(sender, instance, **kwargs):
     pre_save.disconnect(save_image_url, sender=sender)
     instance.photo_url = instance.photo.url
-    instance.save()
     pre_save.connect(save_image_url, sender=sender)
