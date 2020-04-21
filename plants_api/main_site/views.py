@@ -404,7 +404,7 @@ class PlantSpecimenViewSet(BaseSpecimenPatchView , viewsets.ModelViewSet):
     
 
 class MushroomSpecimenViewSet(BaseSpecimenPatchView , viewsets.ModelViewSet):
-    queryset = MushroomSpecimen.objects.all().select_related( 'user' , 'species', 'status', 'ecosystem', 'recolection_area_status' , 'city' , 'cap' , 'form') 
+    queryset = MushroomSpecimen.objects.all().select_related( 'user' , 'species', 'status', 'ecosystem', 'recolection_area_status' , 'city' , 'cap' , 'forms') 
     serializer_class = MushroomSpecimenSerializer
     permission_classes = [permissions.DjangoModelPermissions]
     http_method_names = ['get', 'post', 'head' , 'put' , 'patch']
