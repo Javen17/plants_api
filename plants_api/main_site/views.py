@@ -348,7 +348,7 @@ class SpeciesViewSet(BaseGoogleFixClass, viewsets.ModelViewSet):
 
 class PlantSpecimenViewSet(BaseSpecimenPatchView , viewsets.ModelViewSet):
     serializer_class = PlantSpecimenSerializer
-    queryset = PlantSpecimen.objects.all()
+    queryset = PlantSpecimen.objects.all().select_related( 'user' , 'species', 'status', 'ecosystem', 'recolection_area_status' , 'city' , 'biostatus') 
     permission_classes = [permissions.DjangoModelPermissions]
     http_method_names = ['get', 'post', 'head' , 'put' , 'patch']
     model = PlantSpecimen
@@ -404,7 +404,7 @@ class PlantSpecimenViewSet(BaseSpecimenPatchView , viewsets.ModelViewSet):
     
 
 class MushroomSpecimenViewSet(BaseSpecimenPatchView , viewsets.ModelViewSet):
-    queryset = MushroomSpecimen.objects.all()
+    queryset = MushroomSpecimen.objects.all().select_related( 'user' , 'species', 'status', 'ecosystem', 'recolection_area_status' , 'city' , 'cap' , 'form') 
     serializer_class = MushroomSpecimenSerializer
     permission_classes = [permissions.DjangoModelPermissions]
     http_method_names = ['get', 'post', 'head' , 'put' , 'patch']
