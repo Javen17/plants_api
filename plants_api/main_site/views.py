@@ -16,40 +16,13 @@ from urllib.parse import parse_qs
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from rest_framework.mixins import UpdateModelMixin
-from plants_api.common.base_classes import BaseGoogleFixClass
+from plants_api.common.base_classes import BaseGoogleFixClass , SearchAndPatchMixin
 #from rest_framework.generics import ListCreateAPIView , RetrieveUpdateDestroyAPIView
 
-class BaseSpecimenPatchView(BaseGoogleFixClass , APIView):
-
-    def edit(self, request ,  pk , partial):
-        try:
-            select_obj = self.model.objects.get(id=pk)
-            serializer = self.serializer_class(select_obj, data=request.data, partial=partial)
-            if serializer.is_valid(raise_exception=True):
-                serializer.save()
-            return JsonResponse(serializer.data)
-        except Exception as e:
-            return JsonResponse({"result" : str(e)} , status = 400)
-
-
-class EcosystemViewSet(viewsets.ModelViewSet):
+class EcosystemViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
     queryset = Ecosystem.objects.all()
     serializer_class = EcosystemSerializer
     permission_classes = [permissions.DjangoModelPermissions]
-
-    @action(methods=['get'], detail=False)
-    def search(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , EcosystemSerializer , "OR")
-
-        return JsonResponse(result, safe=False)
-
-    @action(methods=['get'], detail=False)
-    def filter(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , EcosystemSerializer , "AND")
-
-        return JsonResponse(result, safe=False)
 
     def get_permissions(self):
         if self.action == "retrieve" or self.action == "list":
@@ -57,49 +30,20 @@ class EcosystemViewSet(viewsets.ModelViewSet):
         return super(EcosystemViewSet, self).get_permissions()
 
 
-class RecolectionAreaStatusViewSet(viewsets.ModelViewSet):
+class RecolectionAreaStatusViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
     queryset = RecolectionAreaStatus.objects.all()
     serializer_class = RecolectionAreaStatusSerializer
     permission_classes = [permissions.DjangoModelPermissions]
-
-
-    @action(methods=['get'], detail=False)
-    def search(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , RecolectionAreaStatusSerializer , "OR")
-
-        return JsonResponse(result, safe=False)
-
-    @action(methods=['get'], detail=False)
-    def filter(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , RecolectionAreaStatusSerializer , "AND")
-
-        return JsonResponse(result, safe=False)
 
     def get_permissions(self):
         if self.action == "retrieve" or self.action == "list":
             return [permissions.AllowAny(), ]
         return super(RecolectionAreaStatusViewSet, self).get_permissions()
 
-class BiostatusViewSet(viewsets.ModelViewSet):
+class BiostatusViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
     queryset = Biostatus.objects.all()
     serializer_class = BiostatusSerializer
     permission_classes = [permissions.DjangoModelPermissions]
-
-    @action(methods=['get'], detail=False)
-    def search(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , BiostatusSerializer , "OR")
-
-        return JsonResponse(result, safe=False)
-
-    @action(methods=['get'], detail=False)
-    def filter(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , BiostatusSerializer , "AND")
-
-        return JsonResponse(result, safe=False)
 
     def get_permissions(self):
         if self.action == "retrieve" or self.action == "list":
@@ -107,24 +51,9 @@ class BiostatusViewSet(viewsets.ModelViewSet):
         return super(BiostatusViewSet, self).get_permissions()
 
 
-class StatusViewSet(viewsets.ModelViewSet):
+class StatusViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
     queryset = Status.objects.all()
     serializer_class = StatusSerializer
-
-
-    @action(methods=['get'], detail=False)
-    def search(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , StatusSerializer , "OR")
-
-        return JsonResponse(result, safe=False)
-
-    @action(methods=['get'], detail=False)
-    def filter(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , StatusSerializer , "AND")
-
-        return JsonResponse(result, safe=False)
 
     def get_permissions(self):
         if self.action == "retrieve" or self.action == "list":
@@ -132,7 +61,7 @@ class StatusViewSet(viewsets.ModelViewSet):
         return super(StatusViewSet, self).get_permissions()
 
 
-class FamilyViewSet(viewsets.ModelViewSet):
+class FamilyViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
     """
     API endpoint that allows groups to be viewed or edited.
     """
@@ -140,44 +69,15 @@ class FamilyViewSet(viewsets.ModelViewSet):
     serializer_class = FamilySerializer
     permission_classes = [permissions.DjangoModelPermissions]
 
-    @action(methods=['get'], detail=False)
-    def search(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , FamilySerializer , "OR")
-
-        return JsonResponse(result, safe=False)
-
-    @action(methods=['get'], detail=False)
-    def filter(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , FamilySerializer , "AND")
-
-        return JsonResponse(result, safe=False)
-
     def get_permissions(self):
         if self.action == "retrieve" or self.action == "list":
             return [permissions.AllowAny(), ]
         return super(FamilyViewSet, self).get_permissions()
 
-class GenusViewSet(viewsets.ModelViewSet):
+class GenusViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
     queryset = Genus.objects.all()
     serializer_class = GenusSerializer
     permission_classes = [permissions.DjangoModelPermissions]
-
-
-    @action(methods=['get'], detail=False)
-    def search(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , GenusSerializer , "OR")
-
-        return JsonResponse(result, safe=False)
-
-    @action(methods=['get'], detail=False)
-    def filter(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , GenusSerializer , "AND")
-
-        return JsonResponse(result, safe=False)
 
     def get_permissions(self):
         if self.action == "retrieve" or self.action == "list":
@@ -185,25 +85,10 @@ class GenusViewSet(viewsets.ModelViewSet):
         return super(GenusViewSet, self).get_permissions()
 
 
-class CountryViewSet(viewsets.ModelViewSet):
+class CountryViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
     permission_classes = [permissions.DjangoModelPermissions]
-
-
-    @action(methods=['get'], detail=False)
-    def search(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , CountrySerializer , "OR")
-
-        return JsonResponse(result, safe=False)
-
-    @action(methods=['get'], detail=False)
-    def filter(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , CountrySerializer , "AND")
-
-        return JsonResponse(result, safe=False)
 
     def get_permissions(self):
         if self.action == "retrieve" or self.action == "list":
@@ -211,25 +96,10 @@ class CountryViewSet(viewsets.ModelViewSet):
         return super(CountryViewSet, self).get_permissions()
 
 
-class StateViewSet(viewsets.ModelViewSet):
+class StateViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
     queryset = State.objects.all()
     serializer_class = StateSerializer
     permission_classes = [permissions.DjangoModelPermissions]
-
-
-    @action(methods=['get'], detail=False)
-    def search(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , StateSerializer , "OR")
-
-        return JsonResponse(result, safe=False)
-
-    @action(methods=['get'], detail=False)
-    def filter(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , StateSerializer , "AND")
-
-        return JsonResponse(result, safe=False)
 
     def get_permissions(self):
         if self.action == "retrieve" or self.action == "list":
@@ -237,50 +107,20 @@ class StateViewSet(viewsets.ModelViewSet):
         return super(StateViewSet, self).get_permissions()
 
 
-class CityViewSet(viewsets.ModelViewSet):
+class CityViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
     queryset = City.objects.all()
     serializer_class = CitySerializer
     permission_classes = [permissions.DjangoModelPermissions]
-
-
-    @action(methods=['get'], detail=False)
-    def search(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , CitySerializer , "OR")
-
-        return JsonResponse(result, safe=False)
-
-    @action(methods=['get'], detail=False)
-    def filter(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , CitySerializer , "AND")
-
-        return JsonResponse(result, safe=False)
 
     def get_permissions(self):
         if self.action == "retrieve" or self.action == "list":
             return [permissions.AllowAny(), ]
         return super(CityViewSet, self).get_permissions()
 
-class CapTypeViewSet(viewsets.ModelViewSet):
+class CapTypeViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
     queryset = CapType.objects.all()
     serializer_class = CapTypeSerializer
     permission_classes = [permissions.DjangoModelPermissions]
-
-
-    @action(methods=['get'], detail=False)
-    def search(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , CapTypeSerializer , "OR")
-
-        return JsonResponse(result, safe=False)
-
-    @action(methods=['get'], detail=False)
-    def filter(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , CapTypeSerializer , "AND")
-
-        return JsonResponse(result, safe=False)
 
     def get_permissions(self):
         if self.action == "retrieve" or self.action == "list":
@@ -288,65 +128,30 @@ class CapTypeViewSet(viewsets.ModelViewSet):
         return super(CapTypeViewSet, self).get_permissions()
 
 
-class FormTypeViewSet(viewsets.ModelViewSet):
+class FormTypeViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
     queryset = FormType.objects.all()
     serializer_class = FormTypeSerializer
     permission_classes = [permissions.DjangoModelPermissions]
-
-
-    @action(methods=['get'], detail=False)
-    def search(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , FormTypeSerializer , "OR")
-
-        return JsonResponse(result, safe=False)
-
-    @action(methods=['get'], detail=False)
-    def filter(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , FormTypeSerializer , "AND")
-
-        return JsonResponse(result, safe=False)
 
     def get_permissions(self):
         if self.action == "retrieve" or self.action == "list":
             return [permissions.AllowAny(), ]
         return super(FormTypeViewSet, self).get_permissions()
 
-class SpeciesViewSet(BaseGoogleFixClass, viewsets.ModelViewSet):
+class SpeciesViewSet(BaseGoogleFixClass , SearchAndPatchMixin, viewsets.ModelViewSet):
     serializer_class = SpeciesSerializer
     queryset = Species.objects.all()
     parser_class = (FileUploadParser,)
     exclude_serializer = SpeciesExcludeSerializer
-
     permission_classes = [permissions.DjangoModelPermissions]
 
-    @action(methods=['get'], detail=False)
-    def search(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , SpeciesSerializer , "OR")
-
-        return JsonResponse(result, safe=False)
-
-    @action(methods=['get'], detail=False)
-    def filter(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , SpeciesSerializer , "AND")
-
-        return JsonResponse(result, safe=False)
-
     def get_permissions(self):
-        if self.action == "retrieve" or self.action == "list":
+        if self.action in ["list" , "retrieve" , "search", "filter"]:
             return [permissions.AllowAny(), ]
         return super(SpeciesViewSet, self).get_permissions()
 
-#class SpecimenStatusViewSet(viewsets.ModelViewSet):
-#    serializer_class = SpecimenStatusSerializer
-#    queryset = SpecimenStatus
 
-
-
-class PlantSpecimenViewSet(BaseSpecimenPatchView , viewsets.ModelViewSet):
+class PlantSpecimenViewSet(BaseGoogleFixClass , SearchAndPatchMixin  , viewsets.ModelViewSet):
     serializer_class = PlantSpecimenSerializer
     queryset = PlantSpecimen.objects.all().select_related( 'user' , 'species', 'status', 'ecosystem', 'recolection_area_status' , 'city' , 'biostatus') 
     permission_classes = [permissions.DjangoModelPermissions]
@@ -387,7 +192,13 @@ class PlantSpecimenViewSet(BaseSpecimenPatchView , viewsets.ModelViewSet):
     @action(methods=['get'], detail=False)
     def search(self, request, pk=None):
         params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , PlantSpecimenSerializer , "OR")
+
+        if request.user.has_perm("view_plantspecimen"):
+            queryset = self.queryset
+        else:
+            queryset = self.queryset.filter(approved = True)
+
+        result = helpers.search(queryset , params , PlantSpecimenSerializer , "OR")
         return JsonResponse(result, safe=False)
 
     @action(methods=['get'], detail=False)
@@ -403,7 +214,7 @@ class PlantSpecimenViewSet(BaseSpecimenPatchView , viewsets.ModelViewSet):
         return JsonResponse(result, safe=False)     
     
 
-class MushroomSpecimenViewSet(BaseSpecimenPatchView , viewsets.ModelViewSet):
+class MushroomSpecimenViewSet(BaseGoogleFixClass , SearchAndPatchMixin , viewsets.ModelViewSet):
     queryset = MushroomSpecimen.objects.all().select_related( 'user' , 'species', 'status', 'ecosystem', 'recolection_area_status' , 'city' , 'cap' , 'forms') 
     serializer_class = MushroomSpecimenSerializer
     permission_classes = [permissions.DjangoModelPermissions]
@@ -444,14 +255,27 @@ class MushroomSpecimenViewSet(BaseSpecimenPatchView , viewsets.ModelViewSet):
     @action(methods=['get'], detail=False)
     def search(self, request, pk=None):
         params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , GroupSerializer , "OR")
+
+        if request.user.has_perm("view_mushroomspecimen"):
+            queryset = self.queryset
+        else:
+            queryset = self.queryset.filter(approved = True)
+
+        result = helpers.search(queryset , params , MushroomSpecimenSerializer  , "OR")
 
         return JsonResponse(result, safe=False)
 
     @action(methods=['get'], detail=False)
     def filter(self, request, pk=None):
         params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , GroupSerializer , "AND")
+
+        
+        if request.user.has_perm("view_mushroomspecimen"):
+            queryset = self.queryset
+        else:
+            queryset = self.queryset.filter(approved = True)
+
+        result = helpers.search(queryset , params , MushroomSpecimenSerializer , "AND")
 
         return JsonResponse(result, safe=False)
 

@@ -29,7 +29,7 @@ from django.utils.html import strip_tags
 from django.conf import settings
 from . import forms
 from django.http import Http404
-from plants_api.common.base_classes import BaseGoogleFixClass
+from plants_api.common.base_classes import BaseGoogleFixClass , SearchAndPatchMixin
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -39,29 +39,14 @@ from rest_framework_simplejwt.views import (
 User = get_user_model()
 
 
-class ProfileViewSet(BaseGoogleFixClass , viewsets.ModelViewSet):
+class ProfileViewSet(BaseGoogleFixClass , SearchAndPatchMixin , viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
     permission_classes = [permissions.DjangoModelPermissions]
     exclude_serializer = ProfileExcludeSerializer
     
-
-    @action(methods=['get'], detail=False)
-    def search(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , ProfileSerializer , "OR")
-        return JsonResponse(result, safe=False)
-
-    @action(methods=['get'], detail=False)
-    def filter(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , ProfileSerializer , "AND")
-
-        return JsonResponse(result, safe=False)
-
-
-
-class UserViewSet(BaseGoogleFixClass ,viewsets.ModelViewSet):
+    
+class UserViewSet(BaseGoogleFixClass , SearchAndPatchMixin ,viewsets.ModelViewSet):
     queryset = User.objects.all().select_related('profile' , 'auth_token')
     serializer_class =  UserSerializer
     permission_classes = [permissions.DjangoModelPermissions]
@@ -121,22 +106,6 @@ class UserViewSet(BaseGoogleFixClass ,viewsets.ModelViewSet):
             return Response({"result" : UserSerializer(user).data })
 
         return Response(serializer.errors , status = status.HTTP_400_BAD_REQUEST)
-
-
-    @action(methods=['get'], detail=False)
-    def search(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , UserSerializer , "OR")
-
-        return JsonResponse(result, safe=False)
-
-
-    @action(methods=['get'], detail=False)
-    def filter(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , UserSerializer , "AND")
-
-        return JsonResponse(result, safe=False)
 
 
     @action(methods=['get'], detail = True)
@@ -220,14 +189,10 @@ class GeneratePermanentTokenView(APIView):
             print("the user has no cookie or the user has a cookie that should represent the permanent token but it is invalid")
 
         try:
-            access_token = request.COOKIES["token-access"]
-            validated_token = jwt.get_validated_token(access_token)
-
-            user = jwt.get_user(validated_token)
-
-            retrieved_permanent_token , created = Token.objects.get_or_create(user=user)
-
-            print(created)
+            #access_token = request.COOKIES["token-access"]    
+            #validated_token = jwt.get_validated_token(access_token)
+           # user = jwt.get_user(validated_token)
+            retrieved_permanent_token , created = Token.objects.get_or_create(user=request.user)
 
             response = JsonResponse({"result" : "Success"} , status = 200)
 
