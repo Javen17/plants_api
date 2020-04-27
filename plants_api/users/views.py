@@ -53,6 +53,9 @@ class UserViewSet(BaseGoogleFixClass , SearchAndPatchMixin ,viewsets.ModelViewSe
     permission_classes = [permissions.DjangoModelPermissions]
     exclude_serializer = UserExcludeSerializer
 
+    def get_permissions(self):
+         return super(viewsets.ModelViewSet , self).get_permissions()
+
     def create(self, validated_data):
 
         groups = validated_data.data.pop('groups')
@@ -246,9 +249,10 @@ class ModifyMyAccount(BasePatchClass , APIView):
         try :
             if self.request.user.is_anonymous:
                 return JsonResponse({"result" : "You must be logged in to modify your account"} , status = 401)
-            return self.edit(self.request , self.request.user.id , partial)
+            self.edit(self.request , self.request.user.id , partial)
+            return JsonResponse{"result" : "Success at modification" }
         except Exception as e:
-            return JsonResponse({"result" : "Something went wrong" + str(e)} , status = 500)
+            return JsonResponse({"result" : "Something went wrong"} , status = 500)
 
 #todo password recovery
 
