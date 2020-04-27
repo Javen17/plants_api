@@ -249,12 +249,16 @@ class ModifyMyAccount(BasePatchClass , APIView):
         try :
             if self.request.user.is_anonymous:
                 return JsonResponse({"result" : "You must be logged in to modify your account"} , status = 401)
+            
+            #if self.request.user.
+
+            #if self.user.is_staff
+
             self.edit(self.request , self.request.user.id , partial)
-            return JsonResponse{"result" : "Success at modification" }
+            return JsonResponse({"result" : "Success at modification"})
         except Exception as e:
             return JsonResponse({"result" : "Something went wrong"} , status = 500)
 
-#todo password recovery
 
 class ModifyMyProfile( ModifyMyAccount ,BasePatchClass , APIView):
     http_method_names = ["Put" , "Patch"]
@@ -289,15 +293,18 @@ class SignUpViewSet(mixins.CreateModelMixin , viewsets.GenericViewSet):
 
     def create(self, validated_data):
         try:
-            groups = None
-            permissions = None
 
             if validated_data.data.get('date_joined'):
                 date_joined =  validated_data.data.pop('date_joined')
             if validated_data.data.get('groups'):
-                groups = validated_data.data.pop('groups')
+                validated_data.data.pop('groups')
             if validated_data.data.get('user_permissions'):
-                permissions = validated_data.data.pop('user_permissions')
+                validated_data.data.pop('user_permissions')
+
+            groups = None
+            permissions = None    
+            validated_data.data["is_superuser"] = False
+            validated_data.data["is_staff"] = False
 
             username = validated_data.data.get('username')
             email = validated_data.data.get('email')

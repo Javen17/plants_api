@@ -110,7 +110,7 @@ class PlantSpecimenViewSet(BaseGoogleFixClass , viewsets.ModelViewSet , SearchAn
             queryset = self.queryset.filter(approved = True)
         
         plant = get_object_or_404(queryset, pk=pk)
-        serializer = self.serializer_class(plant)
+        serializer = self.exclude_serializer(plant)
         return JsonResponse(serializer.data)
 
     def list(self , request , pk= None):
@@ -120,7 +120,7 @@ class PlantSpecimenViewSet(BaseGoogleFixClass , viewsets.ModelViewSet , SearchAn
             queryset = self.queryset.filter(approved = True)
         
         plants = queryset.all()
-        serializer = self.serializer_class(plants , many = True)
+        serializer = self.exclude_serializer(plants , many = True)
         return JsonResponse(serializer.data, safe = False)
 
     def get_permissions(self):
@@ -140,19 +140,19 @@ class PlantSpecimenViewSet(BaseGoogleFixClass , viewsets.ModelViewSet , SearchAn
         else:
             queryset = self.queryset.filter(approved = True)
 
-        result = helpers.search(queryset , params , PlantSpecimenSerializer , "OR")
+        result = helpers.search(queryset , params , self.exclude_serializer , "OR")
         return JsonResponse(result, safe=False)
 
     @action(methods=['get'], detail=False)
     def filter(self, request, pk=None):
         params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , PlantSpecimenSerializer , "AND")
+        result = helpers.search(self.queryset , params , self.exclude_serializer , "AND")
 
         return JsonResponse(result, safe=False)
 
     @action(methods=['get'] , detail=False)
     def approved(self, request , pk=None):
-        result =  self.serializer_class(self.queryset.filter(approved=True), many = True).data
+        result =  self.exclude_serializer(self.queryset.filter(approved=True), many = True).data
         return JsonResponse(result, safe=False)     
     
 
@@ -188,7 +188,7 @@ class MushroomSpecimenViewSet(BaseGoogleFixClass , SearchAndPatchMixin , viewset
             queryset = self.queryset.filter(approved = True)
         
         mushroom = get_object_or_404(queryset, pk=pk)
-        serializer = self.serializer_class(mushroom)
+        serializer = self.exclude_serializer(mushroom)
         return JsonResponse(serializer.data)
 
     def list(self , request , pk= None):
@@ -199,7 +199,7 @@ class MushroomSpecimenViewSet(BaseGoogleFixClass , SearchAndPatchMixin , viewset
             queryset = self.queryset.filter(approved = True)
         
         mushrooms = queryset.all()
-        serializer = self.serializer_class(mushrooms , many = True)
+        serializer = self.exclude_serializer(mushrooms , many = True)
         return JsonResponse(serializer.data, safe = False)
 
 
@@ -215,7 +215,7 @@ class MushroomSpecimenViewSet(BaseGoogleFixClass , SearchAndPatchMixin , viewset
         else:
             queryset = self.queryset.filter(approved = True)
 
-        result = helpers.search(queryset , params , MushroomSpecimenSerializer  , "OR")
+        result = helpers.search(queryset , params , self.exclude_serializer , "OR")
 
         return JsonResponse(result, safe=False)
 
@@ -229,13 +229,13 @@ class MushroomSpecimenViewSet(BaseGoogleFixClass , SearchAndPatchMixin , viewset
         else:
             queryset = self.queryset.filter(approved = True)
 
-        result = helpers.search(queryset , params , MushroomSpecimenSerializer , "AND")
+        result = helpers.search(queryset , params , self.exclude_serializer , "AND")
 
         return JsonResponse(result, safe=False)
 
     @action(methods=['get'] , detail=False)
     def approved(self, request , pk=None):
-        result =  self.serializer_class(self.queryset.filter(approved=True), many = True).data
+        result =  self.exclude_serializer(self.queryset.filter(approved=True), many = True).data
         return JsonResponse(result, safe=False)        
 
 
