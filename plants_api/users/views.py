@@ -250,6 +250,7 @@ class ModifyMyAccount(BasePatchClass , APIView):
             if self.request.user.is_anonymous:
                 return JsonResponse({"result" : "You must be logged in to modify your account"} , status = 401)
             
+            
             #if self.request.user.
 
             #if self.user.is_staff
@@ -261,12 +262,8 @@ class ModifyMyAccount(BasePatchClass , APIView):
 
 
 class ModifyMyProfile( ModifyMyAccount ,BasePatchClass , APIView):
-    http_method_names = ["Put" , "Patch"]
     model = Profile
     serializer_class = ProfileSerializer
-
-        
-
 
 class MyPermissions(APIView):
     permission_classes = [permissions.IsAuthenticated]
