@@ -255,7 +255,7 @@ class ModifyMyAccount(BasePatchClass , APIView):
 
             #if self.user.is_staff
 
-            self.edit(self.request , self.request.user.id , partial)
+            #return self.edit(self.request , self.request.user.id , partial)
             return JsonResponse({"result" : "Success at modification"})
         except Exception as e:
             return JsonResponse({"result" : "Something went wrong"} , status = 500)
@@ -264,6 +264,26 @@ class ModifyMyAccount(BasePatchClass , APIView):
 class ModifyMyProfile( ModifyMyAccount ,BasePatchClass , APIView):
     model = Profile
     serializer_class = ProfileSerializer
+    queryset =  Profile.objects.all()
+
+    def update(self , request, partial  = False , pk = None):
+        try :
+            if self.request.user.is_anonymous:
+                return JsonResponse({"result" : "You must be logged in to modify your account"} , status = 401)
+            
+            #if self.request.user.
+
+            #if self.user.is_staff
+            profile = self.queryset.filter(user = self.request.user.id).first()
+
+            if profile is not None:
+                self.edit(self.request , profile.id , partial)
+                return JsonResponse({"result" : "Success at modification"})
+            else: 
+                JsonResponse({"result" : "Your profile wasn't found, create one if needed"} , status = 404)
+                #return JsonResponse({"result" : "Success at modification"})
+        except Exception as e:
+            return JsonResponse({"result" : "Something went wrong"} , status = 500)
 
 class MyPermissions(APIView):
     permission_classes = [permissions.IsAuthenticated]
