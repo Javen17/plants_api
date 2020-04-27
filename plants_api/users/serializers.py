@@ -42,6 +42,11 @@ class UserExcludeSerializer(UserSerializer):
         model = User
         exclude = ("password", "user_permissions" , "temporal_password")
 
+class UserSerializerWithPassword(UserSerializer):
+    class Meta:
+        model = User 
+        exclude = ()
+
 class GroupSerializer(serializers.ModelSerializer):
     #permissions = serializers.PrimaryKeyRelatedField(queryset= Permission.objects.all())
 

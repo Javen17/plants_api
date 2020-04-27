@@ -24,42 +24,19 @@ class EcosystemViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
     serializer_class = EcosystemSerializer
     permission_classes = [permissions.DjangoModelPermissions]
 
-    def get_permissions(self):
-        if self.action == "retrieve" or self.action == "list":
-            return [permissions.AllowAny(), ]
-        return super(EcosystemViewSet, self).get_permissions()
-
-
 class RecolectionAreaStatusViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
     queryset = RecolectionAreaStatus.objects.all()
     serializer_class = RecolectionAreaStatusSerializer
     permission_classes = [permissions.DjangoModelPermissions]
-
-    def get_permissions(self):
-        if self.action == "retrieve" or self.action == "list":
-            return [permissions.AllowAny(), ]
-        return super(RecolectionAreaStatusViewSet, self).get_permissions()
 
 class BiostatusViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
     queryset = Biostatus.objects.all()
     serializer_class = BiostatusSerializer
     permission_classes = [permissions.DjangoModelPermissions]
 
-    def get_permissions(self):
-        if self.action == "retrieve" or self.action == "list":
-            return [permissions.AllowAny(), ]
-        return super(BiostatusViewSet, self).get_permissions()
-
-
 class StatusViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
     queryset = Status.objects.all()
     serializer_class = StatusSerializer
-
-    def get_permissions(self):
-        if self.action == "retrieve" or self.action == "list":
-            return [permissions.AllowAny(), ]
-        return super(StatusViewSet, self).get_permissions()
-
 
 class FamilyViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
     """
@@ -69,74 +46,35 @@ class FamilyViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
     serializer_class = FamilySerializer
     permission_classes = [permissions.DjangoModelPermissions]
 
-    def get_permissions(self):
-        if self.action == "retrieve" or self.action == "list":
-            return [permissions.AllowAny(), ]
-        return super(FamilyViewSet, self).get_permissions()
-
 class GenusViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
     queryset = Genus.objects.all()
     serializer_class = GenusSerializer
     permission_classes = [permissions.DjangoModelPermissions]
-
-    def get_permissions(self):
-        if self.action == "retrieve" or self.action == "list":
-            return [permissions.AllowAny(), ]
-        return super(GenusViewSet, self).get_permissions()
-
 
 class CountryViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
     permission_classes = [permissions.DjangoModelPermissions]
 
-    def get_permissions(self):
-        if self.action == "retrieve" or self.action == "list":
-            return [permissions.AllowAny(), ]
-        return super(CountryViewSet, self).get_permissions()
-
-
 class StateViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
     queryset = State.objects.all()
     serializer_class = StateSerializer
     permission_classes = [permissions.DjangoModelPermissions]
-
-    def get_permissions(self):
-        if self.action == "retrieve" or self.action == "list":
-            return [permissions.AllowAny(), ]
-        return super(StateViewSet, self).get_permissions()
-
 
 class CityViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
     queryset = City.objects.all()
     serializer_class = CitySerializer
     permission_classes = [permissions.DjangoModelPermissions]
 
-    def get_permissions(self):
-        if self.action == "retrieve" or self.action == "list":
-            return [permissions.AllowAny(), ]
-        return super(CityViewSet, self).get_permissions()
-
 class CapTypeViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
     queryset = CapType.objects.all()
     serializer_class = CapTypeSerializer
     permission_classes = [permissions.DjangoModelPermissions]
 
-    def get_permissions(self):
-        if self.action == "retrieve" or self.action == "list":
-            return [permissions.AllowAny(), ]
-        return super(CapTypeViewSet, self).get_permissions()
-
-
 class FormTypeViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
     queryset = FormType.objects.all()
     serializer_class = FormTypeSerializer
     permission_classes = [permissions.DjangoModelPermissions]
-
-    def get_permissions(self):
-        if self.action == "retrieve" or self.action == "list":
-            return [permissions.AllowAny(), ]
-        return super(FormTypeViewSet, self).get_permissions()
 
 class SpeciesViewSet(BaseGoogleFixClass , SearchAndPatchMixin, viewsets.ModelViewSet):
     serializer_class = SpeciesSerializer
@@ -145,13 +83,7 @@ class SpeciesViewSet(BaseGoogleFixClass , SearchAndPatchMixin, viewsets.ModelVie
     exclude_serializer = SpeciesExcludeSerializer
     permission_classes = [permissions.DjangoModelPermissions]
 
-    def get_permissions(self):
-        if self.action in ["list" , "retrieve" , "search", "filter"]:
-            return [permissions.AllowAny(), ]
-        return super(SpeciesViewSet, self).get_permissions()
-
-
-class PlantSpecimenViewSet(BaseGoogleFixClass , SearchAndPatchMixin  , viewsets.ModelViewSet):
+class PlantSpecimenViewSet(BaseGoogleFixClass , viewsets.ModelViewSet , SearchAndPatchMixin):
     serializer_class = PlantSpecimenSerializer
     queryset = PlantSpecimen.objects.all().select_related( 'user' , 'species', 'status', 'ecosystem', 'recolection_area_status' , 'city' , 'biostatus') 
     permission_classes = [permissions.DjangoModelPermissions]
@@ -180,6 +112,16 @@ class PlantSpecimenViewSet(BaseGoogleFixClass , SearchAndPatchMixin  , viewsets.
         plant = get_object_or_404(queryset, pk=pk)
         serializer = self.serializer_class(plant)
         return JsonResponse(serializer.data)
+
+    def list(self , request , pk= None):
+        if request.user.has_perm("view_plantspecimen"):
+            queryset = self.queryset
+        else:
+            queryset = self.queryset.filter(approved = True)
+        
+        plants = queryset.all()
+        serializer = self.serializer_class(plants , many = True)
+        return JsonResponse(serializer.data, safe = False)
 
     def get_permissions(self):
         if self.action == "retrieve" or self.action == "approved":
@@ -249,6 +191,18 @@ class MushroomSpecimenViewSet(BaseGoogleFixClass , SearchAndPatchMixin , viewset
         serializer = self.serializer_class(mushroom)
         return JsonResponse(serializer.data)
 
+    def list(self , request , pk= None):
+
+        if request.user.has_perm("view_mushroomspecimen"):
+            queryset = self.queryset
+        else:
+            queryset = self.queryset.filter(approved = True)
+        
+        mushrooms = queryset.all()
+        serializer = self.serializer_class(mushrooms , many = True)
+        return JsonResponse(serializer.data, safe = False)
+
+
     def perform_create(self, serializer):
         return serializer.save(user=self.request.user)
 
@@ -269,7 +223,7 @@ class MushroomSpecimenViewSet(BaseGoogleFixClass , SearchAndPatchMixin , viewset
     def filter(self, request, pk=None):
         params = parse_qs(request.META['QUERY_STRING'])
 
-        
+        # very repetitive snippet should be made a decorator or a different implementation like changing changin the object queryset after checking user permissions TODO
         if request.user.has_perm("view_mushroomspecimen"):
             queryset = self.queryset
         else:

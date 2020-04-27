@@ -7,7 +7,8 @@ from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import viewsets , mixins
 from rest_framework.views import APIView
-from .serializers import UserSerializer , UserExcludeSerializer , ProfileSerializer , ProfileExcludeSerializer , GroupSerializer , PermissionSerializer
+from rest_framework.generics import UpdateAPIView
+from .serializers import UserSerializer , UserExcludeSerializer , UserSerializerWithPassword , ProfileSerializer , ProfileExcludeSerializer , GroupSerializer , PermissionSerializer
 from rest_framework import permissions
 from plants_api.helpers import helpers
 from rest_framework.decorators import action
@@ -29,7 +30,7 @@ from django.utils.html import strip_tags
 from django.conf import settings
 from . import forms
 from django.http import Http404
-from plants_api.common.base_classes import BaseGoogleFixClass , SearchAndPatchMixin
+from plants_api.common.base_classes import BaseGoogleFixClass , SearchAndPatchMixin , BasePatchClass
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -51,7 +52,6 @@ class UserViewSet(BaseGoogleFixClass , SearchAndPatchMixin ,viewsets.ModelViewSe
     serializer_class =  UserSerializer
     permission_classes = [permissions.DjangoModelPermissions]
     exclude_serializer = UserExcludeSerializer
-
 
     def create(self, validated_data):
 
@@ -231,7 +231,35 @@ class WhoAmIView(APIView):
         except:
             return JsonResponse({"status":"Bad Request"} ,  status = 400)
 
+
+class ModifyMyAccount(BasePatchClass , APIView):
+    model = User
+    serializer_class = UserSerializerWithPassword
+
+    def patch(self, request ,  pk = None):
+        return self.update(self , request , True)
     
+    def put(self , request , pk = None):
+        return self.update(self , request , False)
+
+    def update(self , request, partial  = False , pk = None):
+        try :
+            if self.request.user.is_anonymous:
+                return JsonResponse({"result" : "You must be logged in to modify your account"} , status = 401)
+            return self.edit(self.request , self.request.user.id , partial)
+        except Exception as e:
+            return JsonResponse({"result" : "Something went wrong" + str(e)} , status = 500)
+
+#todo password recovery
+
+class ModifyMyProfile( ModifyMyAccount ,BasePatchClass , APIView):
+    http_method_names = ["Put" , "Patch"]
+    model = Profile
+    serializer_class = ProfileSerializer
+
+        
+
+
 class MyPermissions(APIView):
     permission_classes = [permissions.IsAuthenticated]
 

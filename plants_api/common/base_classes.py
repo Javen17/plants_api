@@ -2,6 +2,7 @@ from rest_framework.decorators import action
 from plants_api.helpers import helpers
 from urllib.parse import parse_qs
 from django.http import JsonResponse
+from rest_framework import permissions
 
 #Making them abstract would maybe be a good idea.
 
@@ -25,6 +26,11 @@ class BaseGoogleFixClass:
 
 class BaseSearchAndFilterClass:
     
+    def get_permissions(self):
+        if self.action in ["list" , "retrieve" , "search", "filter"]:
+            return [permissions.AllowAny(), ]
+        return super().get_permissions()
+    
     @action(methods=['get'], detail=False)
     def search(self, request, pk=None):
         params = parse_qs(request.META['QUERY_STRING'])
@@ -37,8 +43,7 @@ class BaseSearchAndFilterClass:
         result = helpers.search(self.queryset , params , self.serializer_class  , "AND")
         return JsonResponse(result, safe=False)
 
-
-
+ 
 class BasePatchClass: 
 
     def edit(self, request ,  pk , partial):

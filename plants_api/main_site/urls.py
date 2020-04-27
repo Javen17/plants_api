@@ -32,6 +32,7 @@ router.register(r'group', user_views.GroupViewSet)
 router.register(r'permission' , user_views.PermissionViewSet)
 router.register(r'sign_up' , user_views.SignUpViewSet)
 
+
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
@@ -41,6 +42,8 @@ urlpatterns = [
     path('delete_permanent_login/', user_views.RemovePermanentTokenView.as_view(), name = 'remove_permanent_token'),
     path('me/',user_views.WhoAmIView.as_view(), name = 'who_am_i'),
     path('me/my_permissions/', user_views.MyPermissions.as_view() , name = 'my_permissions'),
+    re_path(r'^me/modify_account/$', user_views.ModifyMyAccount.as_view() , name = 'modify_account'),   #TODO this should be actions over the same view.
+    re_path(r'^me/modify_profile/$', user_views.ModifyMyProfile.as_view() , name = 'modify_profile'),
     path('stats/',views.StatsView.as_view(), name = 'stats'),
     path('notification_test/',views.NotificationDemoView.as_view(), name = 'not'),
     path('me/restore_password/', user_views.RestorePassword.as_view() , name = 'restore_password'),
