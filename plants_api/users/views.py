@@ -255,7 +255,7 @@ class ModifyMyAccount(BasePatchClass , APIView):
 
             #if self.user.is_staff
 
-            #return self.edit(self.request , self.request.user.id , partial)
+            self.edit(self.request , self.request.user.id , partial)
             return JsonResponse({"result" : "Success at modification"})
         except Exception as e:
             return JsonResponse({"result" : "Something went wrong"} , status = 500)
