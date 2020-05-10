@@ -91,6 +91,11 @@ class PlantSpecimenViewSet(BaseGoogleFixClass , viewsets.ModelViewSet , SearchAn
     model = PlantSpecimen
     exclude_serializer = PlantSpecimenExcludeSerializer
 
+    def get_permissions(self):
+        if self.action in ["list" , "retrieve" , "search", "filter" , "approved"]:
+            return [permissions.AllowAny(), ]
+        return super().get_permissions()
+
     def update(self, request, partial  = False , pk = None):
 
         if pk is not None:
@@ -122,11 +127,6 @@ class PlantSpecimenViewSet(BaseGoogleFixClass , viewsets.ModelViewSet , SearchAn
         plants = queryset.all()
         serializer = self.exclude_serializer(plants , many = True)
         return JsonResponse(serializer.data, safe = False)
-
-    def get_permissions(self):
-        if self.action == "retrieve" or self.action == "approved":
-            return [permissions.AllowAny(), ]
-        return super(PlantSpecimenViewSet, self).get_permissions()
 
     def perform_create(self, serializer):
         return serializer.save(user=self.request.user)
@@ -164,6 +164,13 @@ class MushroomSpecimenViewSet(BaseGoogleFixClass , SearchAndPatchMixin , viewset
     model = MushroomSpecimen
     exclude_serializer = MushroomSpecimenExcludeSerializer
 
+
+    def get_permissions(self):
+        if self.action in ["list" , "retrieve" , "search", "filter" , "approved"]:
+            return [permissions.AllowAny(), ]
+        return super().get_permissions()
+
+
     def update(self , request, partial  = False , pk = None):
 
         if pk is not None:
@@ -176,11 +183,6 @@ class MushroomSpecimenViewSet(BaseGoogleFixClass , SearchAndPatchMixin , viewset
         else:
             return JsonResponse({"result" : "Bad Request"} , status = 400)
                 
-    def get_permissions(self):
-        if self.action == "retrieve" or self.action == "approved":
-            return [permissions.AllowAny(), ]
-        return super(MushroomSpecimenViewSet, self).get_permissions()
-
     def retrieve(self, request, pk=None):
         if request.user.has_perm("view_mushroomspecimen"):
             queryset = self.queryset
