@@ -13,7 +13,6 @@ class CustomAuthMiddleware:
     def __call__(self, request):
 
         try:
-            print(request.COOKIES)
             access_token = request.COOKIES["token-access"]
             refresh_token = request.COOKIES["token-refresh"]
         except:

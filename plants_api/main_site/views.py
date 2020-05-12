@@ -97,7 +97,7 @@ class PlantSpecimenViewSet(BaseGoogleFixClass , viewsets.ModelViewSet , SearchAn
         return super().get_permissions()
 
     def update(self, request, partial  = False , pk = None):
-
+        
         if pk is not None:
             approved = request.data.get("approved")
 

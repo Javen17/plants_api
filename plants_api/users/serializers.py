@@ -42,6 +42,7 @@ class UserExcludeSerializer(UserSerializer):
         model = User
         exclude = ("password", "user_permissions" , "temporal_password")
 
+#use carefully
 class UserSerializerWithPassword(UserSerializer):
     class Meta:
         model = User 

@@ -60,62 +60,62 @@ class UserViewSet(BaseGoogleFixClass , SearchAndPatchMixin ,viewsets.ModelViewSe
 
         groups = validated_data.data.pop('groups')
         permissions = validated_data.data.pop('user_permissions')
-        clearPassNoHash = validated_data.data['password']
+        
+        valid  = validate_user(self.request, validated_data)      
+        
+        if valid != True:
+            return valid
 
-        user = User.objects.create_user(**validated_data.data)
-        for group in groups:
-            user.groups.add(group)
+        try:
+            user = User.objects.create_user(**validated_data.data)
 
-        for permission in permissions:
-            user.user_permissions.add(permission)
+            for group in groups:
+                user.groups.add(group)
+
+            for permission in permissions:
+                user.user_permissions.add(permission)
+
+        except Exception as e:
+            return JsonResponse({"result": "Invalid data try again, if this issue persists contact an administrator."})
 
         return JsonResponse({"result" : "user added" })
 
-    def update(self, request, pk=None):
+    def update(self, request, partial  , pk=None):
+        
+        try:
+            user = User.objects.filter(pk=pk).first()         
+            valid  = validate_user(self.request, request , user)      
 
-        if pk is not None:
+            if valid != True:
+                return valid
 
-            user = User.objects.filter(pk=pk).first()
-
-            try:
-                del request.data["password"]
-            except:
-                pass
-
-            try:
-                user.groups.clear()
-
+            if hasattr(request.data, "groups"):
+                if hasattr(user, "groups"):
+                    user.groups.clear()  
                 for group in request.data["groups"]:
                     user.groups.add(group)
-
-                del request.data["groups"]
-            except:
-                pass
-
-            try:
-                user.permissions.clear()
-
+            
+            if hasattr(request.data, "user_permissions"):
+                if hasattr(user, "user_permissions"):
+                    user.user_permissions.clear()
                 for permission in request.data["user_permissions"]:
                     user.user_permissions.add(permission)
 
-                del request.data["user_permissions"]
-            except:
-                pass
+            request.data.pop("groups", None)
+            request.data.pop("user_permissions", None)
 
             for value in request.data:
                 setattr(user, value, request.data[value])
+                user.save()
 
-            user.save()
             return Response({"result" : UserSerializer(user).data })
-
-        return Response(serializer.errors , status = status.HTTP_400_BAD_REQUEST)
+        except:
+            JsonResponse({"result" : "Something went wrong"})
 
 
     @action(methods=['get'], detail = True)
     def get_user_permissions(self , request , pk):
-
         user =  User.objects.filter(pk = pk).first()
-
         if user.is_superuser:
             permissions = Permission.objects.all().values()
         else:
@@ -123,13 +123,11 @@ class UserViewSet(BaseGoogleFixClass , SearchAndPatchMixin ,viewsets.ModelViewSe
 
         return JsonResponse(list(permissions), safe = False)
 
-
     @action(methods=['get'], detail = True)
     def get_user_groups(self , request , pk):
 
         user =  User.objects.filter(pk = pk).first()
         groups = user.groups.all().values()
-
 
         return JsonResponse(list(groups), safe = False)
 
@@ -141,9 +139,13 @@ class RestorePassword(APIView):
         form = json.loads(request.body)
 
         try:
-        
             email = form["email"]
-            user = User.objects.get(email  = email)
+
+            try:
+                user = User.objects.get(email  = email)
+            except:
+                return JsonResponse({ "result" : "That email doesn't exist in our database" } , status = 400)
+
             temporal = helpers.get_temporal_password(user)
             html_message = render_to_string('restore_password_mail_template.html', {'username': user.username , "link" : settings.DOMAIN_NAME + "/api/me/new_password/?code="  + temporal})   
 
@@ -155,7 +157,7 @@ class RestorePassword(APIView):
             fail_silently=False,
             html_message = html_message
              )
-            return JsonResponse( {"result" : email} )
+            return JsonResponse( {"result" : "Check your email"} )
         except: 
             return JsonResponse({"result": "Bad Request"} , status = 400)
 
@@ -249,15 +251,15 @@ class ModifyMyAccount(BasePatchClass , APIView):
         try :
             if self.request.user.is_anonymous:
                 return JsonResponse({"result" : "You must be logged in to modify your account"} , status = 401)
-            
-            
-            #if self.request.user.
 
-            #if self.user.is_staff
+            valid  = validate_user(self.request, self.request , self.request.user)   #man just use request
+
+            if valid != True:
+                return valid
 
             self.edit(self.request , self.request.user.id , partial)
             return JsonResponse({"result" : "Success at modification"})
-        except Exception as e:
+        except:
             return JsonResponse({"result" : "Something went wrong"} , status = 500)
 
 
@@ -270,10 +272,7 @@ class ModifyMyProfile( ModifyMyAccount ,BasePatchClass , APIView):
         try :
             if self.request.user.is_anonymous:
                 return JsonResponse({"result" : "You must be logged in to modify your account"} , status = 401)
-            
-            #if self.request.user.
-
-            #if self.user.is_staff
+   
             profile = self.queryset.filter(user = self.request.user.id).first()
 
             if profile is not None:
@@ -281,7 +280,6 @@ class ModifyMyProfile( ModifyMyAccount ,BasePatchClass , APIView):
                 return JsonResponse({"result" : "Success at modification"})
             else: 
                 JsonResponse({"result" : "Your profile wasn't found, create one if needed"} , status = 404)
-                #return JsonResponse({"result" : "Success at modification"})
         except Exception as e:
             return JsonResponse({"result" : "Something went wrong"} , status = 500)
 
@@ -318,23 +316,19 @@ class SignUpViewSet(mixins.CreateModelMixin , viewsets.GenericViewSet):
             if validated_data.data.get('user_permissions'):
                 validated_data.data.pop('user_permissions')
 
-            groups = None
-            permissions = None    
             validated_data.data["is_superuser"] = False
             validated_data.data["is_staff"] = False
-
-            username = validated_data.data.get('username')
-            email = validated_data.data.get('email')
+            
+            username = validated_data.data.get('username', None)
+            email = validated_data.data.get('email', None)
 
             invalid_username = True if User.objects.filter(username= username).exists() else False 
             invalid_email = True if User.objects.filter(email= email).exists() else False 
 
-            if invalid_username and invalid_email:
-                return JsonResponse({"result" : "username and email are invalid" } , status = 400)
-            if invalid_username:
-                return JsonResponse({"result" : "username is invalid" } , status = 400)
-            if invalid_email:
-                return JsonResponse({"result" : "email is invalid" } , status = 400)
+            valid = validate_username_and_password(invalid_username , invalid_email)     
+
+            if valid != True:
+                return valid
 
             user = User.objects.create_user(**validated_data.data)
 
@@ -342,74 +336,33 @@ class SignUpViewSet(mixins.CreateModelMixin , viewsets.GenericViewSet):
                 user.date_joined = datetime.now()
 
             user.save()
-
-            if groups is not None:
-                for group in groups:
-                    user.groups.add(group)
-
-            if permissions is not None:
-                for permission in permissions:
-                    user.user_permissions.add(permission)
-
             return JsonResponse({"result" : "user added" } , status = 200)
 
-        except Exception as e:
-            return JsonResponse({"result" : str(e) } , status = 400)
+        except:
+            return JsonResponse({"result" : "Something went wrong" } , status = 400)
 
-class GroupViewSet(viewsets.ModelViewSet):
+class GroupViewSet(SearchAndPatchMixin, viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     permission_classes = [permissions.DjangoModelPermissions]
 
+    def get_permissions(self):
+         return super(viewsets.ModelViewSet , self).get_permissions()
+
     @action(methods=['get'], detail = True)
     def get_group_permissions(self , request , pk):
-
         group =  Group.objects.filter(pk = pk).first()
         group_permissions = group.permissions.all().values()
-
-
         return JsonResponse(list(group_permissions), safe = False)
 
-    @action(methods=['get'], detail=False)
-    def search(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , GroupSerializer , "OR")
-
-        return JsonResponse(result , safe = False)
-
-    @action(methods=['get'], detail=False)
-    def filter(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , GroupsSerializer , "AND")
-
-        return JsonResponse(result , safe = False)
-
-
-class PermissionViewSet(viewsets.ModelViewSet):
-#    http_method_names = ['get']
-
+class PermissionViewSet(SearchAndPatchMixin, viewsets.ModelViewSet):
     queryset = Permission.objects.all()
     serializer_class = PermissionSerializer
     permission_classes = [permissions.DjangoModelPermissions]
 
-    @action(methods=['get'], detail=False)
-    def search(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , PermissionSerializer , "OR")
+    def get_permissions(self):
+        return super(viewsets.ModelViewSet , self).get_permissions()
 
-        return JsonResponse(result , safe = False)
-
-    @action(methods=['get'], detail=False)
-    def filter(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , PermissionSerializer , "AND")
-
-        return JsonResponse(result , safe = False)
-
-#class CustomObtainAuthToken(ObtainAuthToken):
-#    def post(self, request, *args, **kwargs):
-#        token = Token.objects.get(key=response.data['token'])
-#        return Response({'token': token.key, 'id': token.user_id})
 
 class UserDetailView(LoginRequiredMixin, DetailView):
 
@@ -488,3 +441,31 @@ class NewPasswordView(FormView):
 
 class SuccessUpdatedPassword(TemplateView):
     template_name = "users/success_updated_password.html"
+
+
+def validate_user(request , validated_data , user = None):
+    username = validated_data.data.get('username')
+    email = validated_data.data.get('email')
+
+    invalid_username = True if User.objects.filter(username= username).exists() else False 
+    invalid_email = True if User.objects.filter(email= email).exists() else False 
+
+    if request.method in ["PUT" , "PATCH"]:
+        if username == user.username:
+            invalid_username = False
+        if email  == user.email:
+            invalid_email = False
+
+    if not request.user.is_superuser and validated_data.data.get('is_superuser', None) == True:
+        return JsonResponse({"result" : "Forbidden you don't have the privileges for creating a super user" } , status = 403)
+
+    if not request.user.is_staff and validated_data.data.get('is_superuser', None) == True:
+        return JsonResponse({"result" : "Forbidden you don't have the privileges for creating a staff" } , status = 403)
+
+    if invalid_username and invalid_email:
+        return JsonResponse({"result" : "username and email are invalid" } , status = 400)
+    if invalid_username:
+         return JsonResponse({"result" : "username is invalid" } , status = 400)
+    if invalid_email:
+        return JsonResponse({"result" : "email is invalid" } , status = 400)
+    return True
