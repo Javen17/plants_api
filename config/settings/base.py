@@ -102,6 +102,7 @@ LOCAL_APPS = [
     "plants_api.common",
     "plants_api.users.apps.UsersConfig",
     "plants_api.main_site",
+    "plants_api.notifications",
     "plants_api.helpers"
     # Your stuff: custom apps go here
 ]

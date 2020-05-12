@@ -259,5 +259,5 @@ class StatsView(APIView):
 class NotificationDemoView(APIView):
 
     def get(self , request):
-        helpers.send_notification("e9S99OJXnrrHr6AaESoZQ-:APA91bGm3ZiKbPEH2fzH7c2S4ctkcGozCIp_bZ5XnEsTqmoDG3BdQXdVFpAbE9g_HwuLwiwA7eljRTOgTEZvxJ89EV2b5iE8FpxYIg1avbL6mstPSKL_Dy2xkVMO2kUrZgI-PZBdvDtX")
+        helpers.send_notification("egAn5eu7EA8:APA91bFc0sbm3hXXBvDJB6mSdQBiSjH0gtcm5mUvKC3R0EsKMLAHesv6fCyoUoah5ygnTT0Ib4TU6yvZbKmTrPu1vDh0mTBUzozQMeDVTQfu0he5fsdxnjkCdQffaJjiDwUP6dh94qHS")
         return JsonResponse({"result": "prueba"})
