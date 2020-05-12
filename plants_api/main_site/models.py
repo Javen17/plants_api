@@ -2,7 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_save , post_save
 from plants_api.users.models import User
 from gdstorage.storage import GoogleDriveStorage
 from config import settings 
@@ -149,6 +149,11 @@ class City(models.Model):
 
 
 class Specimen(models.Model):
+
+    def __init__(self, *args, **kwargs):
+        super(Specimen, self).__init__(*args, **kwargs)
+        self.original_approved = self.approved
+
     user = models.ForeignKey(User , on_delete=models.CASCADE , blank = False , default =0 ,  verbose_name="Usuario")
     photo = models.ImageField("Imagen" , upload_to="uploads/plant_family", storage=gd_storage)
     date_received =  models.DateTimeField("Fecha")
@@ -224,6 +229,17 @@ class MushroomSpecimen(Specimen):
         return "Espécimen de %s" % (self.species.common_name)
 
 pre_save.connect(helpers.save_image_url, sender=MushroomSpecimen)
+
+
+@receiver(post_save, sender=MushroomSpecimen)
+@receiver(post_save, sender=PlantSpecimen)
+def send_approved_message(sender, instance, **kwargs):
+    if instance.original_approved != instance.approved:
+        if instance.approved:
+            helpers.send_notification(instance.user.id, "Aprobación de ficha técnica" , "Hola " + instance.user.name  + " tu espécimen de " + instance.species.common_name  + " ha sido denegado")
+        else:
+            helpers.send_notification(instance.user.id, "Aprobación de ficha técnica" , "Hola " + instance.user.name  + " tu espécimen de " +  instance.species.common_name + "ha sido denegado")
+
 
 #@receiver(post_save, sender=settings.AUTH_USER_MODEL)
 #def create_auth_token(sender, instance=None, created=False, **kwargs):

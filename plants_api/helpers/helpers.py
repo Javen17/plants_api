@@ -60,10 +60,11 @@ def get_temporal_password(user):
     return unique_id
 
 
-def send_notification(gcm_reg_id):
-    device = GCMDevice.objects.get(registration_id=gcm_reg_id)
-    device.send_message(message={"title" : "Game Request", "body" : "remember, remember the fifth of november"}, extra={"foo": "bar"})
-    return 
+def send_notification(user , title ,  message):
+    devices = GCMDevice.objects.all().filter(user = user)
+    for device in devices:
+        device.send_message(message, extra={"title": title , "icon": "ic_leaf"})
+    #device = GCMDevice.objects.get(registration_id=gcm_reg_id)
 
 
 def save_image_url(sender, instance, **kwargs):

@@ -256,8 +256,10 @@ class StatsView(APIView):
 
         return JsonResponse({"result": result})
 
-class NotificationDemoView(APIView):
+#class NotificationDemoView(APIView):
 
-    def get(self , request):
-        helpers.send_notification("egAn5eu7EA8:APA91bFc0sbm3hXXBvDJB6mSdQBiSjH0gtcm5mUvKC3R0EsKMLAHesv6fCyoUoah5ygnTT0Ib4TU6yvZbKmTrPu1vDh0mTBUzozQMeDVTQfu0he5fsdxnjkCdQffaJjiDwUP6dh94qHS")
-        return JsonResponse({"result": "prueba"})
+#    def get(self , request):
+#        helpers.send_notification( "This is a enriched message" , "egAn5eu7EA8:APA91bFc0sbm3hXXBvDJB6mSdQBiSjH0gtcm5mUvKC3R0EsKMLAHesv6fCyoUoah5ygnTT0Ib4TU6yvZbKmTrPu1vDh0mTBUzozQMeDVTQfu0he5fsdxnjkCdQffaJjiDwUP6dh94qHS")
+#        return JsonResponse({"result": "prueba"})
+
+
