@@ -325,7 +325,7 @@ class SignUpViewSet(mixins.CreateModelMixin , viewsets.GenericViewSet):
             invalid_username = True if User.objects.filter(username= username).exists() else False 
             invalid_email = True if User.objects.filter(email= email).exists() else False 
 
-            valid = validate_username_and_password(invalid_username , invalid_email)     
+            valid = validate_username_and_password(invalid_username , invalid_email , check_email = False)     
 
             if valid != True:
                 return valid
@@ -443,7 +443,7 @@ class SuccessUpdatedPassword(TemplateView):
     template_name = "users/success_updated_password.html"
 
 
-def validate_user(request , validated_data , user = None):
+def validate_user(request , validated_data , user = None , check_email = True):
     username = validated_data.data.get('username')
     email = validated_data.data.get('email')
 
