@@ -61,7 +61,7 @@ class UserViewSet(BaseGoogleFixClass , SearchAndPatchMixin ,viewsets.ModelViewSe
         groups = validated_data.data.pop('groups')
         permissions = validated_data.data.pop('user_permissions')
         
-        valid  = validate_user(self.request, validated_data)      
+        valid  = validate_user(self.request, validated_data, check_email = False)      
         
         if valid != True:
             return valid
@@ -84,7 +84,7 @@ class UserViewSet(BaseGoogleFixClass , SearchAndPatchMixin ,viewsets.ModelViewSe
         
         try:
             user = User.objects.filter(pk=pk).first()         
-            valid  = validate_user(self.request, request , user)      
+            valid  = validate_user(self.request, request , user , check_email = False)      
 
             if valid != True:
                 return valid
@@ -252,7 +252,7 @@ class ModifyMyAccount(BasePatchClass , APIView):
             if self.request.user.is_anonymous:
                 return JsonResponse({"result" : "You must be logged in to modify your account"} , status = 401)
 
-            valid  = validate_user(self.request, self.request , self.request.user)   #man just use request
+            valid  = validate_user(self.request, self.request , self.request.user, check_email = False)   #man just use request
 
             if valid != True:
                 return valid
@@ -308,7 +308,6 @@ class SignUpViewSet(mixins.CreateModelMixin , viewsets.GenericViewSet):
 
     def create(self, validated_data):
         try:
-
             if validated_data.data.get('date_joined'):
                 date_joined =  validated_data.data.pop('date_joined')
             if validated_data.data.get('groups'):
@@ -318,14 +317,14 @@ class SignUpViewSet(mixins.CreateModelMixin , viewsets.GenericViewSet):
 
             validated_data.data["is_superuser"] = False
             validated_data.data["is_staff"] = False
-            
+                
             username = validated_data.data.get('username', None)
             email = validated_data.data.get('email', None)
 
             invalid_username = True if User.objects.filter(username= username).exists() else False 
             invalid_email = True if User.objects.filter(email= email).exists() else False 
 
-            valid = validate_username_and_password(invalid_username , invalid_email , check_email = False)     
+            valid = validate_user( self.request, self.request , check_email = False)     
 
             if valid != True:
                 return valid
@@ -337,7 +336,7 @@ class SignUpViewSet(mixins.CreateModelMixin , viewsets.GenericViewSet):
 
             user.save()
             return JsonResponse({"result" : "user added" } , status = 200)
-
+        
         except:
             return JsonResponse({"result" : "Something went wrong" } , status = 400)
 
@@ -447,8 +446,9 @@ def validate_user(request , validated_data , user = None , check_email = True):
     username = validated_data.data.get('username')
     email = validated_data.data.get('email')
 
-    invalid_username = True if User.objects.filter(username= username).exists() else False 
-    invalid_email = True if User.objects.filter(email= email).exists() else False 
+    if check_email:
+        invalid_username = True if User.objects.filter(username= username).exists() else False 
+        invalid_email = True if User.objects.filter(email= email).exists() else False 
 
     if request.method in ["PUT" , "PATCH"]:
         if username == user.username:
@@ -462,10 +462,11 @@ def validate_user(request , validated_data , user = None , check_email = True):
     if not request.user.is_staff and validated_data.data.get('is_superuser', None) == True:
         return JsonResponse({"result" : "Forbidden you don't have the privileges for creating a staff" } , status = 403)
 
-    if invalid_username and invalid_email:
-        return JsonResponse({"result" : "username and email are invalid" } , status = 400)
-    if invalid_username:
-         return JsonResponse({"result" : "username is invalid" } , status = 400)
-    if invalid_email:
-        return JsonResponse({"result" : "email is invalid" } , status = 400)
+    if check_email:
+        if invalid_username and invalid_email:
+            return JsonResponse({"result" : "username and email are invalid" } , status = 400)
+        if invalid_username:
+             return JsonResponse({"result" : "username is invalid" } , status = 400)
+        if invalid_email:
+            return JsonResponse({"result" : "email is invalid" } , status = 400)
     return True
