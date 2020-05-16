@@ -12,6 +12,6 @@ class AndroidNotificationDeviceViewSet(SearchAndPatchMixin , viewsets.ModelViewS
     permission_classes = [permissions.DjangoModelPermissions]
 
     def get_permissions(self):
-        if self.action in ["update","create"]:
+        if self.action in ["update","create", "search" , "filter"]:
             return [permissions.AllowAny(), ]
         return super().get_permissions()
