@@ -10,8 +10,9 @@ class AndroidNotificationDeviceViewSet(SearchAndPatchMixin , viewsets.ModelViewS
     queryset = GCMDevice.objects.all()
     serializer_class = AndroidNotificationDeviceSerializer
     permission_classes = [permissions.DjangoModelPermissions]
+    
 
     def get_permissions(self):
-        if self.action in ["update","create", "search" , "filter"]:
+        if self.action in ["update","create", "search" , "filter"] or self.request.method in ["PATCH", "PUT"]:
             return [permissions.AllowAny(), ]
         return super().get_permissions()
