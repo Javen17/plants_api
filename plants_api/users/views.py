@@ -264,7 +264,7 @@ class ModifyMyAccount(BasePatchClass , APIView):
             if self.request.user.is_anonymous:
                 return JsonResponse({"result" : "You must be logged in to modify your account"} , status = 401)
 
-            valid  = validate_user(self.request , request.user)
+            valid  = validate_user(self.request , self.request.user)
 
             if valid != True:
                 return valid
@@ -272,7 +272,7 @@ class ModifyMyAccount(BasePatchClass , APIView):
             self.edit(self.request , self.request.user.id , partial)
             return JsonResponse({"result" : "Success at modification"})
         except:
-           return JsonResponse({"result" : "Something went wrong"} , status = 500)
+            return JsonResponse({"result" : "Something went wrong"} , status = 500)
 
 
 class ModifyMyProfile( ModifyMyAccount ,BasePatchClass , APIView):
