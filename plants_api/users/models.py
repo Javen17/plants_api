@@ -23,11 +23,21 @@ class User(AbstractUser):
     def get_absolute_url(self):
         return reverse("users:detail", kwargs={"username": self.username})
 
+    def save(self, *args, **kwargs):
+        data = super().save(*args, **kwargs)
+        try:
+            self.profile
+        except:
+            print("Banana")
+            profile = Profile(phone = None , photo_url = None, user = self)
+            profile.save()
+        return data
+
 class Profile(models.Model):
-    number_id = models.PositiveIntegerField("Número de referencia" , unique = True)
-    phone =  models.CharField(max_length=100 , verbose_name="Teléfono")
+    #number_id = models.PositiveIntegerField("Número de referencia" , unique = True, null = True , blank = True)
+    phone =  models.CharField(max_length=100 , verbose_name="Teléfono" , null = True , blank = True)
     photo = models.ImageField("foto de perfil" , null = True , blank = True , upload_to = "uploads/perfiles" , storage=gd_storage, default =  settings.base.STATIC_ROOT  + "/img/user-placeholder.png")
-    user = models.OneToOneField(User, on_delete=models.CASCADE , null = True , blank = True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE , null = True , blank = True , related_name = "profile")
     photo_url = models.CharField(max_length=100 , verbose_name="Url de imagen" , null = True , blank = True)
 
     class Meta:
@@ -35,6 +45,6 @@ class Profile(models.Model):
         verbose_name_plural = "perfiles"
 
     def __str__(self):
-        return "%s" % (self.number_id)
+        return "%s" % (self.user.name + " Profile")
 
 pre_save.connect(helpers.save_image_url, sender=Profile)

@@ -58,24 +58,25 @@ class UserViewSet(BaseGoogleFixClass , SearchAndPatchMixin ,viewsets.ModelViewSe
 
     def create(self, validated_data):
 
-        groups = validated_data.data.pop('groups')
-        permissions = validated_data.data.pop('user_permissions')
+        groups = validated_data.data.pop('groups', None)
+        permissions = validated_data.data.pop('user_permissions', None)
         
-        valid  = validate_user(self.request, validated_data, check_email = False)      
+        valid  = validate_user(self.request)      
         
         if valid != True:
             return valid
 
         try:
             user = User.objects.create_user(**validated_data.data)
+            if groups is not None:
+                for group in groups:
+                    user.groups.add(group)
 
-            for group in groups:
-                user.groups.add(group)
-
-            for permission in permissions:
-                user.user_permissions.add(permission)
-
-        except Exception as e:
+            if permissions is not None:
+                for permission in permissions:
+                    user.user_permissions.add(permission)
+    
+        except:
             return JsonResponse({"result": "Invalid data try again, if this issue persists contact an administrator."})
 
         return JsonResponse({"result" : "user added" })
@@ -84,18 +85,18 @@ class UserViewSet(BaseGoogleFixClass , SearchAndPatchMixin ,viewsets.ModelViewSe
         
         try:
             user = User.objects.filter(pk=pk).first()         
-            valid  = validate_user(self.request, request , user , check_email = False)      
+            valid  = validate_user(self.request , user)      
 
             if valid != True:
                 return valid
 
-            if hasattr(request.data, "groups"):
+            if "groups" in request.data:
                 if hasattr(user, "groups"):
                     user.groups.clear()  
                 for group in request.data["groups"]:
                     user.groups.add(group)
             
-            if hasattr(request.data, "user_permissions"):
+            if "user_permissions" in request.data:
                 if hasattr(user, "user_permissions"):
                     user.user_permissions.clear()
                 for permission in request.data["user_permissions"]:
@@ -106,7 +107,11 @@ class UserViewSet(BaseGoogleFixClass , SearchAndPatchMixin ,viewsets.ModelViewSe
 
             for value in request.data:
                 setattr(user, value, request.data[value])
-                user.save()
+            
+            if "password" in request.data:
+                user.set_password(request.data["password"])
+
+            user.save()
 
             return Response({"result" : UserSerializer(user).data })
         except:
@@ -247,12 +252,19 @@ class ModifyMyAccount(BasePatchClass , APIView):
     def put(self , request , pk = None):
         return self.update(self , request , False)
 
+    def edit(self, request,  pk, partial):
+        data = super().edit(request, pk, partial)
+        if "password" in request.data:
+            request.user.set_password(request.data["password"])
+            request.user.save()
+        return data
+
     def update(self , request, partial  = False , pk = None):
         try :
             if self.request.user.is_anonymous:
                 return JsonResponse({"result" : "You must be logged in to modify your account"} , status = 401)
 
-            valid  = validate_user(self.request, self.request , self.request.user, check_email = False)   #man just use request
+            valid  = validate_user(self.request , request.user)
 
             if valid != True:
                 return valid
@@ -260,7 +272,7 @@ class ModifyMyAccount(BasePatchClass , APIView):
             self.edit(self.request , self.request.user.id , partial)
             return JsonResponse({"result" : "Success at modification"})
         except:
-            return JsonResponse({"result" : "Something went wrong"} , status = 500)
+           return JsonResponse({"result" : "Something went wrong"} , status = 500)
 
 
 class ModifyMyProfile( ModifyMyAccount ,BasePatchClass , APIView):
@@ -324,7 +336,7 @@ class SignUpViewSet(mixins.CreateModelMixin , viewsets.GenericViewSet):
             invalid_username = True if User.objects.filter(username= username).exists() else False 
             invalid_email = True if User.objects.filter(email= email).exists() else False 
 
-            valid = validate_user( self.request, self.request , check_email = False)     
+            valid = validate_user(self.request)     
 
             if valid != True:
                 return valid
@@ -442,31 +454,29 @@ class SuccessUpdatedPassword(TemplateView):
     template_name = "users/success_updated_password.html"
 
 
-def validate_user(request , validated_data , user = None , check_email = True):
-    username = validated_data.data.get('username')
-    email = validated_data.data.get('email')
+def validate_user(request, user = None):
+    username = request.data.get('username', None)
+    email = request.data.get('email', None)
 
-    if check_email:
-        invalid_username = True if User.objects.filter(username= username).exists() else False 
-        invalid_email = True if User.objects.filter(email= email).exists() else False 
+    invalid_username = True if User.objects.filter(username= username).exists() else False 
+    invalid_email = True if User.objects.filter(email= email).exists() else False 
 
     if request.method in ["PUT" , "PATCH"]:
-        if username == user.username:
+        if username == user.username or username == None:
             invalid_username = False
-        if email  == user.email:
+        if email == user.email or email == None:
             invalid_email = False
-
-    if not request.user.is_superuser and validated_data.data.get('is_superuser', None) == True:
+    
+    if not request.user.is_superuser and request.data.get('is_superuser', None) == True:
         return JsonResponse({"result" : "Forbidden you don't have the privileges for creating a super user" } , status = 403)
 
-    if not request.user.is_staff and validated_data.data.get('is_superuser', None) == True:
+    if not request.user.is_staff and request.data.get('is_superuser', None) == True:
         return JsonResponse({"result" : "Forbidden you don't have the privileges for creating a staff" } , status = 403)
 
-    if check_email:
-        if invalid_username and invalid_email:
-            return JsonResponse({"result" : "username and email are invalid" } , status = 400)
-        if invalid_username:
-             return JsonResponse({"result" : "username is invalid" } , status = 400)
-        if invalid_email:
-            return JsonResponse({"result" : "email is invalid" } , status = 400)
+    if invalid_username and invalid_email:
+        return JsonResponse({"result" : "username and email are invalid" } , status = 400)
+    if invalid_username:
+        return JsonResponse({"result" : "username is invalid" } , status = 400)
+    if invalid_email:
+        return JsonResponse({"result" : "email is invalid" } , status = 400)
     return True
