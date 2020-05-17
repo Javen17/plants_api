@@ -2,6 +2,9 @@ from django.db.models import Q
 from django.utils.crypto import get_random_string
 from push_notifications.models import GCMDevice
 from django.db.models.signals import pre_save
+from docx import Document
+from docx.shared import Inches , RGBColor , Pt
+from docx.enum.text import WD_LINE_SPACING
 
 def search(queryset , search_dic , serializer , type):
 #    first_search , *searchs = search_dic
@@ -71,3 +74,53 @@ def save_image_url(sender, instance, **kwargs):
     pre_save.disconnect(save_image_url, sender=sender)
     instance.photo_url = instance.photo.url
     pre_save.connect(save_image_url, sender=sender)
+
+
+#its relatively dirty
+def build_report(specimen):
+    document = Document()
+    style = document.styles['Normal']
+    font = style.font
+    font.size = Pt(16)
+    
+    heading_style = document.styles['Heading 1']
+    heading_style.font.size = Pt(18)
+
+    heading = document.add_heading()
+    heading.alignment = 1
+
+    run = heading.add_run("Herbario Nacional de Nicaragua", 0)
+    font = run.font
+    font.color.rgb = RGBColor(0, 0, 0)
+ 
+    paragraph = document.add_paragraph(specimen.species.genus.name.upper())
+    paragraph.paragraph_format.space_before = Pt(40)
+
+    document.add_paragraph(specimen.species.scientific_name)
+    document.add_paragraph("Pais: {}".format(specimen.city.state.country.name))
+
+    document.add_paragraph("Departamento de: {}, Municipio {} ".format(specimen.city.state.name , specimen.city.name , specimen.location))
+
+    document.add_paragraph("{}, {}".format(specimen.species.common_name, specimen.description))
+
+    paragraph = document.add_paragraph("{} {}      {}      {}".format(specimen.user.first_name , specimen.user.last_name, specimen.pk , specimen.date_received.strftime("%d/%m/%Y")))
+    paragraph.alignment = 1
+
+    heading = document.add_heading()
+    heading.alignment = 1
+    heading.paragraph_format.space_before = Pt(40)
+    heading.paragraph_format.space_after = 0
+    run = heading.add_run("Facultad de Ciencias, Tecnologia y Ambiente", 0)
+    font = run.font
+    font.color.rgb = RGBColor(0, 0, 0)
+
+    heading = document.add_heading()
+    heading.alignment = 1
+    run = heading.add_run("Universidad Centroamericana UCA", 0)
+    heading.paragraph_format.space_before = 0
+    font = run.font
+    font.color.rgb = RGBColor(0, 0, 0)
+
+    document.add_page_break()
+    return document
+    

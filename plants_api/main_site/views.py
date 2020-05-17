@@ -6,7 +6,7 @@ from plants_api.users.serializers import UserSerializer
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from .serializers import EcosystemSerializer, RecolectionAreaStatusSerializer , BiostatusSerializer , StatusSerializer , SpeciesSerializer , SpeciesExcludeSerializer , FamilySerializer , GenusSerializer , CountrySerializer, StateSerializer , CitySerializer , CapTypeSerializer , FormTypeSerializer , PlantSpecimenSerializer ,PlantSpecimenExcludeSerializer , MushroomSpecimenSerializer , MushroomSpecimenExcludeSerializer
-from django.http import HttpResponse , JsonResponse
+from django.http import HttpResponse , JsonResponse , StreamingHttpResponse
 from rest_framework.renderers import JSONRenderer
 from django.db.models import Q
 from rest_framework.parsers import FileUploadParser
@@ -17,6 +17,7 @@ from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from rest_framework.mixins import UpdateModelMixin
 from plants_api.common.base_classes import BaseGoogleFixClass , SearchAndPatchMixin
+from docx import Document
 #from rest_framework.generics import ListCreateAPIView , RetrieveUpdateDestroyAPIView
 
 class EcosystemViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
@@ -83,6 +84,8 @@ class SpeciesViewSet(BaseGoogleFixClass , SearchAndPatchMixin, viewsets.ModelVie
     exclude_serializer = SpeciesExcludeSerializer
     permission_classes = [permissions.DjangoModelPermissions]
 
+
+#this two classes should be one
 class PlantSpecimenViewSet(BaseGoogleFixClass , viewsets.ModelViewSet , SearchAndPatchMixin):
     serializer_class = PlantSpecimenSerializer
     queryset = PlantSpecimen.objects.all().select_related( 'user' , 'species', 'status', 'ecosystem', 'recolection_area_status' , 'city' , 'biostatus') 
@@ -154,6 +157,15 @@ class PlantSpecimenViewSet(BaseGoogleFixClass , viewsets.ModelViewSet , SearchAn
     def approved(self, request , pk=None):
         result =  self.exclude_serializer(self.queryset.filter(approved=True), many = True).data
         return JsonResponse(result, safe=False)     
+    
+    @action(methods=['get'], detail=True)
+    def report(self, request, pk):
+        specimen = self.queryset.filter(pk = pk).first()
+        document = helpers.build_report(specimen)
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+        response['Content-Disposition'] = 'attachment; filename="Ficha-{}.docx"'.format(specimen.species.common_name)
+        document.save(response)
+        return response
     
 
 class MushroomSpecimenViewSet(BaseGoogleFixClass , SearchAndPatchMixin , viewsets.ModelViewSet):
@@ -240,6 +252,14 @@ class MushroomSpecimenViewSet(BaseGoogleFixClass , SearchAndPatchMixin , viewset
         result =  self.exclude_serializer(self.queryset.filter(approved=True), many = True).data
         return JsonResponse(result, safe=False)        
 
+    @action(methods=['get'], detail=True)
+    def report(self, request, pk):
+        specimen = self.queryset.filter(pk = pk).first()
+        document = helpers.build_report(specimen)
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+        response['Content-Disposition'] = 'attachment; filename="Ficha-{}.docx"'.format(specimen.species.common_name)
+        document.save(response)
+        return response
 
 class StatsView(APIView):
 

@@ -28,7 +28,6 @@ class User(AbstractUser):
         try:
             self.profile
         except:
-            print("Banana")
             profile = Profile(phone = None , photo_url = None, user = self)
             profile.save()
         return data
