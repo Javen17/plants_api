@@ -44,8 +44,8 @@ class CustomAuthMiddleware:
                 user = False
                 #print("invalid credentials but i need this silent so the user can still log in")
                 if not "login/" in request.path: 
-                    response.delete_cookie("token-access")
-                    response.delete_cookie("token-refresh")
+                    request.delete_cookie("token-access")
+                    request.delete_cookie("token-refresh")
                     return JsonResponse({"detail" : "Your credentials are invalid, this authentication requires a login after 10 minutes of inactivity"}, status = 401)
 
             if user:
