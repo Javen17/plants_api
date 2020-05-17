@@ -43,7 +43,8 @@ class CustomAuthMiddleware:
             except:
                 user = False
                 print("invalid credentials but i need this silent so the user can still log in")
-
+                if not "login/" in request.path: 
+                    return JsonResponse({"result" : "Your credentials are invalid, this authentication method only allows one device active at the same time."})
 
             if user:
                 request.META["HTTP_AUTHORIZATION"] = "Bearer " + access_token
