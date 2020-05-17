@@ -42,9 +42,11 @@ class CustomAuthMiddleware:
                 user = jwt.get_user(validated_token)
             except:
                 user = False
-                print("invalid credentials but i need this silent so the user can still log in")
+                #print("invalid credentials but i need this silent so the user can still log in")
                 if not "login/" in request.path: 
-                    return JsonResponse({"detail" : "Your credentials are invalid, this authentication method only allows one device active at the same time."}, status = 401)
+                    response.delete_cookie("token-access")
+                    response.delete_cookie("token-refresh")
+                    return JsonResponse({"detail" : "Your credentials are invalid, this authentication requires a login after 10 minutes of inactivity"}, status = 401)
 
             if user:
                 request.META["HTTP_AUTHORIZATION"] = "Bearer " + access_token
