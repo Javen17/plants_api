@@ -42,12 +42,11 @@ class CustomAuthMiddleware:
                 user = jwt.get_user(validated_token)
             except:
                 user = False
-                #print("invalid credentials but i need this silent so the user can still log in")
-                if not "login/" in request.path: 
-                    response = self.get_response(request)
-                    response.delete_cookie("token-access")
-                    response.delete_cookie("token-refresh")
-                    return JsonResponse({"detail" : "Your credentials are invalid, this authentication requires a login after 10 minutes of inactivity"}, status = 401)
+                print("invalid credentials but i need this silent so the user can still log in")
+                if not "login/" in request.path : 
+                    if request.COOKIES["warning"] == "false":
+                        response.set_cookie("warning", "true")
+                        return JsonResponse({"detail" : "Your credentials are invalid, this authentication requires a login after 10 minutes of inactivity please log again, if you dont you will continue as anonymous"}, status = 401)
 
             if user:
                 request.META["HTTP_AUTHORIZATION"] = "Bearer " + access_token
@@ -55,6 +54,7 @@ class CustomAuthMiddleware:
                 refresh = RefreshToken.for_user(user)
                 response.set_cookie("token-access", str(refresh.access_token))
                 response.set_cookie("token-refresh", str(refresh))
+                response.set_cookie("warning", "false")
             else:
                 response = self.get_response(request)
 
