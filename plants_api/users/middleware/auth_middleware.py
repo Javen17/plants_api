@@ -44,7 +44,7 @@ class CustomAuthMiddleware:
                 user = False
                 print("invalid credentials but i need this silent so the user can still log in")
                 if not "login/" in request.path : 
-                    if request.COOKIES["warning"] == "false":
+                    if request.COOKIES.get("warning") == "false" or  request.COOKIES.get("warning") == None:
                         response.set_cookie("warning", "true")
                         return JsonResponse({"detail" : "Your credentials are invalid, this authentication requires a login after 10 minutes of inactivity please log again, if you dont you will continue as anonymous"}, status = 401)
 
