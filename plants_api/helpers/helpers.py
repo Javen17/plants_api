@@ -66,6 +66,7 @@ def get_temporal_password(user):
 def send_notification(user , title ,  message):
     devices = GCMDevice.objects.all().filter(user = user)
     for device in devices:
+        print(device)
         device.send_message(message, extra={"title": title , "icon": "ic_leaf"})
     #device = GCMDevice.objects.get(registration_id=gcm_reg_id)
 
