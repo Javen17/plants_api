@@ -30,7 +30,7 @@ from django.utils.html import strip_tags
 from django.conf import settings
 from . import forms
 from django.http import Http404
-from plants_api.common.base_classes import BaseGoogleFixClass , SearchAndPatchMixin , BasePatchClass
+from plants_api.common.base_classes import BaseGoogleFixClass , ListSearchPatchMixin , BasePatchClass
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -40,14 +40,14 @@ from rest_framework_simplejwt.views import (
 User = get_user_model()
 
 
-class ProfileViewSet(BaseGoogleFixClass , SearchAndPatchMixin , viewsets.ModelViewSet):
+class ProfileViewSet(BaseGoogleFixClass , ListSearchPatchMixin , viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
     permission_classes = [permissions.DjangoModelPermissions]
     exclude_serializer = ProfileExcludeSerializer
     
     
-class UserViewSet(BaseGoogleFixClass , SearchAndPatchMixin ,viewsets.ModelViewSet):
+class UserViewSet(BaseGoogleFixClass , ListSearchPatchMixin ,viewsets.ModelViewSet):
     queryset = User.objects.all().select_related('profile' , 'auth_token')
     serializer_class =  UserSerializer
     permission_classes = [permissions.DjangoModelPermissions]
@@ -345,7 +345,7 @@ class SignUpViewSet(mixins.CreateModelMixin , viewsets.GenericViewSet):
         except:
             return JsonResponse({"result" : "Something went wrong" } , status = 400)
 
-class GroupViewSet(SearchAndPatchMixin, viewsets.ModelViewSet):
+class GroupViewSet(ListSearchPatchMixin, viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     permission_classes = [permissions.DjangoModelPermissions]
@@ -359,7 +359,7 @@ class GroupViewSet(SearchAndPatchMixin, viewsets.ModelViewSet):
         group_permissions = group.permissions.all().values()
         return JsonResponse(list(group_permissions), safe = False)
 
-class PermissionViewSet(SearchAndPatchMixin, viewsets.ModelViewSet):
+class PermissionViewSet(ListSearchPatchMixin, viewsets.ModelViewSet):
     queryset = Permission.objects.all()
     serializer_class = PermissionSerializer
     permission_classes = [permissions.DjangoModelPermissions]

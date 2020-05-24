@@ -17,7 +17,7 @@ from urllib.parse import parse_qs
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from rest_framework.mixins import UpdateModelMixin
-from plants_api.common.base_classes import BaseGoogleFixClass , SearchAndPatchMixin
+from plants_api.common.base_classes import BaseGoogleFixClass , ListSearchPatchMixin
 from docx import Document
 import csv
 import itertools
@@ -25,26 +25,26 @@ import datetime
 from rest_framework.response import Response
 #from rest_framework.generics import ListCreateAPIView , RetrieveUpdateDestroyAPIView
 
-class EcosystemViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
+class EcosystemViewSet(ListSearchPatchMixin , viewsets.ModelViewSet):
     queryset = Ecosystem.objects.all()
     serializer_class = EcosystemSerializer
     permission_classes = [permissions.DjangoModelPermissions]
 
-class RecolectionAreaStatusViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
+class RecolectionAreaStatusViewSet(ListSearchPatchMixin , viewsets.ModelViewSet):
     queryset = RecolectionAreaStatus.objects.all()
     serializer_class = RecolectionAreaStatusSerializer
     permission_classes = [permissions.DjangoModelPermissions]
 
-class BiostatusViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
+class BiostatusViewSet(ListSearchPatchMixin , viewsets.ModelViewSet):
     queryset = Biostatus.objects.all()
     serializer_class = BiostatusSerializer
     permission_classes = [permissions.DjangoModelPermissions]
 
-class StatusViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
+class StatusViewSet(ListSearchPatchMixin , viewsets.ModelViewSet):
     queryset = Status.objects.all()
     serializer_class = StatusSerializer
 
-class FamilyViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
+class FamilyViewSet(ListSearchPatchMixin , viewsets.ModelViewSet):
     """
     API endpoint that allows groups to be viewed or edited.
     """
@@ -52,37 +52,37 @@ class FamilyViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
     serializer_class = FamilySerializer
     permission_classes = [permissions.DjangoModelPermissions]
 
-class GenusViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
+class GenusViewSet(ListSearchPatchMixin , viewsets.ModelViewSet):
     queryset = Genus.objects.all()
     serializer_class = GenusSerializer
     permission_classes = [permissions.DjangoModelPermissions]
 
-class CountryViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
+class CountryViewSet(ListSearchPatchMixin , viewsets.ModelViewSet):
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
     permission_classes = [permissions.DjangoModelPermissions]
 
-class StateViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
+class StateViewSet(ListSearchPatchMixin , viewsets.ModelViewSet):
     queryset = State.objects.all()
     serializer_class = StateSerializer
     permission_classes = [permissions.DjangoModelPermissions]
 
-class CityViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
+class CityViewSet(ListSearchPatchMixin , viewsets.ModelViewSet):
     queryset = City.objects.all()
     serializer_class = CitySerializer
     permission_classes = [permissions.DjangoModelPermissions]
 
-class CapTypeViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
+class CapTypeViewSet(ListSearchPatchMixin , viewsets.ModelViewSet):
     queryset = CapType.objects.all()
     serializer_class = CapTypeSerializer
     permission_classes = [permissions.DjangoModelPermissions]
 
-class FormTypeViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
+class FormTypeViewSet(ListSearchPatchMixin , viewsets.ModelViewSet):
     queryset = FormType.objects.all()
     serializer_class = FormTypeSerializer
     permission_classes = [permissions.DjangoModelPermissions]
 
-class SpeciesViewSet(BaseGoogleFixClass , SearchAndPatchMixin, viewsets.ModelViewSet):
+class SpeciesViewSet(BaseGoogleFixClass , ListSearchPatchMixin, viewsets.ModelViewSet):
     serializer_class = SpeciesSerializer
     queryset = Species.objects.all()
     parser_class = (FileUploadParser,)
@@ -91,7 +91,7 @@ class SpeciesViewSet(BaseGoogleFixClass , SearchAndPatchMixin, viewsets.ModelVie
 
 
 #this two classes should be one
-class PlantSpecimenViewSet(BaseGoogleFixClass , viewsets.ModelViewSet , SearchAndPatchMixin):
+class PlantSpecimenViewSet(BaseGoogleFixClass , ListSearchPatchMixin , viewsets.ModelViewSet):
     serializer_class = PlantSpecimenSerializer
     queryset = PlantSpecimen.objects.all().select_related( 'user' , 'species', 'status', 'ecosystem', 'recolection_area_status' , 'city' , 'biostatus') 
     permission_classes = [permissions.DjangoModelPermissions]
@@ -147,7 +147,7 @@ class PlantSpecimenViewSet(BaseGoogleFixClass , viewsets.ModelViewSet , SearchAn
         end_date = params.pop('end', None)
         return build_csv(queryset , start_date ,  end_date)
     
-class MushroomSpecimenViewSet(BaseGoogleFixClass , SearchAndPatchMixin , viewsets.ModelViewSet):
+class MushroomSpecimenViewSet(BaseGoogleFixClass , ListSearchPatchMixin , viewsets.ModelViewSet):
     queryset = MushroomSpecimen.objects.all().select_related( 'user' , 'species', 'status', 'ecosystem', 'recolection_area_status' , 'city' , 'cap' , 'forms') 
     serializer_class = MushroomSpecimenSerializer
     permission_classes = [permissions.DjangoModelPermissions]

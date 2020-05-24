@@ -61,7 +61,21 @@ class BaseSearchAndFilterClass:
         serializer = self.get_serializer(result, many=True)
         return Response(serializer.data)
 
+class BasePaginationList:
+     
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        params = parse_qs(self.request.META['QUERY_STRING'])
+        page_arg = params.pop('page', None)
 
+        if page_arg is not None:
+            page = self.paginate_queryset(queryset)
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
  
 class BasePatchClass: 
@@ -76,5 +90,5 @@ class BasePatchClass:
         except Exception as e:
             return JsonResponse({"result" : str(e)} , status = 400)
 
-class SearchAndPatchMixin(BaseSearchAndFilterClass , BasePatchClass):
+class ListSearchPatchMixin(BaseSearchAndFilterClass ,  BasePaginationList , BasePatchClass):
     pass

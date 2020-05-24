@@ -1,12 +1,12 @@
 from django.shortcuts import render
 from push_notifications.models import GCMDevice
-from plants_api.common.base_classes import SearchAndPatchMixin
+from plants_api.common.base_classes import ListSearchPatchMixin
 from rest_framework import viewsets
 from plants_api.notifications.serializers import AndroidNotificationDeviceSerializer
 from rest_framework import permissions
 
 # Create your views here.
-class AndroidNotificationDeviceViewSet(SearchAndPatchMixin , viewsets.ModelViewSet):
+class AndroidNotificationDeviceViewSet(ListSearchPatchMixin , viewsets.ModelViewSet):
     queryset = GCMDevice.objects.all()
     serializer_class = AndroidNotificationDeviceSerializer
     permission_classes = [permissions.DjangoModelPermissions]
