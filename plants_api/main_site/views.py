@@ -188,13 +188,6 @@ class MushroomSpecimenViewSet(BaseGoogleFixClass , SearchAndPatchMixin , viewset
         document.save(response)
         return response
 
-    @action(methods=['get'], detail=False)
-    def report(self, request):
-        queryset = self.get_queryset().values_list("user__first_name" , "user__last_name", "species__common_name", "species__scientific_name" , "species__genus__name", "species__genus__family__name", "species__genus__family__type" ,"date_received" , "number_of_samples" , "description" , "status__name" , "city__name", "city__state__name", "city__state__country__name", "location" , "latitude" , "longitude", "ecosystem__name", "recolection_area_status__name" )
-        params = parse_qs(self.request.META['QUERY_STRING'])
-        start_date = params.pop('start', None)
-        end_date = params.pop('end', None)
-        return build_csv(queryset , start_date ,  end_date)
 
 def build_csv(queryset, start_date, end_date):
     if start_date != None and end_date != None:
@@ -205,7 +198,7 @@ def build_csv(queryset, start_date, end_date):
 
     echo_buffer = Echo()
     csv_writer = csv.writer(echo_buffer)
-    headers =  (csv_writer.writerow(["Nombre".encode('utf-8') ,"Apellido".encode('utf-8') , "Especie".encode('utf-8') , "Nombre común".encode('utf-8') , "Nombre científico".encode('utf-8') , "Genus".encode('utf-8') ,  "Familia".encode('utf-8') , "Tipo".encode('utf-8') , "Fecha de recepción".encode('utf-8') , "Número de ejemplares".encode('utf-8') , "Descripción".encode('utf-8') , "Estado de la planta".encode('utf-8') , "Ciudad".encode('utf-8'), "Departamento".encode('utf-8') , "Ubicacion".encode('utf-8') , "Latitud".encode('utf-8') , "Longitud".encode('utf-8') , "Ecosistema".encode('utf-8') , "Área de recolección".encode('utf-8') ]))
+    headers =  (csv_writer.writerow(["Nombre","Apellido", "Especie" , "Nombre común" , "Nombre científico", "Genus" ,  "Familia" , "Tipo", "Fecha de recepción", "Número de ejemplares", "Descripción", "Estado de la planta", "Ciudad", "Departamento" , "Ubicacion" , "Latitud" , "Longitud" , "Ecosistema" , "Área de recolección" ]))
     rows = (csv_writer.writerow(row) for row in queryset)
     response = StreamingHttpResponse(itertools.chain(headers, rows), content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="Base-de-Datos-de-especímenes.csv"'

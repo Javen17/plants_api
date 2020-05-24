@@ -19,6 +19,9 @@ import sys
 from django.core.wsgi import get_wsgi_application
 # This allows easy placement of apps within the interior
 # plants_api directory.
+reload(sys)     
+sys.setdefaultencoding("utf-8")
+
 app_path = os.path.abspath(
     os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir)
 )
