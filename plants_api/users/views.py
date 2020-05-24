@@ -199,15 +199,9 @@ class GeneratePermanentTokenView(APIView):
             print("the user has no cookie or the user has a cookie that should represent the permanent token but it is invalid")
 
         try:
-            #access_token = request.COOKIES["token-access"]    
-            #validated_token = jwt.get_validated_token(access_token)
-           # user = jwt.get_user(validated_token)
             retrieved_permanent_token , created = Token.objects.get_or_create(user=request.user)
-
             response = JsonResponse({"result" : "Success"} , status = 200)
-
             response.set_cookie("token-permanent", retrieved_permanent_token.key)
-
             return response
 
         except:
@@ -226,7 +220,6 @@ class RemovePermanentTokenView(APIView):
         response.delete_cookie("token-permanent")
 
         return response
-
 
 
 class WhoAmIView(APIView):

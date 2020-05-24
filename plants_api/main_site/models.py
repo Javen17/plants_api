@@ -188,7 +188,7 @@ class PlantSpecimen(Specimen):
     def __str__(self):
         return "Espécimen de %s" % (self.species.common_name)
     
-pre_save.connect(helpers.save_image_url, sender=PlantSpecimen)
+post_save.connect(helpers.save_image_url, sender=PlantSpecimen)
 
 
 class CapType(models.Model):
@@ -228,7 +228,7 @@ class MushroomSpecimen(Specimen):
     def __str__(self):
         return "Espécimen de %s" % (self.species.common_name)
 
-pre_save.connect(helpers.save_image_url, sender=MushroomSpecimen)
+post_save.connect(helpers.save_image_url, sender=MushroomSpecimen)
 
 
 @receiver(post_save, sender=MushroomSpecimen)

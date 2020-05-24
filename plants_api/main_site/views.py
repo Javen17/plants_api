@@ -99,6 +99,12 @@ class PlantSpecimenViewSet(BaseGoogleFixClass , viewsets.ModelViewSet , SearchAn
             return [permissions.AllowAny(), ]
         return super().get_permissions()
 
+    def get_queryset(self):
+        if self.request.user.has_perm("view_plantspecimen"):
+            return self.queryset
+        else:
+            return self.queryset.filter(approved = True)
+
     def update(self, request, partial  = False , pk = None):
         
         if pk is not None:
@@ -111,47 +117,8 @@ class PlantSpecimenViewSet(BaseGoogleFixClass , viewsets.ModelViewSet , SearchAn
         else:
             return JsonResponse({"result" : "Bad Request"} , status = 400)
 
-    def retrieve(self, request, pk=None):
-        if request.user.has_perm("view_plantspecimen"):
-            queryset = self.queryset
-        else:
-            queryset = self.queryset.filter(approved = True)
-        
-        plant = get_object_or_404(queryset, pk=pk)
-        serializer = self.exclude_serializer(plant)
-        return JsonResponse(serializer.data)
-
-    def list(self , request , pk= None):
-        if request.user.has_perm("view_plantspecimen"):
-            queryset = self.queryset
-        else:
-            queryset = self.queryset.filter(approved = True)
-        
-        plants = queryset.all()
-        serializer = self.exclude_serializer(plants , many = True)
-        return JsonResponse(serializer.data, safe = False)
-
     def perform_create(self, serializer):
         return serializer.save(user=self.request.user)
-
-    @action(methods=['get'], detail=False)
-    def search(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-
-        if request.user.has_perm("view_plantspecimen"):
-            queryset = self.queryset
-        else:
-            queryset = self.queryset.filter(approved = True)
-
-        result = helpers.search(queryset , params , self.exclude_serializer , "OR")
-        return JsonResponse(result, safe=False)
-
-    @action(methods=['get'], detail=False)
-    def filter(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , self.exclude_serializer , "AND")
-
-        return JsonResponse(result, safe=False)
 
     @action(methods=['get'] , detail=False)
     def approved(self, request , pk=None):
@@ -160,14 +127,13 @@ class PlantSpecimenViewSet(BaseGoogleFixClass , viewsets.ModelViewSet , SearchAn
     
     @action(methods=['get'], detail=True)
     def report(self, request, pk):
-        specimen = self.queryset.filter(pk = pk).first()
+        specimen = self.get_queryset().filter(pk = pk).first()
         document = helpers.build_report(specimen)
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
         response['Content-Disposition'] = 'attachment; filename="Ficha-{}.docx"'.format(specimen.species.common_name)
         document.save(response)
         return response
     
-
 class MushroomSpecimenViewSet(BaseGoogleFixClass , SearchAndPatchMixin , viewsets.ModelViewSet):
     queryset = MushroomSpecimen.objects.all().select_related( 'user' , 'species', 'status', 'ecosystem', 'recolection_area_status' , 'city' , 'cap' , 'forms') 
     serializer_class = MushroomSpecimenSerializer
@@ -176,15 +142,18 @@ class MushroomSpecimenViewSet(BaseGoogleFixClass , SearchAndPatchMixin , viewset
     model = MushroomSpecimen
     exclude_serializer = MushroomSpecimenExcludeSerializer
 
-
     def get_permissions(self):
         if self.action in ["list" , "retrieve" , "search", "filter" , "approved"]:
             return [permissions.AllowAny(), ]
         return super().get_permissions()
 
-
+    def get_queryset(self):
+        if self.request.user.has_perm("view_mushroomspecimen"):
+            return self.queryset
+        else:
+            return self.queryset.filter(approved = True)
+   
     def update(self , request, partial  = False , pk = None):
-
         if pk is not None:
             approved = request.data.get("approved")
 
@@ -195,66 +164,12 @@ class MushroomSpecimenViewSet(BaseGoogleFixClass , SearchAndPatchMixin , viewset
         else:
             return JsonResponse({"result" : "Bad Request"} , status = 400)
                 
-    def retrieve(self, request, pk=None):
-        if request.user.has_perm("view_mushroomspecimen"):
-            queryset = self.queryset
-        else:
-            queryset = self.queryset.filter(approved = True)
-        
-        mushroom = get_object_or_404(queryset, pk=pk)
-        serializer = self.exclude_serializer(mushroom)
-        return JsonResponse(serializer.data)
-
-    def list(self , request , pk= None):
-
-        if request.user.has_perm("view_mushroomspecimen"):
-            queryset = self.queryset
-        else:
-            queryset = self.queryset.filter(approved = True)
-        
-        mushrooms = queryset.all()
-        serializer = self.exclude_serializer(mushrooms , many = True)
-        return JsonResponse(serializer.data, safe = False)
-
-
     def perform_create(self, serializer):
         return serializer.save(user=self.request.user)
 
-    @action(methods=['get'], detail=False)
-    def search(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-
-        if request.user.has_perm("view_mushroomspecimen"):
-            queryset = self.queryset
-        else:
-            queryset = self.queryset.filter(approved = True)
-
-        result = helpers.search(queryset , params , self.exclude_serializer , "OR")
-
-        return JsonResponse(result, safe=False)
-
-    @action(methods=['get'], detail=False)
-    def filter(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-
-        # very repetitive snippet should be made a decorator or a different implementation like changing changin the object queryset after checking user permissions TODO
-        if request.user.has_perm("view_mushroomspecimen"):
-            queryset = self.queryset
-        else:
-            queryset = self.queryset.filter(approved = True)
-
-        result = helpers.search(queryset , params , self.exclude_serializer , "AND")
-
-        return JsonResponse(result, safe=False)
-
-    @action(methods=['get'] , detail=False)
-    def approved(self, request , pk=None):
-        result =  self.exclude_serializer(self.queryset.filter(approved=True), many = True).data
-        return JsonResponse(result, safe=False)        
-
     @action(methods=['get'], detail=True)
     def report(self, request, pk):
-        specimen = self.queryset.filter(pk = pk).first()
+        specimen = self.get_queryset().filter(pk = pk).first()
         document = helpers.build_report(specimen)
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
         response['Content-Disposition'] = 'attachment; filename="Ficha-{}.docx"'.format(specimen.species.common_name)

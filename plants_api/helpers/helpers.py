@@ -1,7 +1,7 @@
 from django.db.models import Q
 from django.utils.crypto import get_random_string
 from push_notifications.models import GCMDevice
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_save , post_save
 from docx import Document
 from docx.shared import Inches , RGBColor , Pt
 from docx.enum.text import WD_LINE_SPACING
@@ -66,15 +66,14 @@ def get_temporal_password(user):
 def send_notification(user , title ,  message):
     devices = GCMDevice.objects.all().filter(user = user)
     for device in devices:
-        print(device)
         device.send_message(message, extra={"title": title , "icon": "ic_leaf"})
     #device = GCMDevice.objects.get(registration_id=gcm_reg_id)
 
 
 def save_image_url(sender, instance, **kwargs):
-    pre_save.disconnect(save_image_url, sender=sender)
+    post_save.disconnect(save_image_url, sender=sender)
     instance.photo_url = instance.photo.url
-    pre_save.connect(save_image_url, sender=sender)
+    post_save.connect(save_image_url, sender=sender)
 
 
 #its relatively dirty

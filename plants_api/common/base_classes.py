@@ -2,6 +2,7 @@ from rest_framework.decorators import action
 from plants_api.helpers import helpers
 from urllib.parse import parse_qs
 from django.http import JsonResponse
+from rest_framework.response import Response
 from rest_framework import permissions
 
 #Making them abstract would maybe be a good idea.
@@ -33,15 +34,34 @@ class BaseSearchAndFilterClass:
     
     @action(methods=['get'], detail=False)
     def search(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , self.serializer_class , "OR")
-        return JsonResponse(result, safe=False)
+        return self.search_filter("OR")
 
     @action(methods=['get'], detail=False)
     def filter(self, request, pk=None):
-        params = parse_qs(request.META['QUERY_STRING'])
-        result = helpers.search(self.queryset , params , self.serializer_class  , "AND")
-        return JsonResponse(result, safe=False)
+        return self.search_filter("AND")
+
+    def search_filter(self, search_type):
+        params = parse_qs(self.request.META['QUERY_STRING'])
+        params.pop('page', None)
+
+        if len(params) < 1:
+            return JsonResponse({"result" : "Bad Request, at least one search parameter should be included"}, status = 400)
+        
+        try:
+            result = helpers.search(self.get_queryset() , params , self.serializer_class  , search_type)
+        except:
+            return Response({"result" : "Invalid parameter for search"}, status = 400)
+
+        page = self.paginate_queryset(result)
+        
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(result, many=True)
+        return Response(serializer.data)
+
+
 
  
 class BasePatchClass: 
