@@ -42,7 +42,7 @@ class BaseSearchAndFilterClass:
 
     def search_filter(self, search_type):
         params = parse_qs(self.request.META['QUERY_STRING'])
-        params.pop('page', None)
+        page_arg = params.pop('page', None)
 
         if len(params) < 1:
             return JsonResponse({"result" : "Bad Request, at least one search parameter should be included"}, status = 400)
@@ -54,9 +54,10 @@ class BaseSearchAndFilterClass:
 
         page = self.paginate_queryset(result)
         
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+        if page_arg is not None:
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                return self.get_paginated_response(serializer.data)
 
         serializer = self.get_serializer(result, many=True)
         return Response(serializer.data)
