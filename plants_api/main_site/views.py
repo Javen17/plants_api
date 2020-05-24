@@ -1,3 +1,4 @@
+# coding=utf-8
 from django.shortcuts import render
 from .models import Ecosystem , RecolectionAreaStatus , Biostatus , Status ,  Species, Family , Genus , Country , State ,  City , CapType , FormType , PlantSpecimen , MushroomSpecimen
 from plants_api.users.models import User
@@ -201,7 +202,7 @@ def build_csv(queryset, start_date, end_date):
     headers =  (csv_writer.writerow(["Nombre","Apellido", "Especie" , "Nombre común" , "Nombre científico", "Genus" ,  "Familia" , "Tipo", "Fecha de recepción", "Número de ejemplares", "Descripción", "Estado de la planta", "Ciudad", "Departamento" , "Ubicacion" , "Latitud" , "Longitud" , "Ecosistema" , "Área de recolección" ]))
     rows = (csv_writer.writerow(row) for row in queryset)
     response = StreamingHttpResponse(itertools.chain(headers, rows), content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="Base-de-Datos-de-especímenes.csv"'
+    response['Content-Disposition'] = 'attachment; filename="Base-de-Datos-de-especimenes.csv"'
     return response
 
 
