@@ -205,7 +205,7 @@ def build_csv(queryset, start_date, end_date):
 
     echo_buffer = Echo()
     csv_writer = csv.writer(echo_buffer)
-    headers =  (csv_writer.writerow(["Nombre","Apellido", "Especie" , "Nombre común" , "Nombre científico", "Genus" ,  "Familia" , "Tipo", "Fecha de recepción", "Número de ejemplares", "Descripción", "Estado de la planta", "Ciudad", "Departamento" , "Ubicacion" , "Latitud" , "Longitud" , "Ecosistema" , "Área de recolección" ]))
+    headers =  (csv_writer.writerow(["Nombre".encode('utf-8') ,"Apellido".encode('utf-8') , "Especie".encode('utf-8') , "Nombre común".encode('utf-8') , "Nombre científico".encode('utf-8') , "Genus".encode('utf-8') ,  "Familia".encode('utf-8') , "Tipo".encode('utf-8') , "Fecha de recepción".encode('utf-8') , "Número de ejemplares".encode('utf-8') , "Descripción".encode('utf-8') , "Estado de la planta".encode('utf-8') , "Ciudad".encode('utf-8'), "Departamento".encode('utf-8') , "Ubicacion".encode('utf-8') , "Latitud".encode('utf-8') , "Longitud".encode('utf-8') , "Ecosistema".encode('utf-8') , "Área de recolección".encode('utf-8') ]))
     rows = (csv_writer.writerow(row) for row in queryset)
     response = StreamingHttpResponse(itertools.chain(headers, rows), content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="Base-de-Datos-de-especímenes.csv"'
