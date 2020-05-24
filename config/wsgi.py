@@ -17,9 +17,10 @@ import os
 import sys
 
 from django.core.wsgi import get_wsgi_application
+import importlib
 # This allows easy placement of apps within the interior
 # plants_api directory.
-reload(sys)     
+importlib.reload(sys)     
 sys.setdefaultencoding("utf-8")
 
 app_path = os.path.abspath(
