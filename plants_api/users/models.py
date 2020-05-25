@@ -3,14 +3,18 @@ from django.db.models import CharField
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
-from gdstorage.storage import GoogleDriveStorage
+from gdstorage.storage import GoogleDriveStorage, GoogleDrivePermissionRole, GoogleDrivePermissionType ,GoogleDriveFilePermission
 from config import settings
 from plants_api.helpers import helpers
 from django.db.models.signals import pre_save
 
 # Create your models here.
+permission =  GoogleDriveFilePermission(
+   GoogleDrivePermissionRole.READER,
+   GoogleDrivePermissionType.ANYONE
+)
 
-gd_storage = GoogleDriveStorage()
+gd_storage = GoogleDriveStorage(permissions=(permission, ))
 
 class User(AbstractUser):
 

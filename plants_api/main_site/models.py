@@ -4,13 +4,17 @@ from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 from django.db.models.signals import pre_save , post_save
 from plants_api.users.models import User
-from gdstorage.storage import GoogleDriveStorage
+from gdstorage.storage import GoogleDriveStorage, GoogleDrivePermissionRole, GoogleDrivePermissionType ,GoogleDriveFilePermission
 from config import settings 
 from plants_api.helpers import helpers 
 
 # Create your models here.
+permission =  GoogleDriveFilePermission(
+   GoogleDrivePermissionRole.READER,
+   GoogleDrivePermissionType.ANYONE
+)
 
-gd_storage = GoogleDriveStorage()
+gd_storage = GoogleDriveStorage(permissions=(permission, ))
 
 TYPE_CHOICES = [
     ('planta', 'Planta'),
