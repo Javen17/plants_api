@@ -12,7 +12,9 @@ class BaseGoogleFixClass:
         super().__init__(*args, **kwargs)
         self.serializer_action_classes = {
             'list':self.exclude_serializer,
-            'retrieve':self.exclude_serializer
+            'retrieve':self.exclude_serializer,
+            'search' : self.exclude_serializer,
+            'filter' : self.exclude_serializer
         }
 
     def get_serializer_class(self, *args, **kwargs):
@@ -58,7 +60,7 @@ class BaseSearchAndFilterClass:
             if page is not None:
                 serializer = self.get_serializer(page, many=True)
                 return self.get_paginated_response(serializer.data)
-
+       
         serializer = self.get_serializer(result, many=True)
         return Response(serializer.data)
 

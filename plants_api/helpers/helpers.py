@@ -27,11 +27,11 @@ def search(queryset , search_dic , serializer , type):
         found_elements = queryset.filter(q_objects)
         resultlist = []
 
-        for found in found_elements:
-            serializers = serializer(found)
-            resultlist.append(serializers.data)
+        #for found in found_elements:
+        #    serializers = serializer(found)
+        #    resultlist.append(serializers.data)
 
-        return resultlist
+        return found_elements
     else:
         return  "please provide a valid search url"
 
