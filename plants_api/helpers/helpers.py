@@ -72,6 +72,8 @@ def send_notification(user , title ,  message):
 
 def save_image_url(sender, instance, **kwargs):
     post_save.disconnect(save_image_url, sender=sender)
+    print(instance.photo)
+    print(instance.photo.url)
     instance.photo_url = instance.photo.url
     post_save.connect(save_image_url, sender=sender)
 
