@@ -69,7 +69,7 @@ def send_notification(user , title ,  message):
         device.send_message(message, extra={"title": title , "icon": "ic_leaf"})
     #device = GCMDevice.objects.get(registration_id=gcm_reg_id)
 
-
+# This should be an override of the save method of the model currently it saves the instance twice
 def save_image_url(sender, instance, **kwargs):
     post_save.disconnect(save_image_url, sender=sender)
     instance.photo_url = instance.photo.url
