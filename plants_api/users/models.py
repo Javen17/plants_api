@@ -9,12 +9,6 @@ from plants_api.helpers import helpers
 from django.db.models.signals import pre_save
 
 # Create your models here.
-permission =  GoogleDriveFilePermission(
-   GoogleDrivePermissionRole.READER,
-   GoogleDrivePermissionType.ANYONE
-)
-
-gd_storage = GoogleDriveStorage(permissions=(permission, ))
 
 class User(AbstractUser):
 
@@ -39,10 +33,9 @@ class User(AbstractUser):
 class Profile(models.Model):
     #number_id = models.PositiveIntegerField("Número de referencia" , unique = True, null = True , blank = True)
     phone =  models.CharField(max_length=100 , verbose_name="Teléfono" , null = True , blank = True)
-    photo = models.ImageField("foto de perfil" , null = True , blank = True , upload_to = "uploads/perfiles" , storage=gd_storage, default =  settings.base.STATIC_ROOT  + "/img/user-placeholder.png")
+    photo = models.ImageField("foto de perfil" , null = True , blank = True , upload_to = "uploads/perfiles" , default =  settings.base.STATIC_ROOT  + "/img/user-placeholder.png")
     user = models.OneToOneField(User, on_delete=models.CASCADE , null = True , blank = True , related_name = "profile")
-    photo_url = models.CharField(max_length=100 , verbose_name="Url de imagen" , null = True , blank = True)
-
+    
     class Meta:
         verbose_name = "Perfil"
         verbose_name_plural = "perfiles"
@@ -50,4 +43,4 @@ class Profile(models.Model):
     def __str__(self):
         return "%s" % (self.user.name + " Profile")
 
-pre_save.connect(helpers.save_image_url, sender=Profile)
+

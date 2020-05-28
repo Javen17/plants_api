@@ -8,12 +8,6 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = Profile
         fields = '__all__'
 
-class ProfileExcludeSerializer(ProfileSerializer):
-
-    class Meta:
-        model = Profile
-        exclude = ('photo' , )
-
 class UserSerializer(serializers.ModelSerializer):
 
     profile = ProfileSerializer()
@@ -31,16 +25,6 @@ class UserSerializer(serializers.ModelSerializer):
         exclude = ("password", "user_permissions" , "temporal_password")
         #extra_kwargs = {'password': {'write_only': True, 'min_length': 4} , "user_permissions" : {'write_only': True} , "groups" : {'write_only': True}}
 
-
-class UserExcludeSerializer(UserSerializer):
-
-    def to_representation(self, obj):
-        self.fields['profile'] = ProfileExcludeSerializer()
-        return super(UserSerializer, self).to_representation(obj)
-
-    class Meta:
-        model = User
-        exclude = ("password", "user_permissions" , "temporal_password")
 
 #use carefully
 class UserSerializerWithPassword(UserSerializer):

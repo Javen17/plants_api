@@ -8,7 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 from rest_framework import viewsets , mixins
 from rest_framework.views import APIView
 from rest_framework.generics import UpdateAPIView
-from .serializers import UserSerializer , UserExcludeSerializer , UserSerializerWithPassword , ProfileSerializer , ProfileExcludeSerializer , GroupSerializer , PermissionSerializer
+from .serializers import UserSerializer , UserSerializerWithPassword , ProfileSerializer  , GroupSerializer , PermissionSerializer
 from rest_framework import permissions
 from plants_api.helpers import helpers
 from rest_framework.decorators import action
@@ -30,7 +30,7 @@ from django.utils.html import strip_tags
 from django.conf import settings
 from . import forms
 from django.http import Http404
-from plants_api.common.base_classes import BaseGoogleFixClass , ListSearchPatchMixin , BasePatchClass
+from plants_api.common.base_classes import ListSearchPatchMixin , BasePatchClass
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -40,18 +40,15 @@ from rest_framework_simplejwt.views import (
 User = get_user_model()
 
 
-class ProfileViewSet(BaseGoogleFixClass , ListSearchPatchMixin , viewsets.ModelViewSet):
+class ProfileViewSet(ListSearchPatchMixin , viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
     permission_classes = [permissions.DjangoModelPermissions]
-    exclude_serializer = ProfileExcludeSerializer
     
-    
-class UserViewSet(BaseGoogleFixClass , ListSearchPatchMixin ,viewsets.ModelViewSet):
+class UserViewSet(ListSearchPatchMixin ,viewsets.ModelViewSet):
     queryset = User.objects.all().select_related('profile' , 'auth_token')
     serializer_class =  UserSerializer
     permission_classes = [permissions.DjangoModelPermissions]
-    exclude_serializer = UserExcludeSerializer
 
     def get_permissions(self):
          return super(viewsets.ModelViewSet , self).get_permissions()

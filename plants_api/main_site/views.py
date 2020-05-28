@@ -6,7 +6,7 @@ from plants_api.users.views import UserViewSet
 from plants_api.users.serializers import UserSerializer
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from .serializers import EcosystemSerializer, RecolectionAreaStatusSerializer , BiostatusSerializer , StatusSerializer , SpeciesSerializer , SpeciesExcludeSerializer , FamilySerializer , GenusSerializer , CountrySerializer, StateSerializer , CitySerializer , CapTypeSerializer , FormTypeSerializer , PlantSpecimenSerializer ,PlantSpecimenExcludeSerializer , MushroomSpecimenSerializer , MushroomSpecimenExcludeSerializer
+from .serializers import EcosystemSerializer, RecolectionAreaStatusSerializer , BiostatusSerializer , StatusSerializer , SpeciesSerializer , FamilySerializer , GenusSerializer , CountrySerializer, StateSerializer , CitySerializer , CapTypeSerializer , FormTypeSerializer , PlantSpecimenSerializer , MushroomSpecimenSerializer
 from django.http import HttpResponse , JsonResponse , StreamingHttpResponse
 from rest_framework.renderers import JSONRenderer
 from django.db.models import Q
@@ -82,22 +82,20 @@ class FormTypeViewSet(ListSearchPatchMixin , viewsets.ModelViewSet):
     serializer_class = FormTypeSerializer
     permission_classes = [permissions.DjangoModelPermissions]
 
-class SpeciesViewSet(BaseGoogleFixClass , ListSearchPatchMixin, viewsets.ModelViewSet):
+class SpeciesViewSet(ListSearchPatchMixin, viewsets.ModelViewSet):
     serializer_class = SpeciesSerializer
     queryset = Species.objects.all()
     parser_class = (FileUploadParser,)
-    exclude_serializer = SpeciesExcludeSerializer
     permission_classes = [permissions.DjangoModelPermissions]
 
 
 #this two classes should be one
-class PlantSpecimenViewSet(BaseGoogleFixClass , ListSearchPatchMixin , viewsets.ModelViewSet):
+class PlantSpecimenViewSet(ListSearchPatchMixin , viewsets.ModelViewSet):
     serializer_class = PlantSpecimenSerializer
     queryset = PlantSpecimen.objects.all().select_related( 'user' , 'species', 'status', 'ecosystem', 'recolection_area_status' , 'city' , 'biostatus') 
     permission_classes = [permissions.DjangoModelPermissions]
     http_method_names = ['get', 'post', 'head' , 'put' , 'patch']
     model = PlantSpecimen
-    exclude_serializer = PlantSpecimenExcludeSerializer
 
     def get_permissions(self):
         if self.action in ["list" , "retrieve" , "search", "filter" , "approved"]:
@@ -127,7 +125,8 @@ class PlantSpecimenViewSet(BaseGoogleFixClass , ListSearchPatchMixin , viewsets.
 
     @action(methods=['get'] , detail=False)
     def approved(self, request , pk=None):
-        result =  self.exclude_serializer(self.queryset.filter(approved=True), many = True).data
+        serializer =  self.get_serializer() 
+        result =  serializer(self.get_queryset().filter(approved=True), many = True).data
         return JsonResponse(result, safe=False)     
     
     @action(methods=['get'], detail=True)
@@ -147,13 +146,12 @@ class PlantSpecimenViewSet(BaseGoogleFixClass , ListSearchPatchMixin , viewsets.
         end_date = params.pop('end', None)
         return build_csv(queryset , start_date ,  end_date)
     
-class MushroomSpecimenViewSet(BaseGoogleFixClass , ListSearchPatchMixin , viewsets.ModelViewSet):
+class MushroomSpecimenViewSet(ListSearchPatchMixin , viewsets.ModelViewSet):
     queryset = MushroomSpecimen.objects.all().select_related( 'user' , 'species', 'status', 'ecosystem', 'recolection_area_status' , 'city' , 'cap' , 'forms') 
     serializer_class = MushroomSpecimenSerializer
     permission_classes = [permissions.DjangoModelPermissions]
     http_method_names = ['get', 'post', 'head' , 'put' , 'patch']
     model = MushroomSpecimen
-    exclude_serializer = MushroomSpecimenExcludeSerializer
 
     def get_permissions(self):
         if self.action in ["list" , "retrieve" , "search", "filter" , "approved"]:
@@ -188,7 +186,6 @@ class MushroomSpecimenViewSet(BaseGoogleFixClass , ListSearchPatchMixin , viewse
         response['Content-Disposition'] = 'attachment; filename="Ficha-{}.docx"'.format(specimen.species.common_name)
         document.save(response)
         return response
-
 
 def build_csv(queryset, start_date, end_date):
     if start_date != None and end_date != None:

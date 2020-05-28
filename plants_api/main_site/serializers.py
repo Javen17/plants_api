@@ -1,6 +1,6 @@
 from .models import Ecosystem, RecolectionAreaStatus , Biostatus , Status , Family, Genus, Species , Country , State , City  , Specimen, PlantSpecimen , MushroomSpecimen, CapType , FormType
 from rest_framework import serializers
-from plants_api.users.serializers import UserSerializer , UserExcludeSerializer
+from plants_api.users.serializers import UserSerializer
 from plants_api.users.models import User
 
 
@@ -119,11 +119,6 @@ class SpeciesSerializer(serializers.ModelSerializer):
         model = Species
         fields = '__all__'
 
-class SpeciesExcludeSerializer(SpeciesSerializer): 
-
-    class Meta:
-        model = Species
-        exclude = ('photo', )
 
 #class SpecimenStatusSerializer(serializers.ModelSerializer):
 
@@ -178,20 +173,6 @@ class PlantSpecimenSerializer(SpecimenSerializer , serializers.ModelSerializer):
         fields = "__all__"
 
 
-class PlantSpecimenExcludeSerializer(PlantSpecimenSerializer): 
-    species = SpeciesExcludeSerializer()
-
-    def to_representation(self, obj):
-        self.fields['user'] = UserExcludeSerializer()
-        self.fields['species'] = SpeciesExcludeSerializer()
-        self.fields['biostatus'] = BiostatusSerializer()
-        return super(PlantSpecimenSerializer, self).to_representation(obj)
-
-    class Meta:
-        model = PlantSpecimen
-        exclude = ('photo', )
-
-
 class MushroomSpecimenSerializer(SpecimenSerializer , serializers.ModelSerializer):
     cap = CapTypeSerializer()
     forms = FormTypeSerializer()
@@ -211,17 +192,3 @@ class MushroomSpecimenSerializer(SpecimenSerializer , serializers.ModelSerialize
     class Meta:
         model = MushroomSpecimen
         fields = "__all__"
-
-class MushroomSpecimenExcludeSerializer(MushroomSpecimenSerializer): 
-    species = SpeciesExcludeSerializer()
-
-    def to_representation(self, obj):
-        self.fields['species'] = SpeciesExcludeSerializer()
-        self.fields['cap'] = CapTypeSerializer()
-        self.fields['forms'] = FormTypeSerializer()
-        self.fields['user'] = UserExcludeSerializer()
-        return super(MushroomSpecimenSerializer, self).to_representation(obj)
-
-    class Meta:
-        model = MushroomSpecimen
-        exclude = ('photo', )

@@ -91,9 +91,7 @@ class Species(models.Model):
     scientific_name =  models.CharField(max_length=100 , verbose_name="Nombre científico" , unique = True)
     genus = models.ForeignKey(Genus , on_delete = models.CASCADE , verbose_name = "Género")
     description = models.TextField(blank=True,default="")
-    photo = models.ImageField("Imagen" , upload_to="uploads/plant_family", storage=gd_storage)
-
-    photo_url = models.CharField(max_length=100 , verbose_name="Url de imagen" , null = True , blank = True)
+    photo = models.ImageField("Imagen" , upload_to="uploads/plant_family")
 
     class Meta:
         verbose_name = 'Especies de Plantas'
@@ -102,8 +100,6 @@ class Species(models.Model):
 
     def __str__(self):
         return "%s" % (self.common_name)
-
-pre_save.connect(helpers.save_image_url, sender=Species)
 
 
 #class SpecimenStatus(models.Model):
@@ -176,7 +172,6 @@ class Specimen(models.Model):
     longitude =  models.FloatField("Longitud" , blank=True , null=True)
 
     location = models.CharField(max_length=100 , verbose_name="Ubicación")
-    photo_url = models.CharField(max_length=100 , verbose_name="Url de imagen" , null = True , blank = True)
 
     class Meta:
         abstract = True
@@ -192,8 +187,6 @@ class PlantSpecimen(Specimen):
     def __str__(self):
         return "Espécimen de %s" % (self.species.common_name)
     
-post_save.connect(helpers.save_image_url, sender=PlantSpecimen)
-
 
 class CapType(models.Model):
     name = models.CharField(max_length=100 , verbose_name="Nombre")
@@ -231,8 +224,6 @@ class MushroomSpecimen(Specimen):
 
     def __str__(self):
         return "Espécimen de %s" % (self.species.common_name)
-
-post_save.connect(helpers.save_image_url, sender=MushroomSpecimen)
 
 
 @receiver(post_save, sender=MushroomSpecimen)
