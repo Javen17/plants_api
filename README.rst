@@ -185,7 +185,7 @@ pip install -r requirements.txt
 
 #Cambiamos configuraciones
 
-sudo nano plants_api/settings.py
+sudo nano plants_api/base.py
 
 #MODIFICAMOS EL ARRAY DE ALLOWED_HOSTS, E INCLUIMOS LA IP A USAR, O DOMINIO #EJEMPLO
 
