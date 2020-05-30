@@ -6,7 +6,7 @@ from django.db import models
 from gdstorage.storage import GoogleDriveStorage, GoogleDrivePermissionRole, GoogleDrivePermissionType ,GoogleDriveFilePermission
 from config import settings
 from plants_api.helpers import helpers
-from django.db.models.signals import pre_save
+from django.db.models.signals import post_save
 
 # Create your models here.
 permission =  GoogleDriveFilePermission(
@@ -50,4 +50,4 @@ class Profile(models.Model):
     def __str__(self):
         return "%s" % (self.user.name + " Profile")
 
-pre_save.connect(helpers.save_image_url, sender=Profile)
+post_save.connect(helpers.save_image_url, sender=Profile)
