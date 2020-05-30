@@ -54,5 +54,3 @@ class UserAdmin(auth_admin.UserAdmin):
                 form.base_fields[f].disabled = True
 
         return form
-
-admin.site.register(Permission)

@@ -363,6 +363,7 @@ class PermissionViewSet(ListSearchPatchMixin, viewsets.ModelViewSet):
     queryset = Permission.objects.all()
     serializer_class = PermissionSerializer
     permission_classes = [permissions.DjangoModelPermissions]
+    http_method_names = [u'get', u'post', u'put', u'patch', u'head', u'options', u'trace']
 
     def get_permissions(self):
         return super(viewsets.ModelViewSet , self).get_permissions()
