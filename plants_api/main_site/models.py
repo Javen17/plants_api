@@ -239,9 +239,9 @@ post_save.connect(helpers.save_image_url, sender=MushroomSpecimen)
 @receiver(post_save, sender=PlantSpecimen)
 def send_approved_message(sender, instance, **kwargs):
     if instance.original_approved != instance.approved:
-        message_string = "Hola " + instance.user.name  + " tu espécimen de " + instance.species.common_name + " registrado el " + instance.date_received.strftime("%d-%m-%Y") 
+        message_string = "Hola " + instance.user.name  + ". tu espécimen de " + instance.species.common_name + " registrado el " + instance.date_received.strftime("%d-%m-%Y") 
         if instance.approved:
-            helpers.send_notification(instance.user.id, "Aprobación de ficha técnica" , message_string  + " ha sido aprovado")
+            helpers.send_notification(instance.user.id, "Aprobación de ficha técnica" , message_string  + " ha sido aprobado")
         else:
             helpers.send_notification(instance.user.id, "Aprobación de ficha técnica" , message_string + " ha sido denegado")
 

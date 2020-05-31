@@ -1,0 +1,30 @@
+.form-restore-container{
+    .form-restore-col{
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+        border-radius: 25px;
+        p{
+            display: flex;
+            font-weight: bold;
+            justify-content: space-between;
+            flex-wrap: wrap
+        }
+    }
+}
+
+.submit-button{
+    background-color: $main-green;
+    background-color: #00BC73;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-weight: bold;
+    &:focus{
+        border-radius: 25px;
+        outline: none;
+        box-shadow: 0 0 0pt 2pt white;
+    }
+}
+
+#notification-container{
+    display: none;
+}

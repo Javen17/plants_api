@@ -100,7 +100,7 @@ class PlantSpecimenViewSet(BaseGoogleFixClass , ListSearchPatchMixin , viewsets.
     exclude_serializer = PlantSpecimenExcludeSerializer
 
     def get_permissions(self):
-        if self.action in ["list" , "retrieve" , "search", "filter" , "approved" , "card" , "report"]:
+        if self.action in ["list" , "retrieve" , "create" , "search", "filter" , "approved" , "card" , "report"]:
             return [permissions.AllowAny(), ]
         return super().get_permissions()
 
@@ -159,7 +159,7 @@ class MushroomSpecimenViewSet(BaseGoogleFixClass , ListSearchPatchMixin , viewse
     exclude_serializer = MushroomSpecimenExcludeSerializer
 
     def get_permissions(self):
-        if self.action in ["list" , "retrieve" , "search", "filter" , "approved" , "card" , "report"]:
+        if self.action in ["list" , "retrieve" , "create" , "search", "filter" , "approved" , "card" , "report"]:
             return [permissions.AllowAny(), ]
         return super().get_permissions()
 

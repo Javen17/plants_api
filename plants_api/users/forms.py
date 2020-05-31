@@ -32,5 +32,5 @@ class UserCreationForm(forms.UserCreationForm):
 
 
 class NewPasswordForm(f.Form):
-    newpassword = f.CharField()
-    newpassword_again = f.CharField()
+    newpassword = f.CharField(label='Nueva contraseña', widget=f.PasswordInput())
+    newpassword_again = f.CharField(label='Confirma tu contraseña', widget=f.PasswordInput())
