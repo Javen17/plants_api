@@ -4,18 +4,10 @@ from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 from django.db.models.signals import pre_save , post_save
 from plants_api.users.models import User
-from gdstorage.storage import GoogleDriveStorage, GoogleDrivePermissionRole, GoogleDrivePermissionType ,GoogleDriveFilePermission
 from config import settings 
 from plants_api.helpers import helpers 
 
 # Create your models here.
-permission =  GoogleDriveFilePermission(
-   GoogleDrivePermissionRole.READER,
-   GoogleDrivePermissionType.ANYONE
-)
-
-gd_storage = GoogleDriveStorage(permissions=(permission, ))
-
 TYPE_CHOICES = [
     ('planta', 'Planta'),
     ('hongo', 'Hongo'),
@@ -155,7 +147,7 @@ class Specimen(models.Model):
         self.original_approved = self.approved
 
     user = models.ForeignKey(User , on_delete=models.CASCADE , blank = False , default =0 ,  verbose_name="Usuario")
-    photo = models.ImageField("Imagen" , upload_to="uploads/plant_family", storage=gd_storage)
+    photo = models.ImageField("Imagen" , upload_to="uploads/plant_family")
     date_received =  models.DateTimeField("Fecha")
     species = models.ForeignKey(Species , on_delete = models.CASCADE, verbose_name = "Especie")
     status = models.ForeignKey(Status , on_delete=models.CASCADE , verbose_name = "Estado")

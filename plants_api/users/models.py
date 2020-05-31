@@ -3,7 +3,6 @@ from django.db.models import CharField
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
-from gdstorage.storage import GoogleDriveStorage, GoogleDrivePermissionRole, GoogleDrivePermissionType ,GoogleDriveFilePermission
 from config import settings
 from plants_api.helpers import helpers
 from django.db.models.signals import post_save
@@ -43,4 +42,4 @@ class Profile(models.Model):
     def __str__(self):
         return "%s" % (self.user.name + " Profile")
 
-post_save.connect(helpers.save_image_url, sender=Profile)
+#post_save.connect(helpers.save_image_url, sender=Profile)

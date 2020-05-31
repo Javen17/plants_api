@@ -96,7 +96,7 @@ THIRD_PARTY_APPS = [
     "smart_selects",
     "rest_framework.authtoken",
     "corsheaders",
-    "gdstorage",
+    #"gdstorage",
     "push_notifications"
 ]
 

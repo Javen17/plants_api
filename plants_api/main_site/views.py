@@ -17,7 +17,7 @@ from urllib.parse import parse_qs
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from rest_framework.mixins import UpdateModelMixin
-from plants_api.common.base_classes import BaseGoogleFixClass , ListSearchPatchMixin
+from plants_api.common.base_classes import ListSearchPatchMixin
 from docx import Document
 import csv
 import itertools
