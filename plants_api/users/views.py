@@ -311,21 +311,15 @@ class SignUpViewSet(mixins.CreateModelMixin , viewsets.GenericViewSet):
     def create(self, validated_data):
         try:
             if validated_data.data.get('date_joined'):
-                date_joined =  validated_data.data.pop('date_joined')
+                    date_joined =  validated_data.data.pop('date_joined')
             if validated_data.data.get('groups'):
-                validated_data.data.pop('groups')
+                    validated_data.data.pop('groups')
             if validated_data.data.get('user_permissions'):
-                validated_data.data.pop('user_permissions')
+                    validated_data.data.pop('user_permissions')
 
             validated_data.data["is_superuser"] = False
             validated_data.data["is_staff"] = False
-                
-            username = validated_data.data.get('username', None)
-            email = validated_data.data.get('email', None)
-
-            invalid_username = True if User.objects.filter(username= username).exists() else False 
-            invalid_email = True if User.objects.filter(email= email).exists() else False 
-
+                    
             valid = validate_user(self.request)     
 
             if valid != True:
@@ -337,8 +331,7 @@ class SignUpViewSet(mixins.CreateModelMixin , viewsets.GenericViewSet):
                 user.date_joined = datetime.now()
 
             user.save()
-            return JsonResponse({"result" : "user added" } , status = 200)
-        
+            return JsonResponse({"result" : "user added" } , status = 200)        
         except:
             return JsonResponse({"result" : "Something went wrong" } , status = 400)
 
@@ -356,10 +349,12 @@ class GroupViewSet(ListSearchPatchMixin, viewsets.ModelViewSet):
         group_permissions = group.permissions.all().values()
         return JsonResponse(list(group_permissions), safe = False)
 
+
 class PermissionViewSet(ListSearchPatchMixin, viewsets.ModelViewSet):
     queryset = Permission.objects.all()
     serializer_class = PermissionSerializer
     permission_classes = [permissions.DjangoModelPermissions]
+    http_method_names = [u'get', u'post', u'put', u'patch', u'head', u'options', u'trace']
 
     def get_permissions(self):
         return super(viewsets.ModelViewSet , self).get_permissions()

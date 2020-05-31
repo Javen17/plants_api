@@ -98,12 +98,12 @@ class PlantSpecimenViewSet(ListSearchPatchMixin , viewsets.ModelViewSet):
     model = PlantSpecimen
 
     def get_permissions(self):
-        if self.action in ["list" , "retrieve" , "search", "filter" , "approved"]:
+        if self.action in ["list" , "retrieve" , "create" , "search", "filter" , "approved" , "card" , "report"]:
             return [permissions.AllowAny(), ]
         return super().get_permissions()
 
     def get_queryset(self):
-        if self.request.user.has_perm("view_plantspecimen"):
+        if self.request.user.has_perm("view_plantspecimen") or self.request.user.is_superuser:
             return self.queryset
         else:
             return self.queryset.filter(approved = True)
@@ -121,7 +121,10 @@ class PlantSpecimenViewSet(ListSearchPatchMixin , viewsets.ModelViewSet):
             return JsonResponse({"result" : "Bad Request"} , status = 400)
 
     def perform_create(self, serializer):
-        return serializer.save(user=self.request.user)
+        if self.request.user.has_perm("change_plant_approval") or self.request.user.is_superuser:
+            return serializer.save(user=self.request.user)
+        else:
+            return serializer.save(user=self.request.user, approved=False)
 
     @action(methods=['get'] , detail=False)
     def approved(self, request , pk=None):
@@ -154,12 +157,12 @@ class MushroomSpecimenViewSet(ListSearchPatchMixin , viewsets.ModelViewSet):
     model = MushroomSpecimen
 
     def get_permissions(self):
-        if self.action in ["list" , "retrieve" , "search", "filter" , "approved"]:
+        if self.action in ["list" , "retrieve" , "create" , "search", "filter" , "approved" , "card" , "report"]:
             return [permissions.AllowAny(), ]
         return super().get_permissions()
 
     def get_queryset(self):
-        if self.request.user.has_perm("view_mushroomspecimen"):
+        if self.request.user.has_perm("view_mushroomspecimen") or self.request.user.is_superuser:
             return self.queryset
         else:
             return self.queryset.filter(approved = True)
@@ -174,9 +177,13 @@ class MushroomSpecimenViewSet(ListSearchPatchMixin , viewsets.ModelViewSet):
                 return JsonResponse({"result" : "Bad Request"} , status = 400)
         else:
             return JsonResponse({"result" : "Bad Request"} , status = 400)
-                
+
+    #This should be done overriding the save method, here in only checks the endpoint and would do nothing if the user enters the django admin
     def perform_create(self, serializer):
-        return serializer.save(user=self.request.user)
+        if self.request.user.has_perm("change_mushroom_approval") or self.request.user.is_superuser:
+            return serializer.save(user=self.request.user)
+        else:
+            return serializer.save(user=self.request.user, approved=False)
 
     @action(methods=['get'], detail=True)
     def card(self, request, pk):

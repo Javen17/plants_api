@@ -32,6 +32,31 @@ $red: #b94a48;
   color: $red;
 }
 
+.alert{
+  background-color: $pink;
+  border-color: $dark-pink;
+  color: $red;
+  border-radius: 0px;
+}
+
+button{
+  outline: white;
+  border: none;
+}
+
+.card-shadow{
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+}
+
+.icon{
+  color:white;
+}
+
+.success-icon{
+  font-size: 60px;
+  color: $main-green;
+}
+
 .display-justify{
   display: flex;
   justify-content: center;
