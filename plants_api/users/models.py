@@ -43,8 +43,4 @@ class Profile(models.Model):
     def __str__(self):
         return "%s" % (self.user.name + " Profile")
 
-<<<<<<< HEAD
-
-=======
 post_save.connect(helpers.save_image_url, sender=Profile)
->>>>>>> master
