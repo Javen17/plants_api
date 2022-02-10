@@ -9,7 +9,7 @@
     "gulp-pixrem": "^1.0.0",
     "gulp-terser": "^1.2.0",
     "gulp-util": "^3.0.8",
-    "node-sass": "^4.13.1",
+    "node-sass": "^7.0.0",
     "run-sequence": "^2.2.1"
   },
   "devDependencies": {
